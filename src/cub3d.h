@@ -1,0 +1,157 @@
+// #ifndef CUB3D_H
+// # define CUB3D_H
+
+/* system includes */
+# include <unistd.h>		// POSIX sys calls
+# include <stdlib.h>		// mem allocatn
+# include <fcntl.h>			// file ctrl ops
+# include <math.h>
+# include "mlx/mlx.h"		// MiniLibX graphics lib
+
+/* program constants */
+# define EXIT_SUCCESS 0
+# define EXIT_FAILURE 1
+# define BUFFER_SIZE 1024
+/* fixed vals during prog executn 
+define configuration parameters, system limits, identifiers, 
+and behavioral settings that the program references consistently 
+rather than using magic numbers scattered throughout code */
+
+
+/* MLX keycodes: 
+hardware-specific integers mapping physical keys to unique IDs */
+/* MLX abstracts OS keyboard events into these integer constants that the event handlers receive. 
+FLOW:
+Hardware: Physical key pressed
+OS: Generates raw scancode → translates to OS-specific keycode
+MLX: Receives OS keycode → passes unchanged to your callback
+Your program: Receives keycode integer in key_press_handler(int keycode) */
+
+// 2 OSs: manual block commenting:
+// MacOS
+# define KEY_W 13
+# define KEY_A 0
+# define KEY_S 1
+# define KEY_D 2
+# define KEY_Q 12
+# define KEY_E 14
+# define KEY_LEFT 123
+# define KEY_RIGHT 124
+# define KEY_ESC 53
+
+// Linux	- ENSURE VALIDITY OF THESE
+/* Critical limitation: I don't have definitive knowledge of MLX's exact Linux X11 keycode mappings. 
+These values are approximations based on typical X11 keysyms.
+Verification required: Test on actual Linux system or check MLX-Linux documentation. 
+X11 keycodes can vary by keyboard layout and MLX implementation.
+Alternative approach: Build on Linux, add printf("keycode: %d\n", keycode); to your key handler, 
+press keys, record actual values MLX passes. */
+// # define KEY_W 25
+// # define KEY_A 38
+// # define KEY_S 39  
+// # define KEY_D 40
+// # define KEY_LEFT 113
+// # define KEY_RIGHT 114
+// # define KEY_ESC 9
+
+
+/* map cell types */
+# define EMPTY 0		// walkable space
+# define WALL 1			// collision / rendering surface
+# define VOID 2			// invalid map space (outside boundaries)
+/* The algorithm casts rays until hitting WALL, treats EMPTY as traversable, 
+and VOID handles map parsing edge cases where spaces might exist beyond defined boundaries. */
+
+
+/* wall face directions */
+# define NORTH 0
+# define SOUTH 1
+# define WEST 2
+# define EAST 3
+
+/* RENDERING CONSTANTS */
+# define DEFAULT_WIDTH 1024
+# define DEFAULT_HEIGHT 768
+# define FOV 0.66
+
+/*
+DATA STRUCTURES:
+Minimal data representation for core game functionality.
+*/
+
+/* PLAYER STATE */
+typedef struct s_player
+{
+    double pos_x;           // World position X
+    double pos_y;           // World position Y
+    double dir_x;           // View direction X
+    double dir_y;           // View direction Y
+    double camera_plane_x;  // Camera plane X (FOV)
+    double camera_plane_y;  // Camera plane Y (FOV)
+} t_player;
+
+/* MAP CONFIGURATION */
+typedef struct s_map
+{
+    int *grid;              // 2D map as 1D array
+    int width;              // Map width in cells
+    int height;             // Map height in cells
+    char *texture_paths[4]; // Wall texture file paths
+    int floor_color;        // Floor RGB color
+    int ceiling_color;      // Ceiling RGB color
+} t_map;
+
+/* GRAPHICS SYSTEM */
+typedef struct s_graphics
+{
+    void *mlx_ptr;          // MLX library pointer
+    void *window_ptr;       // Window pointer  
+    void *image_ptr;        // Image buffer pointer
+    char *image_data;       // Raw image data
+    int bits_per_pixel;     // Color depth
+    int line_length;        // Bytes per line
+    int endian;             // Byte order
+    int screen_width;       // Screen width pixels
+    int screen_height;      // Screen height pixels
+} t_graphics;
+
+/* GAME STATE */
+typedef struct s_game
+{
+    t_player player;        // Player state
+    t_map map;              // Map data
+    t_graphics graphics;    // Graphics system
+    int running;            // Game loop flag
+    double movement_speed;  // Player movement speed
+    double rotation_speed;  // Camera rotation speed
+} t_game;
+
+
+/* FUNCTION DECLARATIONS:
+	Organize by 
+	source file responsibility
+	program flow? */
+// ADD WHEN STARTING TO BUILD PROJECT ELSE TOO FREQUENT CHANGES
+
+/* GLOBAL GAME STATE */
+extern t_game g_game;
+
+// #endif
+
+/*
+ARCHITECTURAL PRINCIPLES APPLIED:
+1. Clear separation of concerns by file
+2. Minimal data structures with essential fields only
+3. Function declarations organized by responsibility  
+4. Constants grouped logically by usage
+5. No premature optimization or over-engineering
+
+UPSTREAM DESIGN DECISIONS:
+- Single global game state for simplicity
+- Direct MLX integration without abstraction layers
+- Mathematical operations inline rather than wrapped
+- Error handling immediate and decisive
+- Memory management explicit and manual
+
+This structure provides foundation for implementing 
+core raycasting engine without unnecessary complexity. */

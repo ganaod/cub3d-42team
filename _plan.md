@@ -1,4 +1,7 @@
-[] shared github repo?
+[x] shared github repo
+
+[] andere mlx lub? blohrer schaut dazu
+
 
 [] discuss data structs - do we want to use the ones currently in .h ?
 

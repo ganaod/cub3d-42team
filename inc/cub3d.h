@@ -84,7 +84,9 @@ typedef struct s_graphics
     int screen_height;      // Screen height pixels
 } t_graphics;
 
-/* GAME STATE */
+/* GAME STATE 
+type def: defines what a game state looks like
+blueprint/template */
 typedef struct s_game
 {
     t_player player;        // Player state
@@ -95,6 +97,10 @@ typedef struct s_game
     double rotation_speed;  // Camera rotation speed
 } t_game;
 
+/* GLOBAL GAME STATE 
+var declaration: declares that somewhere exists a specific instance 
+of t_game that all files can access */
+extern t_game g_game;
 
 /* FUNCTION DECLARATIONS:
 	Organize by 
@@ -102,7 +108,6 @@ typedef struct s_game
 	program flow? */
 // ADD WHEN STARTING TO BUILD PROJECT ELSE TOO FREQUENT CHANGES
 
-/* GLOBAL GAME STATE */
-extern t_game g_game;
+
 
 #endif

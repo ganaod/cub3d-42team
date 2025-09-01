@@ -1,5 +1,5 @@
-// #ifndef CUB3D_H
-// # define CUB3D_H
+#ifndef CUB3D_H
+# define CUB3D_H
 
 /* system includes */
 # include <unistd.h>		// POSIX sys calls
@@ -105,22 +105,4 @@ typedef struct s_game
 /* GLOBAL GAME STATE */
 extern t_game g_game;
 
-// #endif
-
-/*
-ARCHITECTURAL PRINCIPLES APPLIED:
-1. Clear separation of concerns by file
-2. Minimal data structures with essential fields only
-3. Function declarations organized by responsibility  
-4. Constants grouped logically by usage
-5. No premature optimization or over-engineering
-
-UPSTREAM DESIGN DECISIONS:
-- Single global game state for simplicity
-- Direct MLX integration without abstraction layers
-- Mathematical operations inline rather than wrapped
-- Error handling immediate and decisive
-- Memory management explicit and manual
-
-This structure provides foundation for implementing 
-core raycasting engine without unnecessary complexity. */
+#endif

@@ -6,29 +6,15 @@
 # include <stdlib.h>		// mem allocatn
 # include <fcntl.h>			// file ctrl ops
 # include <math.h>
-# include "mlx/mlx.h"		// MiniLibX graphics lib
+# include "lib/minilibx-macOS/mlx.h"		// MiniLibX graphics lib
 
 /* program constants */
 # define EXIT_SUCCESS 0
 # define EXIT_FAILURE 1
 # define BUFFER_SIZE 1024
-/* fixed vals during prog executn 
-define configuration parameters, system limits, identifiers, 
-and behavioral settings that the program references consistently 
-rather than using magic numbers scattered throughout code */
-
 
 /* MLX keycodes: 
 hardware-specific integers mapping physical keys to unique IDs */
-/* MLX abstracts OS keyboard events into these integer constants that the event handlers receive. 
-FLOW:
-Hardware: Physical key pressed
-OS: Generates raw scancode → translates to OS-specific keycode
-MLX: Receives OS keycode → passes unchanged to your callback
-Your program: Receives keycode integer in key_press_handler(int keycode) */
-
-// 2 OSs: manual block commenting:
-// MacOS
 # define KEY_W 13
 # define KEY_A 0
 # define KEY_S 1
@@ -39,29 +25,14 @@ Your program: Receives keycode integer in key_press_handler(int keycode) */
 # define KEY_RIGHT 124
 # define KEY_ESC 53
 
-// Linux	- ENSURE VALIDITY OF THESE
-/* Critical limitation: I don't have definitive knowledge of MLX's exact Linux X11 keycode mappings. 
-These values are approximations based on typical X11 keysyms.
-Verification required: Test on actual Linux system or check MLX-Linux documentation. 
-X11 keycodes can vary by keyboard layout and MLX implementation.
-Alternative approach: Build on Linux, add printf("keycode: %d\n", keycode); to your key handler, 
-press keys, record actual values MLX passes. */
-// # define KEY_W 25
-// # define KEY_A 38
-// # define KEY_S 39  
-// # define KEY_D 40
-// # define KEY_LEFT 113
-// # define KEY_RIGHT 114
-// # define KEY_ESC 9
-
-
-/* map cell types */
+/* map cell types 
+the algorithm casts rays until hitting WALL, 
+treats EMPTY as traversable, 
+and VOID handles map parsing edge cases 
+where spaces might exist beyond defined boundaries. */
 # define EMPTY 0		// walkable space
 # define WALL 1			// collision / rendering surface
 # define VOID 2			// invalid map space (outside boundaries)
-/* The algorithm casts rays until hitting WALL, treats EMPTY as traversable, 
-and VOID handles map parsing edge cases where spaces might exist beyond defined boundaries. */
-
 
 /* wall face directions */
 # define NORTH 0
@@ -74,10 +45,8 @@ and VOID handles map parsing edge cases where spaces might exist beyond defined 
 # define DEFAULT_HEIGHT 768
 # define FOV 0.66
 
-/*
-DATA STRUCTURES:
-Minimal data representation for core game functionality.
-*/
+/* DATA STRUCTURES:
+Minimal data representation for core game functionality */
 
 /* PLAYER STATE */
 typedef struct s_player

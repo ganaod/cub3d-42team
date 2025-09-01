@@ -5,7 +5,7 @@ Prevents memory leaks
 Provides clear error messages
 Coordinates shutdown sequence */
 
-#include "cub3d.h"
+#include "../inc/cub3d.h"
 
 /*
 UPSTREAM RESPONSIBILITY:

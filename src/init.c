@@ -5,7 +5,7 @@ Establishes MLX interface
 Sets up user interaction
 Prepares graphics pipeline */
 
-#include "cub3d.h"
+#include "../inc/cub3d.h"
 
 /*
 UPSTREAM RESPONSIBILITY:

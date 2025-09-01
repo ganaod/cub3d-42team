@@ -1,6 +1,6 @@
 /* program entry & orchestration */
 
-#include "cub3d.h"
+#include "../inc/cub3d.h"
 
 /* 1. validate cmd line args
 2. initialise sys

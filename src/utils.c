@@ -4,7 +4,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3d.h"
+#include "../inc/cub3d.h"
 
 /*
 UPSTREAM RESPONSIBILITY:

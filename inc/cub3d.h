@@ -15,17 +15,6 @@
 # define EXIT_FAILURE 1
 # define BUFFER_SIZE 1024
 
-/* MLX keycodes:
-hardware-specific integers mapping physical keys to unique IDs */
-# define KEY_W 13
-# define KEY_A 0
-# define KEY_S 1
-# define KEY_D 2
-# define KEY_Q 12
-# define KEY_E 14
-# define KEY_LEFT 123
-# define KEY_RIGHT 124
-# define KEY_ESC 53
 
 /* map cell types
 the algorithm casts rays until hitting WALL,
@@ -68,23 +57,19 @@ typedef struct s_map
     int width;              // Map width in cells
     int height;             // Map height in cells
     char *texture_paths[4]; // Wall texture file paths
-    int floor_color;        // Floor RGB color
-    int ceiling_color;      // Ceiling RGB color
+    uint32_t floor_color;   // 0xRRGGBB
+    uint32_t ceiling_color; // 0xRRGGBB
 } t_map;
 
 /* GRAPHICS SYSTEM */
 typedef struct s_graphics
 {
-    void *mlx_ptr;          // MLX library pointer
-    void *window_ptr;       // Window pointer
-    void *image_ptr;        // Image buffer pointer
-    char *image_data;       // Raw image data
-    int bits_per_pixel;     // Color depth
-    int line_length;        // Bytes per line
-    int endian;             // Byte order
-    int screen_width;       // Screen width pixels
-    int screen_height;      // Screen height pixels
+    mlx_t       *mlx;        // MLX42 Kontext
+    mlx_image_t *frame;      // Framebuffer (WIN_W x WIN_H, RGBA8888)
+    int         screen_width;
+    int         screen_height;
 } t_graphics;
+
 
 /* GAME STATE
 type def: defines what a game state looks like

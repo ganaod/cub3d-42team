@@ -4,16 +4,18 @@
 /* system includes */
 # include <unistd.h>		// POSIX sys calls
 # include <stdlib.h>		// mem allocatn
+# include <stdio.h>
 # include <fcntl.h>			// file ctrl ops
 # include <math.h>
-# include "lib/minilibx-macOS/mlx.h"		// MiniLibX graphics lib
+// # include "lib/minilibx-macOS/mlx.h"		// MiniLibX graphics lib
+# include "../lib/MLX42/include/MLX42/MLX42.h"
 
 /* program constants */
 # define EXIT_SUCCESS 0
 # define EXIT_FAILURE 1
 # define BUFFER_SIZE 1024
 
-/* MLX keycodes: 
+/* MLX keycodes:
 hardware-specific integers mapping physical keys to unique IDs */
 # define KEY_W 13
 # define KEY_A 0
@@ -25,10 +27,10 @@ hardware-specific integers mapping physical keys to unique IDs */
 # define KEY_RIGHT 124
 # define KEY_ESC 53
 
-/* map cell types 
-the algorithm casts rays until hitting WALL, 
-treats EMPTY as traversable, 
-and VOID handles map parsing edge cases 
+/* map cell types
+the algorithm casts rays until hitting WALL,
+treats EMPTY as traversable,
+and VOID handles map parsing edge cases
 where spaces might exist beyond defined boundaries. */
 # define EMPTY 0		// walkable space
 # define WALL 1			// collision / rendering surface
@@ -74,7 +76,7 @@ typedef struct s_map
 typedef struct s_graphics
 {
     void *mlx_ptr;          // MLX library pointer
-    void *window_ptr;       // Window pointer  
+    void *window_ptr;       // Window pointer
     void *image_ptr;        // Image buffer pointer
     char *image_data;       // Raw image data
     int bits_per_pixel;     // Color depth
@@ -84,7 +86,7 @@ typedef struct s_graphics
     int screen_height;      // Screen height pixels
 } t_graphics;
 
-/* GAME STATE 
+/* GAME STATE
 type def: defines what a game state looks like
 blueprint/template */
 typedef struct s_game
@@ -97,13 +99,13 @@ typedef struct s_game
     double rotation_speed;  // Camera rotation speed
 } t_game;
 
-/* GLOBAL GAME STATE 
-var declaration: declares that somewhere exists a specific instance 
+/* GLOBAL GAME STATE
+var declaration: declares that somewhere exists a specific instance
 of t_game that all files can access */
 extern t_game g_game;
 
 /* FUNCTION DECLARATIONS:
-	Organize by 
+	Organize by
 	source file responsibility
 	program flow? */
 // ADD WHEN STARTING TO BUILD PROJECT ELSE TOO FREQUENT CHANGES

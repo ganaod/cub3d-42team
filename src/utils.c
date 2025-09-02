@@ -19,40 +19,6 @@ STRING OPERATIONS:
 Basic string manipulation without external dependencies.
 Required for parsing configuration files.
 */
-int ft_strlen(char *str)
-{
-    int len = 0;
-    if (!str)
-        return (0);
-    while (str[len])
-        len++;
-    return (len);
-}
-
-char *ft_strdup(char *src)
-{
-    int len = ft_strlen(src);
-    char *dst = malloc(len + 1);
-    int i = 0;
-    
-    if (!dst)
-        return (NULL);
-    while (i < len)
-    {
-        dst[i] = src[i];
-        i++;
-    }
-    dst[i] = '\0';
-    return (dst);
-}
-
-int ft_strcmp(char *s1, char *s2)
-{
-    int i = 0;
-    while (s1[i] && s2[i] && s1[i] == s2[i])
-        i++;
-    return (s1[i] - s2[i]);
-}
 
 /*
 FILE OPERATIONS:
@@ -73,10 +39,10 @@ int validate_file_extension(char *filename, char *expected_ext)
 {
     int filename_len = ft_strlen(filename);
     int ext_len = ft_strlen(expected_ext);
-    
+
     if (filename_len < ext_len)
         return (0);
-    
+
     // Check if filename ends with expected extension
     char *file_ext = filename + (filename_len - ext_len);
     return (ft_strcmp(file_ext, expected_ext) == 0);
@@ -150,71 +116,3 @@ int extract_blue(int color)
     return (color & 0xFF);
 }
 
-/*
-PARSING UTILITIES:
-Helper functions for configuration file parsing.
-*/
-int ft_atoi(char *str)
-{
-    int result = 0;
-    int sign = 1;
-    int i = 0;
-    
-    // Skip whitespace
-    while (str[i] == ' ' || str[i] == '\t')
-        i++;
-    
-    // Handle sign
-    if (str[i] == '-')
-    {
-        sign = -1;
-        i++;
-    }
-    else if (str[i] == '+')
-        i++;
-    
-    // Convert digits
-    while (str[i] >= '0' && str[i] <= '9')
-    {
-        result = result * 10 + (str[i] - '0');
-        i++;
-    }
-    
-    return (result * sign);
-}
-
-char **ft_split(char *str, char separator)
-{
-    // Count words separated by separator
-    int word_count = count_words(str, separator);
-    
-    // Allocate array for word pointers
-    char **result = safe_malloc(sizeof(char*) * (word_count + 1));
-    
-    // Extract each word
-    int word_index = 0;
-    int i = 0;
-    
-    while (str[i] && word_index < word_count)
-    {
-        // Skip separators
-        while (str[i] == separator)
-            i++;
-        
-        // Find end of current word
-        int word_start = i;
-        while (str[i] && str[i] != separator)
-            i++;
-        
-        // Extract word
-        int word_len = i - word_start;
-        result[word_index] = safe_malloc(word_len + 1);
-        ft_strncpy(result[word_index], str + word_start, word_len);
-        result[word_index][word_len] = '\0';
-        
-        word_index++;
-    }
-    
-    result[word_index] = NULL;
-    return (result);
-}

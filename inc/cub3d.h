@@ -96,5 +96,11 @@ extern t_game g_game;
 // ADD WHEN STARTING TO BUILD PROJECT ELSE TOO FREQUENT CHANGES
 
 
+//  ================== PARSE_UTILS ==================
+
+int	skip_ws(const char *s, int i);
+int	parse_u8_component(const char *s, int *i, int *out);
+int expect_comma(const char *s, int *i);
+int	parse_rgb_triplet(const char *s, uint32_t *out_rgb);
 
 #endif

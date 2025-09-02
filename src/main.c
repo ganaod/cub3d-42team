@@ -7,11 +7,11 @@
 3. coordinate main game loop
 4. manage graceful shutdown */
 
-int main(void)
-{
-    printf("Hello cub3D\n");
-    return(0);
-}
+// int main(void)
+// {
+//     printf("Hello cub3D\n");
+//     return(0);
+// }
 
 // int main(int ac, char **av)
 // {
@@ -35,3 +35,96 @@ int main(void)
 //         error_exit("Graphics initialization failed");
 //     setup_input_handlers();
 // }
+
+
+/* ===== Draw test image: sky above, ground below ===== */
+static void draw_test_frame(t_game *g)
+{
+    int w = g->graphics.screen_width;
+    int h = g->graphics.screen_height;
+
+    uint32_t ceil_rgba = (g->map.ceiling_color << 8) | 0xFF; // 0xRRGGBBA
+    uint32_t floor_rgba = (g->map.floor_color   << 8) | 0xFF;
+
+    for (int y = 0; y < h; y++)
+    {
+        uint32_t color = (y < h / 2) ? ceil_rgba : floor_rgba;
+        for (int x = 0; x < w; x++)
+            mlx_put_pixel(g->graphics.frame, x, y, color);
+    }
+}
+
+/* ===== Player Default Init (einfacher Startwert) ===== */
+static void player_init_defaults(t_player *p)
+{
+    p->pos_x = 3.5;
+    p->pos_y = 3.5;
+    p->dir_x = -1.0;  // Blick nach "Westen"
+    p->dir_y = 0.0;
+    p->camera_plane_x = 0.0;
+    p->camera_plane_y = FOV; // bei klassischem Setup ~0.66
+}
+
+/* ===== Map/State Default Init (nur für den Test) ===== */
+static void map_init_defaults(t_map *m)
+{
+    m->grid = NULL;         // noch keine Map geladen
+    m->width = 0;
+    m->height = 0;
+    m->texture_paths[0] = NULL;
+    m->texture_paths[1] = NULL;
+    m->texture_paths[2] = NULL;
+    m->texture_paths[3] = NULL;
+
+    // Test colors: sky light blue, ground green
+    m->ceiling_color = 0x87CEEB; // 0xRRGGBB
+    m->floor_color   = 0x228B22; // 0xRRGGBB
+}
+
+int main(void)
+{
+    t_game g;
+
+    // Window size from your header
+    g.graphics.screen_width  = DEFAULT_WIDTH;
+    g.graphics.screen_height = DEFAULT_HEIGHT;
+
+    // MLX42 start
+    g.graphics.mlx = mlx_init(DEFAULT_WIDTH, DEFAULT_HEIGHT, "Cub3D", false);
+    if (!g.graphics.mlx)
+        return (EXIT_FAILURE);
+
+    // Create framebuffer
+    g.graphics.frame = mlx_new_image(g.graphics.mlx,
+                                     g.graphics.screen_width,
+                                     g.graphics.screen_height);
+    if (!g.graphics.frame)
+    {
+        mlx_terminate(g.graphics.mlx);
+        return (EXIT_FAILURE);
+    }
+
+    // Image in window
+    if (mlx_image_to_window(g.graphics.mlx, g.graphics.frame, 0, 0) < 0)
+    {
+        mlx_delete_image(g.graphics.mlx, g.graphics.frame);
+        mlx_terminate(g.graphics.mlx);
+        return (EXIT_FAILURE);
+    }
+
+    // Defaults for map/player so that draw_test_frame has colors
+    map_init_defaults(&g.map);
+    player_init_defaults(&g.player);
+
+    // Draw test image
+    draw_test_frame(&g);
+
+    // Eventloop
+    mlx_loop(g.graphics.mlx);
+
+    // Clean up
+    mlx_delete_image(g.graphics.mlx, g.graphics.frame);
+    mlx_terminate(g.graphics.mlx);
+    return (EXIT_SUCCESS);
+}
+

@@ -31,10 +31,10 @@ where spaces might exist beyond defined boundaries. */
 # define WEST 2
 # define EAST 3
 
-/* RENDERING CONSTANTS */
-# define DEFAULT_WIDTH 1024
-# define DEFAULT_HEIGHT 768
-# define FOV 0.66
+/* rendering constants */
+# define DEFAULT_WIDTH 1024		// screen sampling resolution
+# define DEFAULT_HEIGHT 768		// vertical pixel count
+# define FOV 0.66				// field of view / radians					- PLAY AROUND WITH THESE
 
 /* DATA STRUCTURES:
 Minimal data representation for core game functionality */

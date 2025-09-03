@@ -23,19 +23,21 @@ MATHEMATICAL FOUNDATION:
 
 void render_complete_frame(void)
 {
-    // PHASE 1: CLEAR SCREEN BUFFER
+    // 1. clear screen buffer
     clear_screen_buffer();
     
-    // PHASE 2: CAST RAYS FOR EACH SCREEN COLUMN
+    // 2. cast rays for each screen column
     /*
     Screen width determines ray count.
     Each column gets exactly one ray.
     Rays spread across player's field of view.
     */
-    for (int screen_x = 0; screen_x < screen_width; screen_x++)
+    for (int screen_x = 0; screen_x < g_game.graphics.screen_width; screen_x++)
     {
+		double ray_dir_x, ray_dir_y;
+
         // Calculate ray direction for this column
-        calculate_ray_direction(screen_x);
+        calculate_ray_direction(screen_x, &ray_dir_x, &ray_dir_y);
         
         // Cast ray and find wall collision
         double wall_distance = cast_ray_to_wall();
@@ -53,6 +55,25 @@ void render_complete_frame(void)
     // PHASE 3: RENDER UI ELEMENTS
     render_user_interface();
 }
+
+/*
+MATHEMATICAL TRANSFORM: Screen Column → Ray Direction Vector
+INPUT: Screen column index
+OUTPUT: Ray direction components (by reference)
+DEPENDENCIES: Global player state, screen dimensions
+*/
+void calculate_ray_direction(int screen_x, double *ray_dir_x, double *ray_dir_y)
+{
+    double camera_x;
+    
+    // STEP 1: Screen space [0, width-1] → Camera space [-1, +1]
+    camera_x = 2.0 * screen_x / (double)g_game.graphics.screen_width - 1.0;
+    
+    // STEP 2: Ray = Player Direction + Camera Plane Offset
+    *ray_dir_x = g_game.player.dir_x + camera_x * g_game.player.camera_plane_x;
+    *ray_dir_y = g_game.player.dir_y + camera_x * g_game.player.camera_plane_y;
+}
+
 
 /*
 RAY CASTING ALGORITHM (DDA - Digital Differential Analyzer):
@@ -145,10 +166,8 @@ int get_wall_texture_color(int wall_direction, int screen_y, int wall_height)
     return (extract_texture_pixel(wall_texture, texture_x, texture_y));
 }
 
-/*
-SCREEN BUFFER MANAGEMENT:
-Clear and present frame buffer operations
-*/
+/* screen buffer management:
+clear & present frame buffer ops */
 void clear_screen_buffer(void)
 {
     int total_pixels;
@@ -181,10 +200,7 @@ void present_frame_to_screen(void)
     );
 }
 
-/*
-PIXEL MANIPULATION:
-Direct pixel access to image buffer
-*/
+/* direct pixel access to image buffer */
 void put_pixel(int x, int y, int color)
 {
     int pixel_index;

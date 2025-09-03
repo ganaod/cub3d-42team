@@ -39,7 +39,6 @@ void render_complete_frame(void)
         // Calculate ray direction for this column
         calculate_ray_direction(screen_x, &ray_dir_x, &ray_dir_y);
         
-		// THE FOLLOWING STILL TO IMPLEMENT:
         // Cast ray and find wall collision
         double wall_distance = cast_ray_to_wall();
         
@@ -167,10 +166,8 @@ int get_wall_texture_color(int wall_direction, int screen_y, int wall_height)
     return (extract_texture_pixel(wall_texture, texture_x, texture_y));
 }
 
-/*
-SCREEN BUFFER MANAGEMENT:
-Clear and present frame buffer operations
-*/
+/* screen buffer management:
+clear & present frame buffer ops */
 void clear_screen_buffer(void)
 {
     int total_pixels;
@@ -203,10 +200,7 @@ void present_frame_to_screen(void)
     );
 }
 
-/*
-PIXEL MANIPULATION:
-Direct pixel access to image buffer
-*/
+/* direct pixel access to image buffer */
 void put_pixel(int x, int y, int color)
 {
     int pixel_index;

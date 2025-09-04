@@ -9,11 +9,21 @@
 # include <math.h>
 // # include "lib/minilibx-macOS/mlx.h"		// MiniLibX graphics lib
 # include "../lib/MLX42/include/MLX42/MLX42.h"
+# include "../lib/libft/libft/libft.h"
+# include "../lib/libft/gnl/get_next_line.h"
+# include "../lib/libft/ft_printf/ft_printf.h"
 
 /* program constants */
 # define EXIT_SUCCESS 0
 # define EXIT_FAILURE 1
-# define BUFFER_SIZE 1024
+// # define BUFFER_SIZE 1024
+
+# define HDR_NO (1<<0)
+# define HDR_SO (1<<1)
+# define HDR_WE (1<<2)
+# define HDR_EA (1<<3)
+# define HDR_F  (1<<4)
+# define HDR_C  (1<<5)
 
 
 /* map cell types
@@ -59,6 +69,7 @@ typedef struct s_map
     char *texture_paths[4]; // Wall texture file paths
     uint32_t floor_color;   // 0xRRGGBB
     uint32_t ceiling_color; // 0xRRGGBB
+    char *first_map_line;
 } t_map;
 
 /* GRAPHICS SYSTEM */
@@ -70,6 +81,14 @@ typedef struct s_graphics
     int         screen_height;
 } t_graphics;
 
+typedef struct s_texinfo
+{
+	char		**slot;
+	const char	*line;
+	int			j;
+	int			bit;
+	int			*flags;
+}				t_texinfo;
 
 /* GAME STATE
 type def: defines what a game state looks like
@@ -102,5 +121,20 @@ int	skip_ws(const char *s, int i);
 int	parse_u8_component(const char *s, int *i, int *out);
 int expect_comma(const char *s, int *i);
 int	parse_rgb_triplet(const char *s, uint32_t *out_rgb);
+
+//  ================== PARSE_HEADER ==================
+
+int	set_texture_field(char **dst_path, const char *after_key);
+int	set_color_field(uint32_t *dst_rgb, const char *after_key, int *was_set);
+int	parse_header_line(t_map *m, const char *line, int *flags);
+int	match2(const char *s, int i, char a, char b);
+int	set_tex_entry(char **slot, const char *after_key, int bit, int *flags);
+int	parse_header_texture(t_map *m, const char *line, int i, int *flags);
+int	parse_header_color(t_map *m, const char *line, int i, int *flags);
+
+//  ================== PARSE_HEADER ==================
+
+int	parse_header_lines(t_map *m, int fd);
+
 
 #endif

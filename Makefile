@@ -18,7 +18,12 @@ LIBRARIES   =  $(MLX_PATH)/build/libmlx42.a \
                -L$(MLX_PATH)/build -lmlx42 -lglfw -ldl -pthread -lm
 
 SRC_DIR     = src
-SRC_FILES   = main.c
+SRC_FILES   =	main.c \
+				parse_utils.c \
+				parse_header.c \
+				parse_header_lines.c \
+				parse_header_utils.c
+
 SRCS        = $(addprefix $(SRC_DIR)/, $(SRC_FILES))
 OBJS        = $(SRCS:.c=.o)
 

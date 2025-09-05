@@ -66,6 +66,8 @@ Step through map grid until wall collision detected
 Mathematically efficient grid traversal
 
 ret: perpendicular dist (prevent fisheye distortion) */
+
+// coordinator
 double	cast_ray_to_wall(double ray_dir_x, double ray_dir_y, int *wall_side)
 {
 	t_dda_state	state;
@@ -76,6 +78,30 @@ double	cast_ray_to_wall(double ray_dir_x, double ray_dir_y, int *wall_side)
 	return (wall_distance);
 }
 
+/* initialiser
+calculate all mathematical setup vars
+transform ray dir > DDA stepping params */
+void	setup_dda_vars(double ray_dir_x, double ray_dir_y, t_dda_state *state)
+{
+	state->map_x = (int)g_game.player.pos_x;
+	state->map_y = (int)g_game.player.pos_y;
+	state->delta_dist_x = fabs(1.0 / ray_dir_x);
+	state->delta_dist_y = fabs(1.0 / ray_dir_y);
+	if (ray_dir_x < 0)
+	{
+		state->step_x = -1;
+		state->side_dist_x = (g_game.player.pos_x - state->map_x)
+							* state->delta_dist_x;
+	}
+	else
+	{
+		state->step_x = 1;
+		state->side_dist_x = (state->map_x + 1.0 - g_game.player.pos_x)
+							* state->delta_dist_x;
+	}
+	// y dir
+	state->wall_hit = 0;
+}
 
 // UPCOMING
 int get_wall_face_hit(/* DDA intersection data */);

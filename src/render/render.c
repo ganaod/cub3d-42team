@@ -18,43 +18,50 @@ For each screen column:
 
 MATHEMATICAL FOUNDATION:
 - Ray = Player Position + Direction * Distance
-- Wall Height = Screen Height / Wall Distance  
+- Wall Height = Screen Height / Wall Distance
 - Perspective correction prevents fisheye distortion */
 
-void render_complete_frame(void)
-{
-    // 1. clear screen buffer
-    clear_screen_buffer();
-    
-    // 2. cast rays for each screen column
-    /*
-    Screen width determines ray count.
-    Each column gets exactly one ray.
-    Rays spread across player's field of view.
-    */
-    for (int screen_x = 0; screen_x < g_game.graphics.screen_width; screen_x++)
-    {
-		double ray_dir_x, ray_dir_y;
 
-        // Calculate ray direction for this column
-        calculate_ray_direction(screen_x, &ray_dir_x, &ray_dir_y);
-        
-        // Cast ray and find wall collision
-        double wall_distance = cast_ray_to_wall();
-        
-        // Determine which wall face was hit (N/S/E/W)
-        int wall_direction = get_wall_face_hit();
-        
-        // Calculate wall strip height on screen
-        int wall_height = calculate_screen_wall_height(wall_distance);
-        
-        // Draw the vertical wall strip
-        render_wall_column(screen_x, wall_height, wall_direction);
-    }
-    
-    // PHASE 3: RENDER UI ELEMENTS
-    render_user_interface();
+
+/*
+1. initialise buffer
+. clear screen buff to known state (black pixels)
+. prepare canvas for additive composition
+
+2. raycasting core loop
+. for each screen col: cast ray, find wall, draw vert strip
+. screen width determines ray count (1 ray / col)
+. rays spread across player's FOV */
+void	render_complete_frame(void)
+{
+	int	screen_x;
+	int	screen_width;
+
+	clear_screen_buffer();
+	screen_width = g_game.graphics.screen_width;
+	screen_x = 0;
+	while (screen_x < screen_width)
+	{
+		render_single_column(screen_x);
+		screen_x++;
+	}
 }
+
+/* ray processing for 1 screen col
+flow:
+Ray Direction → Wall Distance → Screen Height → Pixels */
+void	render_single_column(int screen_x)
+{
+	double	ray_dir_x;
+	double	ray_dir_y;
+	double	wall_distance;
+	int		wall_direction;
+
+	calculate_ray_direction(screen_x, &ray_dir_x, &ray_dir_y);
+	wall_distance = cast_ray_to_wall(ray_dir_x, ray_dir_y, &wall_direction);
+	draw_wall_column(screen_x, wall_distance, wall_direction);
+}
+
 
 /*
 WALL RENDERING: Convert distance to screen coordinates
@@ -64,17 +71,17 @@ void render_wall_column(int screen_x, int wall_height, int wall_direction)
     // Calculate wall strip boundaries on screen
     int wall_start_y = (screen_height - wall_height) / 2;
     int wall_end_y = wall_start_y + wall_height;
-    
+
     // CEILING RENDERING: Above wall
     for (int y = 0; y < wall_start_y; y++)
         put_pixel(screen_x, y, ceiling_color);
-    
+
     // WALL RENDERING: Apply texture if available
     for (int y = wall_start_y; y < wall_end_y; y++) {
         int texture_color = get_wall_texture_color(wall_direction, y, wall_height);
         put_pixel(screen_x, y, texture_color);
     }
-    
+
     // FLOOR RENDERING: Below wall
     for (int y = wall_end_y; y < screen_height; y++)
         put_pixel(screen_x, y, floor_color);

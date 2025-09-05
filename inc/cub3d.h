@@ -86,7 +86,7 @@ typedef struct s_graphics
     int         screen_height;
 } t_graphics;
 
-// dda algorithm state
+// dda temp algorithm state
 typedef struct	s_dda_state
 {
 	int		map_x;			// current grid x pos

@@ -11,8 +11,15 @@ Fundamentals of Computer Graphics
 
 
 
-Immersive Linear Algebra (immersivemath.com): Interactive vector/matrix visualizations
+Immersive Linear Algebra
+immersivemath.com
 
-Essence of Linear Algebra (3Blue1Brown): Geometric intuition for transformations
+Essence of Linear Algebra | 3Blue1Brown
 
 Khan Academy (trig basics)
+
+
+
+
+The DDA Algorithm, explained interactively
+https://aaaa.sh/creatures/dda-algorithm-interactive/

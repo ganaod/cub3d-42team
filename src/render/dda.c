@@ -1,16 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   grid_traversal_dda.c                               :+:      :+:    :+:   */
+/*   dda.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 15:48:27 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/05 16:24:58 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/05 17:02:52 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/cub3d.h"
+
+void		execute_dda_traversal(t_dda_state *state, int *wall_side);
+double		calculate_wall_distance(t_dda_state *state, int wall_side);
 
 /* visual reality: How far can I see before hitting a wall?
 . player stands at position, looks toward screen column X
@@ -42,70 +45,16 @@ think of DDA as:
 
 ret: perpendicular dist (prevent fisheye distortion) */
 
-// coordinator
+// coordinate
 double	cast_ray_to_wall(double ray_dir_x, double ray_dir_y, int *wall_side)
 {
 	t_dda_state	state;
 	double		wall_distance;
 
 	setup_dda_vars(ray_dir_x, ray_dir_y, &state);
-	wall_distance = execute_dda_traversal(&state, wall_side);
+	execute_dda_traversal(&state, wall_side);
+	wall_distance = calculate_wall_distance(&state, wall_side);
 	return (wall_distance);
-}
-
-/* initialiser
-calculate all mathematical setup vars
-transform ray dir > DDA stepping params */
-void	setup_dda_vars(double ray_dir_x, double ray_dir_y, t_dda_state *state)
-{
-	state->map_x = (int)g_game.player.pos_x;
-	state->map_y = (int)g_game.player.pos_y;
-	state->delta_dist_x = fabs(1.0 / ray_dir_x);
-	state->delta_dist_y = fabs(1.0 / ray_dir_y);
-	state->ray_dir_x = ray_dir_x;
-	state->ray_dir_y = ray_dir_y;
-	setup_x_axis_stepping(ray_dir_x, state);
-	setup_y_axis_stepping(ray_dir_y, state);
-	state->wall_hit = 0;
-}
-
-/* stepping set up
-prepares:
-. which dir to step thru grid (step_x, step_y)
-. how far to 1st grid boundary (side_dist_x, side_dist_y) 
-
-enables core dda loop:
-if x boundary closer: step in x dir ...*/
-static void	setup_x_axis_stepping(double ray_dir_x, t_dda_state *state)
-{
-	if (ray_dir_x < 0)
-	{
-		state->step_x = -1;
-		state->side_dist_x = (g_game.player.pos_x - state->map_x)
-							* state->delta_dist_x;
-	}
-	else
-	{
-		state->step_x = 1;
-		state->side_dist_x = (state->map_x + 1.0 - g_game.player.pos_x)
-							* state->delta_dist_x;
-	}
-}
-
-static void	setup_y_axis_stepping(double ray_dir_y, t_dda_state *state)
-{
-	if (ray_dir_y < 0)
-	{
-		state->step_y = -1;
-		state->side_dist_y = (g_game.player.pos_y - state->map_y)
-							* state->delta_dist_y;
-	}
-	else
-	{
-		state->step_y = 1;
-		state->side_dist_y = (state->map_y + 1.0 - g_game.player.pos_y)
-							* state->delta_dist_y;
-	}
 }
 
 /* core dda algo
@@ -115,24 +64,36 @@ dda stepping loop:
 . step to whichever boundary is closer
 . update dist for axis stepped along
 . check if new grid cell contains wall
-. repeat until wall found
-
-dist calc:
-. calc perpendicular dist to prevent fisheye distortion
-. use exact intersection pt on wall face
-. ret dist from player > wall intersection */
-double	execute_dda_traversal(t_dda_state *state, int *wall_side)
+. repeat until wall found */
+void	execute_dda_traversal(t_dda_state *state, int *wall_side)
 {
 	while (!state->wall_hit)
 	{
-		
+		if (state->side_dist_x < state->side_dist_y)
+		{
+			state->side_dist_x += state->delta_dist_x;
+			state->map_x += state->step_x;
+			*wall_side = VERTICAL_WALL;
+		}
+		else
+		{
+			state->side_dist_y += state->delta_dist_y;
+			state->map_y += state->step_y;
+			*wall_side = HORIZONTAL_WALL;
+		}
+		if (g_game.map.grid[state->map_y * g_game.map.width + state->map_x] == WALL)
+			state->wall_hit = 1;
 	}
-	if (*wall_side == VERTICAL_WALL)
-	{
-		
-	}
-	else if (wall_side == HORIZONTAL_WALL)
-	{
-		
-	}
+}
+
+/* dist calc:
+. calc perpendicular dist to prevent fisheye distortion
+. use exact intersection pt on wall face
+. ret dist from player > wall intersection */
+double	calculate_wall_distance(t_dda_state *state, int wall_side)
+{
+	if (wall_side == VERTICAL_WALL)
+		return ((state->map_x - g_game.player.pos_x + (1 - state->step_x) / 2) / state->ray_dir_x);
+	else
+		return ((state->map_y - g_game.player.pos_y + (1 - state->step_y) / 2) / state->ray_dir_y);
 }

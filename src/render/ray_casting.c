@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 15:48:41 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/05 16:23:23 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/05 17:09:00 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,6 @@ void	calculate_ray_direction(int screen_x, double *ray_dir_x, double *ray_dir_y)
 	*ray_dir_x = g_game.player.dir_x + camera_x * g_game.player.camera_plane_x;
 	*ray_dir_y = g_game.player.dir_y + camera_x * g_game.player.camera_plane_y;
 }
-
 
 int get_wall_face_hit(t_dda_state *state, int wall_side)
 {

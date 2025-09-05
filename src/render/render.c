@@ -1,48 +1,43 @@
-/* raycasting & frame rendering */
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   render.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/05 17:04:34 by go-donne          #+#    #+#             */
+/*   Updated: 2025/09/05 17:11:39 by go-donne         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "../inc/cub3d.h"
 
-/* RESPONSIBILITY:
-- Implement core raycasting mathematics
-- Transform 3D world into 2D screen representation
-- Manage rendering pipeline from player view to pixels
-- Handle texture mapping and visual effects */
+/* responsibility:
+. Implement core raycasting mathematics
+. Create 3D visual illusion from 2D map data
+. Manage rendering pipeline from player view to pixels
+. Handle wall projection and texture mapping
+	 
 
-/*
-RAYCASTING FUNDAMENTAL CONCEPT:
-For each screen column:
-1. Cast ray from player through that column
-2. Find distance to nearest wall
-3. Calculate wall height based on distance
-4. Draw vertical strip representing that wall segment
+execution pipeline:
 
-MATHEMATICAL FOUNDATION:
-- Ray = Player Position + Direction * Distance
-- Wall Height = Screen Height / Wall Distance
-- Perspective correction prevents fisheye distortion */
-
-
-/* current execution pipeline:
-
-render.c 
-    ↓
-ray_casting.c (calculate_ray_direction)
-    ↓  
+render.c (render_complete_frame)
+	↓
+render.c (render_single_column)  
+	↓
+ray_math.c (calculate_ray_direction)
+	↓
 dda.c (cast_ray_to_wall)
-    ↓
-ray_casting.c (get_wall_face_hit)
-    ↓
-texture.c (texture sampling)
-    ↓
-screen_buffer.c (pixel drawing)
+	↓
+projection.c (calculate_wall_height)
+	↓  
+texture.c (get_wall_texture_color)
+	↓
+screen_buffer.c (put_pixel)
 
-*/
+RESULT: 2D map data → 3D visual representation */
 
-
-
-
-/*
-1. initialise buffer
+/* 1. initialise buffer
 . clear screen buff to known state (black pixels)
 . prepare canvas for additive composition
 
@@ -65,10 +60,8 @@ void	render_complete_frame(void)
 	}
 }
 
-
 /* ray processing for 1 screen col
-flow:
-Ray Direction → Wall Distance → Screen Height → Pixels */
+flow: Ray Direction → Wall Distance → Screen Height → Pixels */
 void	render_single_column(int screen_x)
 {
 	double	ray_dir_x;
@@ -78,7 +71,7 @@ void	render_single_column(int screen_x)
 
 	calculate_ray_direction(screen_x, &ray_dir_x, &ray_dir_y);
 	wall_distance = cast_ray_to_wall(ray_dir_x, ray_dir_y, &wall_direction);
-	draw_wall_column(screen_x, wall_distance, wall_direction);
+	render_wall_column(screen_x, wall_distance, wall_direction);
 }
 
 

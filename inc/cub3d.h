@@ -158,6 +158,34 @@ void	rstrip_eol(char *s);
 int	normalize_map(char ***lines_io, int h, int *out_w);
 
 // RENDER
+// main render pipeline
+void	render_complete_frame(void);
+void	render_single_column(int screen_x);
 
+// ray math
+void	calculate_ray_direction(int screen_x, double *ray_dir_x, double *ray_dir_y);
+
+// dda algo
+double	cast_ray_to_wall(double ray_dir_x, double ray_dir_y, int *wall_side);
+void	execute_dda_traversal(t_dda_state *state, int *wall_side);
+double	calculate_wall_distance(t_dda_state *state, int wall_side);
+
+// dda setup utils
+void	setup_dda_vars(double ray_dir_x, double ray_dir_y, t_dda_state *state);
+
+// projection calc
+int		calculate_screen_wall_height(double wall_distance);
+void	calculate_wall_boundaries(int wall_height, int *wall_start, int *wall_end);
+
+// texture sampling
+int		get_wall_texture_color(int wall_direction, int screen_y, int wall_height);
+
+// wall rendering
+void	render_wall_column(int screen_x, double wall_distance, int wall_direction);
+
+// screen buffer ops
+void	clear_screen_buffer(void);
+void	put_pixel(int x, int y, int color);
+void	present_frame_to_screen(void);
 
 #endif

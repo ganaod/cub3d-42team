@@ -193,12 +193,12 @@ int main(int argc, char **argv) {
 	t_map m;
 	int fd, h, i;
 	char **lines;
+	int w;
 
 	if (argc != 2) { fprintf(stderr, "usage: %s file.cub\n", argv[0]); return 2; }
 	fd = open(argv[1], O_RDONLY);
 	if (fd < 0) { perror("open"); return 1; }
 
-	/* Map-Struktur nullen reicht hier als Init */
 	m = (t_map){0};
 
 	if (!parse_header_lines(&m, fd)) {
@@ -211,6 +211,18 @@ int main(int argc, char **argv) {
 	}
 	close(fd);
 
+
+	if (!normalize_map(&lines, h, &w)) {
+		ft_printf("❌ normalize_map failed\n");
+		return (EXIT_FAILURE);
+	}
+	ft_printf("✅ normalize_map: w=%d, h=%d\n", w, h);
+	i = 0;
+	while (i < h) {
+		ft_printf("  [%d] |%s| (len=%d)\n", i, lines[i], (int)ft_strlen(lines[i]));
+		i++;
+	}
+
 	printf("✅ collected %d map lines:\n", h);
 	i = 0;
 	while (i < h) {
@@ -218,8 +230,6 @@ int main(int argc, char **argv) {
 		i++;
 	}
 
-	/* Aufräumen */
 	free_lines_array(lines, h);
-	/* + ggf. m.texture_paths[...] freigeben, falls allokiert (später) */
 	return 0;
 }

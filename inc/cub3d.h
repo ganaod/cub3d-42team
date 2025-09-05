@@ -143,4 +143,8 @@ int	append_line(char ***lines_ptr, int *cap_ptr, int *h_ptr, char *take);
 int	validate_map_line(const char *s);
 void	rstrip_eol(char *s);
 
+//  ================== NORMALIZE_MAP ==================
+
+int	normalize_map(char ***lines_io, int h, int *out_w);
+
 #endif

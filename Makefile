@@ -25,7 +25,8 @@ SRC_FILES   =	main.c \
 				parse_header_utils.c \
 				collect_map_lines.c \
 				collect_map_lines_utils.c \
-				collect_map_lines_core.c
+				collect_map_lines_core.c \
+				normalize_map.c
 
 SRCS        = $(addprefix $(SRC_DIR)/, $(SRC_FILES))
 OBJS        = $(SRCS:.c=.o)

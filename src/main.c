@@ -128,57 +128,98 @@
 //     return (EXIT_SUCCESS);
 // }
 
-int main(int argc, char **argv)
-{
-    t_map   m;
-    int     fd;
-    int     ok;
-    int     i;
+// int main(int argc, char **argv)
+// {
+//     t_map   m;
+//     int     fd;
+//     int     ok;
+//     int     i;
 
-    if (argc != 2)
-    {
-        printf("Usage: %s <file.cub>\n", argv[0]);
-        return (1);
-    }
+//     if (argc != 2)
+//     {
+//         printf("Usage: %s <file.cub>\n", argv[0]);
+//         return (1);
+//     }
 
-    // Map-Struct initialisieren
-    for (i = 0; i < 4; i++)
-        m.texture_paths[i] = NULL;
-    m.floor_color = 0;
-    m.ceiling_color = 0;
-    m.first_map_line = NULL;
+//     // Map-Struct initialisieren
+//     for (i = 0; i < 4; i++)
+//         m.texture_paths[i] = NULL;
+//     m.floor_color = 0;
+//     m.ceiling_color = 0;
+//     m.first_map_line = NULL;
 
-    fd = open(argv[1], O_RDONLY);
-    if (fd < 0)
-    {
-        perror("open");
-        return (1);
-    }
+//     fd = open(argv[1], O_RDONLY);
+//     if (fd < 0)
+//     {
+//         perror("open");
+//         return (1);
+//     }
 
-    ok = parse_header_lines(&m, fd);
-    close(fd);
+//     ok = parse_header_lines(&m, fd);
+//     close(fd);
 
-    if (!ok)
-    {
-        printf("❌ parse_header_lines failed\n");
-        return (1);
-    }
+//     if (!ok)
+//     {
+//         printf("❌ parse_header_lines failed\n");
+//         return (1);
+//     }
 
-    // Ergebnisse ausgeben
-    printf("✅ parse_header_lines succeeded\n");
-    printf("NO: %s\n", m.texture_paths[NORTH]);
-    printf("SO: %s\n", m.texture_paths[SOUTH]);
-    printf("WE: %s\n", m.texture_paths[WEST]);
-    printf("EA: %s\n", m.texture_paths[EAST]);
-    printf("F:  %#08x\n", m.floor_color);
-    printf("C:  %#08x\n", m.ceiling_color);
-    if (m.first_map_line)
-        printf("First map line: %s", m.first_map_line); // Zeile endet mit \n aus GNL
+//     // Ergebnisse ausgeben
+//     printf("✅ parse_header_lines succeeded\n");
+//     printf("NO: %s\n", m.texture_paths[NORTH]);
+//     printf("SO: %s\n", m.texture_paths[SOUTH]);
+//     printf("WE: %s\n", m.texture_paths[WEST]);
+//     printf("EA: %s\n", m.texture_paths[EAST]);
+//     printf("F:  %#08x\n", m.floor_color);
+//     printf("C:  %#08x\n", m.ceiling_color);
+//     if (m.first_map_line)
+//         printf("First map line: %s", m.first_map_line); // Zeile endet mit \n aus GNL
 
-    // Aufräumen
-    for (i = 0; i < 4; i++)
-        free(m.texture_paths[i]);
-    free(m.first_map_line);
+//     // Aufräumen
+//     for (i = 0; i < 4; i++)
+//         free(m.texture_paths[i]);
+//     free(m.first_map_line);
 
-    return (0);
+//     return (0);
+// }
+
+static void free_lines_array(char **lines, int h) {
+	int i = 0;
+	while (i < h) { free(lines[i]); i++; }
+	free(lines);
+}
+
+int main(int argc, char **argv) {
+	t_map m;
+	int fd, h, i;
+	char **lines;
+
+	if (argc != 2) { fprintf(stderr, "usage: %s file.cub\n", argv[0]); return 2; }
+	fd = open(argv[1], O_RDONLY);
+	if (fd < 0) { perror("open"); return 1; }
+
+	/* Map-Struktur nullen reicht hier als Init */
+	m = (t_map){0};
+
+	if (!parse_header_lines(&m, fd)) {
+		fprintf(stderr, "❌ header parse failed\n");
+		close(fd); return 3;
+	}
+	if (!collect_map_lines(&m, fd, &lines, &h)) {
+		fprintf(stderr, "❌ collect_map_lines failed\n");
+		close(fd); return 4;
+	}
+	close(fd);
+
+	printf("✅ collected %d map lines:\n", h);
+	i = 0;
+	while (i < h) {
+		printf("  [%d] \"%s\"\n", i, lines[i]);
+		i++;
+	}
+
+	/* Aufräumen */
+	free_lines_array(lines, h);
+	/* + ggf. m.texture_paths[...] freigeben, falls allokiert (später) */
+	return 0;
 }

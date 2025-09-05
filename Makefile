@@ -22,7 +22,10 @@ SRC_FILES   =	main.c \
 				parse_utils.c \
 				parse_header.c \
 				parse_header_lines.c \
-				parse_header_utils.c
+				parse_header_utils.c \
+				collect_map_lines.c \
+				collect_map_lines_utils.c \
+				collect_map_lines_core.c
 
 SRCS        = $(addprefix $(SRC_DIR)/, $(SRC_FILES))
 OBJS        = $(SRCS:.c=.o)

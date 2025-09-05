@@ -136,5 +136,11 @@ int	parse_header_color(t_map *m, const char *line, int i, int *flags);
 
 int	parse_header_lines(t_map *m, int fd);
 
+//  ================== COLLECT_MAP_LINES ==================
+
+int	collect_map_lines(t_map *m, int fd, char ***out_lines, int *out_h);
+int	append_line(char ***lines_ptr, int *cap_ptr, int *h_ptr, char *take);
+int	validate_map_line(const char *s);
+void	rstrip_eol(char *s);
 
 #endif

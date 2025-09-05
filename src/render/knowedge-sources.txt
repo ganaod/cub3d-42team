@@ -1,0 +1,18 @@
+Eric Lengyel
+Foundations of Game Engine Development
+Volume 1: Mathematics
+
+Lode Vandevenne
+Lode's Computer Graphics Tutorial: Raycasting
+https://lodev.org/cgtutor/raycasting.html
+
+Steve Marschner, Peter Shirley
+Fundamentals of Computer Graphics
+
+
+
+Immersive Linear Algebra (immersivemath.com): Interactive vector/matrix visualizations
+
+Essence of Linear Algebra (3Blue1Brown): Geometric intuition for transformations
+
+Khan Academy (trig basics)

@@ -1,7 +1,7 @@
 #ifndef CUB3D_H
 # define CUB3D_H
 
-/* system includes */
+// SYSTEM INCLUDES
 # include <unistd.h>		// POSIX sys calls
 # include <stdlib.h>		// mem allocatn
 # include <stdio.h>
@@ -13,7 +13,8 @@
 # include "../lib/libft/gnl/get_next_line.h"
 # include "../lib/libft/ft_printf/ft_printf.h"
 
-/* program constants */
+// PROGRAM CONSTANTS
+
 # define EXIT_SUCCESS 0
 # define EXIT_FAILURE 1
 // # define BUFFER_SIZE 1024
@@ -25,31 +26,35 @@
 # define HDR_F  (1<<4)
 # define HDR_C  (1<<5)
 
-
-/* map cell types
-the algorithm casts rays until hitting WALL,
-treats EMPTY as traversable,
-and VOID handles map parsing edge cases
-where spaces might exist beyond defined boundaries. */
-# define EMPTY 0		// walkable space
+// map cell types
+# define EMPTY 0		// traversable space
 # define WALL 1			// collision / rendering surface
 # define VOID 2			// invalid map space (outside boundaries)
 
-/* wall face directions */
+// wall face directions (for texture selection)
 # define NORTH 0
 # define SOUTH 1
 # define WEST 2
 # define EAST 3
+/* Determines which specific wall face was hit
+Used for texture selection (different textures per face)
+Calculated from VERTICAL_WALL/HORIZONTAL_WALL + ray direction */
 
-/* rendering constants */
-# define DEFAULT_WIDTH 1024		// screen sampling resolution
-# define DEFAULT_HEIGHT 768		// vertical pixel count
-# define FOV 0.66				// field of view / radians					- PLAY AROUND WITH THESE
+// wall side types (for DDA)
+# define VERTICAL_WALL	0
+# define HORIZONTAL_WALL 1
+/* Determines which type of grid line was crossed
+Used for distance calculation (different formulas for X vs Y boundaries)
+Set during DDA traversal based on which boundary was closer */
 
-/* DATA STRUCTURES:
-Minimal data representation for core game functionality */
+// rendering constants
+# define DEFAULT_WIDTH	1024		// screen sampling resolution
+# define DEFAULT_HEIGHT	768			// vertical pixel count
+# define FOV 			0.66		// field of view / radians
 
-/* PLAYER STATE */
+//  DATA STRUCTURES
+
+// player state
 typedef struct s_player
 {
     double pos_x;           // World position X
@@ -92,6 +97,8 @@ typedef struct	s_dda_state
 	double	delta_dist_y;	// dist to traverse 1 X grid cell
 	double	side_dist_x;	// dist to next x grid boundary
 	double	side_dist_y;	// dist to next y grid boundary
+	double	ray_dir_x;
+	double	ray_dir_y;
 	int		wall_hit;		// wall collision flag
 }	t_dda_state;
 

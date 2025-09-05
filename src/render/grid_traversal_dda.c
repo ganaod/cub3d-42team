@@ -1,21 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   dda.c                                              :+:      :+:    :+:   */
+/*   grid_traversal_dda.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 15:48:27 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/05 15:49:18 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/05 16:24:58 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/cub3d.h"
 
 /* visual reality: How far can I see before hitting a wall?
-. Player stands at position, looks toward screen column X
+. player stands at position, looks toward screen column X
 . vision travels in straight line until blocked by wall
-. function returns: how far that vision traveled
+. fn returns: how far that vision traveled
 
 without: no depth perception - every wall would appear
 same size regardless of distance
@@ -31,7 +31,7 @@ performance: must execute 1000+ time/frame (real-time requirement)
 
 Digital Differential Analyzer (DDA) algorithm: 
 instead of checking arbitrary pts, only check grid
-boundary crossings
+boundary crossings (efficient)
 
 think of DDA as:
 	Standing at player position
@@ -39,8 +39,6 @@ think of DDA as:
 	"Which grid line will I cross first - vertical or horizontal?"
 	Step to that grid line, check for wall
 	Repeat until wall found
-
-Mathematically efficient grid traversal
 
 ret: perpendicular dist (prevent fisheye distortion) */
 
@@ -64,7 +62,8 @@ void	setup_dda_vars(double ray_dir_x, double ray_dir_y, t_dda_state *state)
 	state->map_y = (int)g_game.player.pos_y;
 	state->delta_dist_x = fabs(1.0 / ray_dir_x);
 	state->delta_dist_y = fabs(1.0 / ray_dir_y);
-
+	state->ray_dir_x = ray_dir_x;
+	state->ray_dir_y = ray_dir_y;
 	setup_x_axis_stepping(ray_dir_x, state);
 	setup_y_axis_stepping(ray_dir_y, state);
 	state->wall_hit = 0;
@@ -109,5 +108,31 @@ static void	setup_y_axis_stepping(double ray_dir_y, t_dda_state *state)
 	}
 }
 
-// UPCOMING
-double execute_dda_traversal(t_dda_state *state, int *wall_side);
+/* core dda algo
+
+dda stepping loop:
+. compare distances to next x & y grid boundaries
+. step to whichever boundary is closer
+. update dist for axis stepped along
+. check if new grid cell contains wall
+. repeat until wall found
+
+dist calc:
+. calc perpendicular dist to prevent fisheye distortion
+. use exact intersection pt on wall face
+. ret dist from player > wall intersection */
+double	execute_dda_traversal(t_dda_state *state, int *wall_side)
+{
+	while (!state->wall_hit)
+	{
+		
+	}
+	if (*wall_side == VERTICAL_WALL)
+	{
+		
+	}
+	else if (wall_side == HORIZONTAL_WALL)
+	{
+		
+	}
+}

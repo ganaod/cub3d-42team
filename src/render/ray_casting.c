@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 15:48:41 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/05 15:49:04 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/05 16:23:23 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,4 +52,21 @@ void	calculate_ray_direction(int screen_x, double *ray_dir_x, double *ray_dir_y)
 }
 
 
-int get_wall_face_hit(t_dda_state *state, int wall_side);
+int get_wall_face_hit(t_dda_state *state, int wall_side)
+{
+    if (wall_side == VERTICAL_WALL)
+    {
+        if (state->step_x > 0)
+            return (WEST);   // Hit left side of wall
+        else
+            return (EAST);   // Hit right side of wall
+    }
+    else if (wall_side == HORIZONTAL_WALL)
+    {
+        if (state->step_y > 0)
+            return (NORTH);  // Hit bottom side of wall
+        else
+            return (SOUTH);  // Hit top side of wall
+    }
+    return (NORTH);  // Default fallback
+}

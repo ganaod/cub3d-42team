@@ -6,7 +6,7 @@ ray casting & DDA algos */
 
 
 /* create peripheral vision
-transform raycaster from "1D scanner" > "3D vision simulator"
+transform raycaster from 1D scanner > 3D vision simulator
 
 transform each screen col > ray dir vector (viewing angle)
 visual result: natural FOV instead of "tunnel vision"
@@ -17,12 +17,14 @@ with: l/r cols show angled views (human-like peripheral vision)
 dependencies: g_game.player (pos/dir),
 			g_game_graphics (screen width)
 
+
 steps:
+
 1. screen pixel > FOV pos
 . leftmost pixel (0) becomes -1 (left edge of vision)
 . center pixel becomes 0 (straight ahead)
 . rightmost pixel becomes +1 (right edge of vision)
-Normalisation formula for range mapping:
+normalisation formula for range mapping:
 	. scale to [0,2]
 	. shift to [-1,+1]
 
@@ -30,7 +32,7 @@ Normalisation formula for range mapping:
 . base dir (where player faces) + angular offset (l/r tilt)
 . visual: creates "sweep" of vision from left peripheral > right peripheral 
 
-Vector addition with scaling */
+vector addition with scaling */
 void	calculate_ray_direction(int screen_x, double *ray_dir_x, double *ray_dir_y)
 {
 	double	camera_x;
@@ -40,61 +42,35 @@ void	calculate_ray_direction(int screen_x, double *ray_dir_x, double *ray_dir_y)
 	*ray_dir_y = g_game.player.dir_y + camera_x * g_game.player.camera_plane_y;
 }
 
+/* visual reality: How far can I see before hitting a wall?
+. Player stands at position, looks toward screen column X
+. vision travels in straight line until blocked by wall
+. function returns: how far that vision traveled
 
+without: no depth perception - every wall would appear
+same size regardless of distance
 
+core transaction:
+	. in: ray direction (where to look)
+	. out: distance to nearest wall in that direction
 
+problem: find intersection of continuous line with discrete grid
+constraint: must be exact (no approximatn errs)
+performance: must execute 1000+ time/frame (real-time requirement)
 
+Digital Differential Analyzer (DDA) algorithm: 
+instead of checking arbitrary pts, only check grid
+boundary crossings
 
+Step through map grid until wall collision detected
+Mathematically efficient grid traversal
 
-/*
-RAY CASTING ALGORITHM (DDA - Digital Differential Analyzer):
-Step through map grid until wall collision detected.
-Mathematically efficient grid traversal.
-*/
-double cast_ray_to_wall(void)
+ret: perpendicular dist (prevent fisheye distortion) */
+double	cast_ray_to_wall(double ray_dir_x, double ray_dir_y, int *wall_side)
 {
-    // INITIALIZATION: Starting position and direction
-    double ray_x = player.position_x;
-    double ray_y = player.position_y;
-    double ray_dir_x = current_ray_direction_x;
-    double ray_dir_y = current_ray_direction_y;
-
-    // GRID TRAVERSAL: Step through map cells
-    int map_x = (int)ray_x;
-    int map_y = (int)ray_y;
-
-    // DISTANCE CALCULATION: How far to next grid line?
-    double delta_dist_x = calculate_delta_distance_x();
-    double delta_dist_y = calculate_delta_distance_y();
-
-    // STEPPING: Which direction and how far?
-    calculate_step_direction_and_distances();
-
-    // DDA LOOP: Step until wall hit
-    int wall_hit = 0;
-    while (!wall_hit)
-    {
-        // Move to next grid intersection
-        if (side_dist_x < side_dist_y) {
-            side_dist_x += delta_dist_x;
-            map_x += step_x;
-            wall_side = VERTICAL_WALL; // Hit vertical wall
-        } else {
-            side_dist_y += delta_dist_y;
-            map_y += step_y;
-            wall_side = HORIZONTAL_WALL; // Hit horizontal wall
-        }
-
-        // Check if current grid cell contains wall
-        if (map_grid[map_y][map_x] == WALL)
-            wall_hit = 1;
-    }
-
-    // DISTANCE CALCULATION: Prevent fisheye distortion
-    if (wall_side == VERTICAL_WALL)
-        return ((map_x - ray_x + (1 - step_x) / 2) / ray_dir_x);
-    else
-        return ((map_y - ray_y + (1 - step_y) / 2) / ray_dir_y);
+	// DDA setup vars
+	// DDA stepping loop
+	// dist calc
 }
 
 

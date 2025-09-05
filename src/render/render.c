@@ -47,6 +47,7 @@ void	render_complete_frame(void)
 	}
 }
 
+
 /* ray processing for 1 screen col
 flow:
 Ray Direction → Wall Distance → Screen Height → Pixels */
@@ -61,6 +62,10 @@ void	render_single_column(int screen_x)
 	wall_distance = cast_ray_to_wall(ray_dir_x, ray_dir_y, &wall_direction);
 	draw_wall_column(screen_x, wall_distance, wall_direction);
 }
+
+
+
+
 
 
 /*

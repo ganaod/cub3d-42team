@@ -81,6 +81,20 @@ typedef struct s_graphics
     int         screen_height;
 } t_graphics;
 
+// dda algorithm state
+typedef struct	s_dda_state
+{
+	int		map_x;			// current grid x pos
+	int		map_y;			// current grid y pos
+	int		step_x;			// x step dir (-1 / +1)
+	int		step_y;			// y step dir (-1 / +1)
+	double	delta_dist_x;	// dist to traverse 1 X grid cell
+	double	delta_dist_y;	// dist to traverse 1 X grid cell
+	double	side_dist_x;	// dist to next x grid boundary
+	double	side_dist_y;	// dist to next y grid boundary
+	int		wall_hit;		// wall collision flag
+}	t_dda_state;
+
 typedef struct s_texinfo
 {
 	char		**slot;
@@ -90,30 +104,19 @@ typedef struct s_texinfo
 	int			*flags;
 }				t_texinfo;
 
-/* GAME STATE
-type def: defines what a game state looks like
-blueprint/template */
+// game state
 typedef struct s_game
 {
-    t_player player;        // Player state
-    t_map map;              // Map data
-    t_graphics graphics;    // Graphics system
-    int running;            // Game loop flag
-    double movement_speed;  // Player movement speed
-    double rotation_speed;  // Camera rotation speed
-} t_game;
+	t_player	player;
+	t_map		map;
+	t_graphics	graphics;
+	int			running;		// game loop flag
+	double		movement_speed;
+	double		rotation_speed;	// (camera)
+}	t_game;
 
-/* GLOBAL GAME STATE
-var declaration: declares that somewhere exists a specific instance
-of t_game that all files can access */
-extern t_game g_game;
-
-/* FUNCTION DECLARATIONS:
-	Organize by
-	source file responsibility
-	program flow? */
-// ADD WHEN STARTING TO BUILD PROJECT ELSE TOO FREQUENT CHANGES
-
+// global game state
+extern t_game	g_game;
 
 //  ================== PARSE_UTILS ==================
 
@@ -135,6 +138,8 @@ int	parse_header_color(t_map *m, const char *line, int i, int *flags);
 //  ================== PARSE_HEADER ==================
 
 int	parse_header_lines(t_map *m, int fd);
+
+// RENDER
 
 
 #endif

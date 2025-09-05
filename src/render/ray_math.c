@@ -68,9 +68,12 @@ Mathematically efficient grid traversal
 ret: perpendicular dist (prevent fisheye distortion) */
 double	cast_ray_to_wall(double ray_dir_x, double ray_dir_y, int *wall_side)
 {
-	// DDA setup vars
-	// DDA stepping loop
-	// dist calc
+	t_dda_state	state;
+	double		wall_distance;
+
+	setup_dda_vars(ray_dir_x, ray_dir_y, &state);
+	wall_distance = execute_dda_traversal(&state, wall_side);
+	return (wall_distance);
 }
 
 

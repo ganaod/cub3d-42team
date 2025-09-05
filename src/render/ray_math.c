@@ -5,26 +5,8 @@ ray casting & DDA algos */
 
 
 
-/*
-MATHEMATICAL TRANSFORM: Screen Column → Ray Direction Vector
-INPUT: Screen column index
-OUTPUT: Ray direction components (by reference)
-DEPENDENCIES: Global player state, screen dimensions
-*/
-void calculate_ray_direction(int screen_x, double *ray_dir_x, double *ray_dir_y)
-{
-    double camera_x;
-
-    // STEP 1: Screen space [0, width-1] → Camera space [-1, +1]
-    camera_x = 2.0 * screen_x / (double)g_game.graphics.screen_width - 1.0;
-
-    // STEP 2: Ray = Player Direction + Camera Plane Offset
-    *ray_dir_x = g_game.player.dir_x + camera_x * g_game.player.camera_plane_x;
-    *ray_dir_y = g_game.player.dir_y + camera_x * g_game.player.camera_plane_y;
-}
-
-
-/* create peripheral vision effect
+/* create peripheral vision
+transform raycaster from "1D scanner" > "3D vision simulator"
 
 transform each screen col > ray dir vector (viewing angle)
 visual result: natural FOV instead of "tunnel vision"
@@ -36,14 +18,21 @@ dependencies: g_game.player (pos/dir),
 			g_game_graphics (screen width)
 
 steps:
-1. screen space [0, width-1] > camera space [-1, +1]
-2. ray = player dir + camera plane offset */
+1. screen pixel > FOV pos
+. leftmost pixel (0) becomes -1 (left edge of vision)
+. center pixel becomes 0 (straight ahead)
+. rightmost pixel becomes +1 (right edge of vision)
+
+2. calculate actual ray direction for this viewing angle
+. base dir (where player faces) + angular offset (l/r tilt)
+. visual: creates "sweep" of vision from left peripheral > right peripheral */
 void	calculate_ray_direction(int screen_x, double *ray_dir_x, double *ray_dir_y)
 {
 	double	camera_x;
 
 	camera_x = 2.0 * screen_x / (double)g_game.graphics.screen_width - 1.0;
-
+	*ray_dir_x = g_game.player.dir_x + camera_x * g_game.player.camera_plane_x;
+	*ray_dir_y = g_game.player.dir_y + camera_x * g_game.player.camera_plane_y;
 }
 
 

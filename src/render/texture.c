@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 14:01:40 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/07 15:26:15 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/07 16:03:06 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,11 @@ int sample_texture_pixel(texture_image *tex, int tex_x, int tex_y);
 SOLID COLOR VERIFICATION
 Purpose: Verify wall face detection accuracy before texture complexity
 Strategy: Each wall face gets distinct solid color
+
+Testing Strategy: Walk through your map - 
+each wall should consistently show its assigned color.
+
+
 */
 
 int get_wall_texture_color(int wall_direction, int screen_y, int wall_height)

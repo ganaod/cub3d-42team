@@ -1,7 +1,6 @@
 #ifndef CUB3D_H
 # define CUB3D_H
 
-// SYSTEM INCLUDES
 # include <unistd.h>		// POSIX sys calls
 # include <stdlib.h>		// mem allocatn
 # include <stdio.h>
@@ -12,8 +11,6 @@
 # include "../lib/libft/libft/libft.h"
 # include "../lib/libft/gnl/get_next_line.h"
 # include "../lib/libft/ft_printf/ft_printf.h"
-
-// PROGRAM CONSTANTS
 
 # define EXIT_SUCCESS 0
 # define EXIT_FAILURE 1
@@ -44,15 +41,13 @@ Calculated from VERTICAL_WALL/HORIZONTAL_WALL + ray direction */
 # define VERTICAL_WALL	0
 # define HORIZONTAL_WALL 1
 /* Determines which type of grid line was crossed
-Used for distance calculation (different formulas for X vs Y boundaries)
+Used for distance calculation (different formulae for X vs Y boundaries)
 Set during DDA traversal based on which boundary was closer */
 
 // rendering constants
 # define DEFAULT_WIDTH	1024		// screen sampling resolution
 # define DEFAULT_HEIGHT	768			// vertical pixel count
 # define FOV 			0.66		// field of view / radians
-
-//  DATA STRUCTURES
 
 // player state
 typedef struct s_player

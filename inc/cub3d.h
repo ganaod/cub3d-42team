@@ -48,6 +48,8 @@ Set during DDA traversal based on which boundary was closer */
 # define DEFAULT_HEIGHT	768			// vertical pixel count
 # define FOV 			0.66		// field of view / radians
 
+
+
 // player state
 typedef struct s_player
 {

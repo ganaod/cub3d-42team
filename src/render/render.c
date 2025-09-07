@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 17:04:34 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/07 11:02:46 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/07 11:47:03 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,16 +58,17 @@ void	render_complete_frame(void)
 flow: Ray Direction → Wall Distance → Screen Height → Pixels */
 void	render_single_column(int screen_x)
 {
-	double	ray_dir_x;
-	double	ray_dir_y;
-	double	wall_distance;
-	int		wall_direction;
-
+	double			ray_dir_x;
+	double			ray_dir_y;
+	t_column_render	col;
+	
 	calculate_ray_direction(screen_x, &ray_dir_x, &ray_dir_y);
-	wall_distance = cast_ray_to_wall(ray_dir_x, ray_dir_y, &wall_direction);
-	render_wall_column(screen_x, wall_distance, wall_direction);
+	col.wall_distance = cast_ray_to_wall(ray_dir_x, ray_dir_y, &col.wall_direction);
+	col.wall_height = calculate_screen_wall_height(col.wall_distance);
+	render_wall_column(screen_x, col.wall_distance, col.wall_direction);
 }
 
+// STILL NEEDS TO CALL TEXTURING SUB-MODULE
 /* render wall: convert dist to screen coordinates */
 void	render_wall_column(int screen_x, int wall_height, int wall_direction)
 {

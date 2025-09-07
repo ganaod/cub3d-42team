@@ -1,12 +1,11 @@
 #ifndef CUB3D_H
 # define CUB3D_H
 
-# include <unistd.h>		// POSIX sys calls
-# include <stdlib.h>		// mem allocatn
+# include <unistd.h>
+# include <stdlib.h>
 # include <stdio.h>
-# include <fcntl.h>			// file ctrl ops
+# include <fcntl.h>	
 # include <math.h>
-// # include "lib/minilibx-macOS/mlx.h"		// MiniLibX graphics lib
 # include "../lib/MLX42/include/MLX42/MLX42.h"
 # include "../lib/libft/libft/libft.h"
 # include "../lib/libft/gnl/get_next_line.h"
@@ -52,50 +51,60 @@ Set during DDA traversal based on which boundary was closer */
 // player state
 typedef struct s_player
 {
-    double pos_x;           // World position X
-    double pos_y;           // World position Y
-    double dir_x;           // View direction X
-    double dir_y;           // View direction Y
-    double camera_plane_x;  // Camera plane X (FOV)
-    double camera_plane_y;  // Camera plane Y (FOV)
-} t_player;
+	double		pos_x;				// World position X
+	double		pos_y;				// World position Y
+	double		dir_x;				// View direction X
+	double		dir_y;				// View direction Y
+	double		camera_plane_x;		// Camera plane X (FOV)
+	double		camera_plane_y;		// Camera plane Y (FOV)
+}	t_player;
 
 /* MAP CONFIGURATION */
 typedef struct s_map
 {
-    int *grid;              // 2D map as 1D array
-    int width;              // Map width in cells
-    int height;             // Map height in cells
-    char *texture_paths[4]; // Wall texture file paths
-    uint32_t floor_color;   // 0xRRGGBB
-    uint32_t ceiling_color; // 0xRRGGBB
-    char *first_map_line;
-} t_map;
+	int			*grid;				// 2D map as 1D array
+	int			width;				// Map width in cells
+	int			height;				// Map height in cells
+	char		*texture_paths[4];	// Wall texture file paths
+	uint32_t	floor_color;		// 0xRRGGBB
+	uint32_t	ceiling_color;		// 0xRRGGBB
+	char		*first_map_line;
+}	t_map;
 
 /* GRAPHICS SYSTEM */
 typedef struct s_graphics
 {
-    mlx_t       *mlx;        // MLX42 Kontext
-    mlx_image_t *frame;      // Framebuffer (WIN_W x WIN_H, RGBA8888)
-    int         screen_width;
-    int         screen_height;
-} t_graphics;
+	mlx_t		*mlx;				// MLX42 Kontext
+	mlx_image_t	*frame;				// Framebuffer (WIN_W x WIN_H, RGBA8888)
+	int			screen_width;
+	int			screen_height;
+}	t_graphics;
 
 // dda temp algorithm state
-typedef struct	s_dda_state
+typedef struct s_dda_state
 {
-	int		map_x;			// current grid x pos
-	int		map_y;			// current grid y pos
-	int		step_x;			// x step dir (-1 / +1)
-	int		step_y;			// y step dir (-1 / +1)
-	double	delta_dist_x;	// dist to traverse 1 X grid cell
-	double	delta_dist_y;	// dist to traverse 1 X grid cell
-	double	side_dist_x;	// dist to next x grid boundary
-	double	side_dist_y;	// dist to next y grid boundary
-	double	ray_dir_x;
-	double	ray_dir_y;
-	int		wall_hit;		// wall collision flag
+	int			map_x;				// current grid x pos
+	int			map_y;				// current grid y pos
+	int			step_x;				// x step dir (-1 / +1)
+	int			step_y;				// y step dir (-1 / +1)
+	double		delta_dist_x;		// dist to traverse 1 X grid cell
+	double		delta_dist_y;		// dist to traverse 1 Y grid cell
+	double		side_dist_x;		// dist to next X grid boundary
+	double		side_dist_y;		// dist to next Y grid boundary
+	double		ray_dir_x;
+	double		ray_dir_y;
+	int			wall_hit;			// wall collision flag
 }	t_dda_state;
+
+// column rendering state
+// like dda state: temporary algorithmic struct, not a persistent game entity
+// groups related data to conform to 42 Norm
+typedef struct	s_column_render
+{
+	double		wall_distance;
+	int			wall_height;
+	int			wall_direction;
+}	t_column_render;
 
 typedef struct s_texinfo
 {
@@ -104,7 +113,8 @@ typedef struct s_texinfo
 	int			j;
 	int			bit;
 	int			*flags;
-}				t_texinfo;
+}	t_texinfo;
+
 
 // game state
 typedef struct s_game

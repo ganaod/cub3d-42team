@@ -32,16 +32,10 @@
 # define SOUTH 1
 # define WEST 2
 # define EAST 3
-/* Determines which specific wall face was hit
-Used for texture selection (different textures per face)
-Calculated from VERTICAL_WALL/HORIZONTAL_WALL + ray direction */
 
 // wall side types (for DDA)
 # define VERTICAL_WALL	0
 # define HORIZONTAL_WALL 1
-/* Determines which type of grid line was crossed
-Used for distance calculation (different formulae for X vs Y boundaries)
-Set during DDA traversal based on which boundary was closer */
 
 // rendering constants
 # define DEFAULT_WIDTH	1024		// screen sampling resolution

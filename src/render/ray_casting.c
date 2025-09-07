@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 15:48:41 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/05 17:09:00 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/07 10:37:52 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,17 +29,18 @@ dependencies: g_game.player (pos/dir),
 
 steps:
 
-1. screen pixel > FOV pos
-. leftmost pixel (0) becomes -1 (left edge of vision)
-. center pixel becomes 0 (straight ahead)
-. rightmost pixel becomes +1 (right edge of vision)
-normalisation formula for range mapping:
-	. scale to [0,2]
-	. shift to [-1,+1]
+	1. screen pixel > FOV pos
+	. leftmost pixel (0) becomes -1 (left edge of vision)
+	. center pixel becomes 0 (straight ahead)
+	. rightmost pixel becomes +1 (right edge of vision)
+	normalisation formula for range mapping:
+		. scale to [0,2]
+		. shift to [-1,+1]
 
-2. calculate actual ray direction for this viewing angle
-. base dir (where player faces) + angular offset (l/r tilt)
-. visual: creates "sweep" of vision from left peripheral > right peripheral 
+	2. calculate actual ray direction for this viewing angle
+	. base dir (where player faces) + angular offset (l/r tilt)
+	. visual: creates "sweep" of vision from left peripheral 
+	> right peripheral 
 
 vector addition with scaling */
 void	calculate_ray_direction(int screen_x, double *ray_dir_x, double *ray_dir_y)

@@ -6,20 +6,13 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 17:04:34 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/05 17:11:39 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/07 11:02:46 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/cub3d.h"
 
-/* responsibility:
-. Implement core raycasting mathematics
-. Create 3D visual illusion from 2D map data
-. Manage rendering pipeline from player view to pixels
-. Handle wall projection and texture mapping
-	 
-
-execution pipeline:
+/* execution pipeline:
 
 render.c (render_complete_frame)
 	↓
@@ -40,6 +33,7 @@ RESULT: 2D map data → 3D visual representation */
 /* 1. initialise buffer
 . clear screen buff to known state (black pixels)
 . prepare canvas for additive composition
+(compose final image by adding visual elements (ceiling + wall + floor))
 
 2. raycasting core loop
 . for each screen col: cast ray, find wall, draw vert strip
@@ -74,31 +68,41 @@ void	render_single_column(int screen_x)
 	render_wall_column(screen_x, wall_distance, wall_direction);
 }
 
-
-
-
-
-
-/*
-WALL RENDERING: Convert distance to screen coordinates
-*/
-void render_wall_column(int screen_x, int wall_height, int wall_direction)
+/* render wall: convert dist to screen coordinates */
+void	render_wall_column(int screen_x, int wall_height, int wall_direction)
 {
-    // Calculate wall strip boundaries on screen
-    int wall_start_y = (screen_height - wall_height) / 2;
-    int wall_end_y = wall_start_y + wall_height;
+	int	wall_start_y;
+	int	wall_end_y;
 
-    // CEILING RENDERING: Above wall
-    for (int y = 0; y < wall_start_y; y++)
-        put_pixel(screen_x, y, ceiling_color);
-
-    // WALL RENDERING: Apply texture if available
-    for (int y = wall_start_y; y < wall_end_y; y++) {
-        int texture_color = get_wall_texture_color(wall_direction, y, wall_height);
-        put_pixel(screen_x, y, texture_color);
-    }
-
-    // FLOOR RENDERING: Below wall
-    for (int y = wall_end_y; y < screen_height; y++)
-        put_pixel(screen_x, y, floor_color);
+	wall_start_y = (g_game.graphics.screen_height - wall_height) / 2;
+	wall_end_y = wall_start_y + wall_height;
+	render_ceiling_section(screen_x, wall_start_y);
+	render_wall_section(screen_x, wall_start_y, wall_end_y, wall_direction);
+	render_floor_section(screen_x, wall_end_y);
 }
+/* vertically center the wall with ceiling above & floor below
+to simulate eye-level perspective:
+
+screen coordinate sys:
+y=0    ┌─────────────────┐  ← Top of screen
+       │    CEILING      │
+       │                 │
+y=284  ├─────────────────┤  ← wall_start_y
+       │                 │
+       │      WALL       │  ← Wall centered on screen
+       │                 │
+y=484  ├─────────────────┤  ← wall_end_y  
+       │                 │
+       │     FLOOR       │
+       │                 │
+y=767  └─────────────────┘  ← Bottom of screen
+
+screen_height = 768
+wall_height = 200
+wall_start_y = (768 - 200) / 2 = 284   // Center the wall
+wall_end_y = 284 + 200 = 484           // Wall bottom edge
+
+Rendering Order (top-down):
+	y = 0 → 283: Paint ceiling pixels
+	y = 284 → 483: Paint wall texture pixels
+	y = 484 → 767: Paint floor pixels	*/

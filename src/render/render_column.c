@@ -6,11 +6,15 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 10:56:37 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/07 11:16:51 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/07 15:45:59 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-// column section helpers
+/* column section helpers
+re. texture, from subject:
+	"display different wall textures"
+	"set the floor and ceiling to two different colours"
+hence only in render_wall_section() */
 
 #include "../inc/cub3d.h"
 
@@ -37,6 +41,8 @@ void	render_wall_section(int screen_x, int wall_start_y, int wall_end_y,
 	y = wall_start_y;
 	while (y < g_game.graphics.screen_height)
 	{
+		texture_color = get_wall_texture_color(wall_direction, y,
+						wall_end_y - wall_start_y);
 		put_pixel(screen_x, y, g_game.map.floor_color);
 		y++;
 	}

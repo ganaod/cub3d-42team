@@ -48,89 +48,96 @@ Set during DDA traversal based on which boundary was closer */
 # define DEFAULT_HEIGHT	768			// vertical pixel count
 # define FOV 			0.66		// field of view / radians
 
-
+typedef struct s_texture_image
+{
+	mlx_image_t		*mlx_image;		// mlx42 image pointer
+	uint32_t		*pixels;		// pixel buffer
+	int				width;			// image width
+	int				height;			// image height
+}					t_texture_image;
 
 // player state
 typedef struct s_player
 {
-	double		pos_x;				// World position X
-	double		pos_y;				// World position Y
-	double		dir_x;				// View direction X
-	double		dir_y;				// View direction Y
-	double		camera_plane_x;		// Camera plane X (FOV)
-	double		camera_plane_y;		// Camera plane Y (FOV)
-}	t_player;
+	double			pos_x;			// world position x
+	double			pos_y;			// world position y
+	double			dir_x;			// view direction x
+	double			dir_y;			// view direction y
+	double			camera_plane_x;	// camera plane x (fov)
+	double			camera_plane_y;	// camera plane y (fov)
+}					t_player;
 
-/* MAP CONFIGURATION */
+// map configuration
 typedef struct s_map
 {
-	int			*grid;				// 2D map as 1D array
-	int			width;				// Map width in cells
-	int			height;				// Map height in cells
-	char		*texture_paths[4];	// Wall texture file paths
-	uint32_t	floor_color;		// 0xRRGGBB
-	uint32_t	ceiling_color;		// 0xRRGGBB
-	char		*first_map_line;
-}	t_map;
+	int				*grid;				// 2d map as 1d array
+	int				width;				// map width in cells
+	int				height;				// map height in cells
+	char			*texture_paths[4];	// wall texture file paths
+	uint32_t		floor_color;		// 0xrrggbb
+	uint32_t		ceiling_color;		// 0xrrggbb
+	char			*first_map_line;	// first line of map
+	t_texture_image	*wall_textures[4];	// wall textures
+}					t_map;
 
-/* GRAPHICS SYSTEM */
+// graphics system
 typedef struct s_graphics
 {
-	mlx_t		*mlx;				// MLX42 Kontext
-	mlx_image_t	*frame;				// Framebuffer (WIN_W x WIN_H, RGBA8888)
-	int			screen_width;
-	int			screen_height;
-}	t_graphics;
+	mlx_t			*mlx;			// mlx42 context
+	mlx_image_t		*frame;			// framebuffer (win_w x win_h, rgba8888)
+	int				screen_width;	// window width
+	int				screen_height;	// window height
+}					t_graphics;
 
 // dda temp algorithm state
 typedef struct s_dda_state
 {
-	int			map_x;				// current grid x pos
-	int			map_y;				// current grid y pos
-	int			step_x;				// x step dir (-1 / +1)
-	int			step_y;				// y step dir (-1 / +1)
-	double		delta_dist_x;		// dist to traverse 1 X grid cell
-	double		delta_dist_y;		// dist to traverse 1 Y grid cell
-	double		side_dist_x;		// dist to next X grid boundary
-	double		side_dist_y;		// dist to next Y grid boundary
-	double		ray_dir_x;
-	double		ray_dir_y;
-	int			wall_hit;			// wall collision flag
-}	t_dda_state;
+	int				map_x;			// current grid x pos
+	int				map_y;			// current grid y pos
+	int				step_x;			// x step dir (-1 / +1)
+	int				step_y;			// y step dir (-1 / +1)
+	double			delta_dist_x;	// dist to traverse 1 x grid cell
+	double			delta_dist_y;	// dist to traverse 1 y grid cell
+	double			side_dist_x;	// dist to next x grid boundary
+	double			side_dist_y;	// dist to next y grid boundary
+	double			ray_dir_x;		// ray direction x
+	double			ray_dir_y;		// ray direction y
+	int				wall_hit;		// wall collision flag
+}					t_dda_state;
 
 // column rendering state
 // like dda state: temporary algorithmic struct, not a persistent game entity
-// groups related data to conform to 42 Norm
-typedef struct	s_column_render
+// groups related data to conform to 42 norm
+typedef struct s_column_render
 {
-	double		wall_distance;
-	int			wall_height;
-	int			wall_direction;
-}	t_column_render;
+	double			wall_distance;	// perpendicular distance to wall
+	int				wall_height;	// calculated wall height
+	int				wall_direction;	// wall side hit (0-3)
+}					t_column_render;
 
 typedef struct s_texinfo
 {
-	char		**slot;
-	const char	*line;
-	int			j;
-	int			bit;
-	int			*flags;
-}	t_texinfo;
-
+	char			**slot;			// texture slot
+	const char		*line;			// config line
+	int				j;				// index
+	int				bit;			// bit flag
+	int				*flags;			// pointer to flags
+}					t_texinfo;
 
 // game state
 typedef struct s_game
 {
-	t_player	player;
-	t_map		map;
-	t_graphics	graphics;
-	int			running;		// game loop flag
-	double		movement_speed;
-	double		rotation_speed;	// (camera)
-}	t_game;
+	t_player		player;			// player data
+	t_map			map;			// map data
+	t_graphics		graphics;		// graphics system
+	int				running;		// game loop flag
+	double			movement_speed;	// player movement speed
+	double			rotation_speed;	// camera rotation speed
+}					t_game;
+
 
 // global game state
-extern t_game	g_game;
+extern t_game		g_game;
 
 //  ================== PARSE_UTILS ==================
 
@@ -186,6 +193,9 @@ void	calculate_wall_boundaries(int wall_height, int *wall_start, int *wall_end);
 
 // texture sampling
 int		get_wall_texture_color(int wall_direction, int screen_y, int wall_height);
+int             load_wall_textures(void);
+t_texture_image *load_single_texture(char *path);
+void            cleanup_wall_textures(void);
 
 // wall rendering
 void	render_wall_column(int screen_x, double wall_distance, int wall_direction);

@@ -2,12 +2,20 @@ Eric Lengyel
 Foundations of Game Engine Development
 Volume 1: Mathematics
 
+Gabriel Gambetta
+Computer Graphics from Scratch
+
 Lode Vandevenne
 Lode's Computer Graphics Tutorial: Raycasting
 https://lodev.org/cgtutor/raycasting.html
 
 Steve Marschner, Peter Shirley
 Fundamentals of Computer Graphics
+
+
+
+
+
 
 
 

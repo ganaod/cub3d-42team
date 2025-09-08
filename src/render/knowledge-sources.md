@@ -26,6 +26,14 @@ immersivemath.com
 Essence of Linear Algebra | 3Blue1Brown
 
 
+
+### DDA algo
+
+The DDA Algorithm, explained interactively
+https://aaaa.sh/creatures/dda-algorithm-interactive/
+
+
+
 ## projection
 	claude thread
 	Gambetta: https://www.gabrielgambetta.com/computer-graphics-from-scratch/09-perspective-projection.html
@@ -38,8 +46,4 @@ Essence of Linear Algebra | 3Blue1Brown
 
 
 
-
-### DDA algo
-
-The DDA Algorithm, explained interactively
-https://aaaa.sh/creatures/dda-algorithm-interactive/
+## texture

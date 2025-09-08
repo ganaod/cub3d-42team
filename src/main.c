@@ -183,53 +183,121 @@
 //     return (0);
 // }
 
+// static void free_lines_array(char **lines, int h) {
+// 	int i = 0;
+// 	while (i < h) { free(lines[i]); i++; }
+// 	free(lines);
+// }
+
+// int main(int argc, char **argv) {
+// 	t_map m;
+// 	int fd, h, i;
+// 	char **lines;
+// 	int w;
+
+// 	if (argc != 2) { fprintf(stderr, "usage: %s file.cub\n", argv[0]); return 2; }
+// 	fd = open(argv[1], O_RDONLY);
+// 	if (fd < 0) { perror("open"); return 1; }
+
+// 	m = (t_map){0};
+
+// 	if (!parse_header_lines(&m, fd)) {
+// 		fprintf(stderr, "❌ header parse failed\n");
+// 		close(fd); return 3;
+// 	}
+// 	if (!collect_map_lines(&m, fd, &lines, &h)) {
+// 		fprintf(stderr, "❌ collect_map_lines failed\n");
+// 		close(fd); return 4;
+// 	}
+// 	close(fd);
+
+
+// 	if (!normalize_map(&lines, h, &w)) {
+// 		ft_printf("❌ normalize_map failed\n");
+// 		return (EXIT_FAILURE);
+// 	}
+// 	ft_printf("✅ normalize_map: w=%d, h=%d\n", w, h);
+// 	i = 0;
+// 	while (i < h) {
+// 		ft_printf("  [%d] |%s| (len=%d)\n", i, lines[i], (int)ft_strlen(lines[i]));
+// 		i++;
+// 	}
+
+// 	printf("✅ collected %d map lines:\n", h);
+// 	i = 0;
+// 	while (i < h) {
+// 		printf("  [%d] \"%s\"\n", i, lines[i]);
+// 		i++;
+// 	}
+
+// 	free_lines_array(lines, h);
+// 	return 0;
+// }
+
 static void free_lines_array(char **lines, int h) {
-	int i = 0;
-	while (i < h) { free(lines[i]); i++; }
-	free(lines);
+    int i = 0;
+    while (i < h) { free(lines[i]); i++; }
+    free(lines);
+}
+
+static char cell_ch(int v) {
+    if (v == CELL_WALL)  return '#';
+    if (v == CELL_EMPTY) return '.';
+    if (v == CELL_VOID)  return ' ';
+    return '?';
 }
 
 int main(int argc, char **argv) {
-	t_map m;
-	int fd, h, i;
-	char **lines;
-	int w;
+    t_game g = (t_game){0};
+    char **lines;
+    int   h;
+    int   fd;
+    int   player_found;
+    int   y;
+    int   x;
 
-	if (argc != 2) { fprintf(stderr, "usage: %s file.cub\n", argv[0]); return 2; }
-	fd = open(argv[1], O_RDONLY);
-	if (fd < 0) { perror("open"); return 1; }
+    if (argc != 2) { fprintf(stderr, "usage: %s file.cub\n", argv[0]); return 2; }
+    fd = open(argv[1], O_RDONLY);
+    if (fd < 0) { perror("open"); return 1; }
 
-	m = (t_map){0};
+    if (!parse_header_lines(&g.map, fd)) { fprintf(stderr, "❌ header parse failed\n"); close(fd); return 3; }
+    if (!collect_map_lines(&g.map, fd, &lines, &h)) { fprintf(stderr, "❌ collect_map_lines failed\n"); close(fd); return 4; }
+    close(fd);
 
-	if (!parse_header_lines(&m, fd)) {
-		fprintf(stderr, "❌ header parse failed\n");
-		close(fd); return 3;
-	}
-	if (!collect_map_lines(&m, fd, &lines, &h)) {
-		fprintf(stderr, "❌ collect_map_lines failed\n");
-		close(fd); return 4;
-	}
-	close(fd);
+    /* normalize_map braucht eine Breite-Variable: wir können direkt g.map.width füllen */
+    if (!normalize_map(&lines, h, &g.map.width)) {
+        fprintf(stderr, "❌ normalize_map failed\n");
+        free_lines_array(lines, h);
+        return 5;
+    }
 
+    /* NEUE Signatur: h/w werden intern aus lines bestimmt */
+    player_found = 0;
+    if (!build_grid_from_lines(&g.map, &g.player, lines, &player_found)) {
+        fprintf(stderr, "❌ build_grid_from_lines failed (player_found=%d)\n", player_found);
+        free_lines_array(lines, h);
+        return 6;
+    }
 
-	if (!normalize_map(&lines, h, &w)) {
-		ft_printf("❌ normalize_map failed\n");
-		return (EXIT_FAILURE);
-	}
-	ft_printf("✅ normalize_map: w=%d, h=%d\n", w, h);
-	i = 0;
-	while (i < h) {
-		ft_printf("  [%d] |%s| (len=%d)\n", i, lines[i], (int)ft_strlen(lines[i]));
-		i++;
-	}
+    /* Ausgabe */
+    printf("✅ grid built: w=%d h=%d player_found=%d\n", g.map.width, g.map.height, player_found);
+    printf("   player: pos=(%.2f, %.2f) dir=(%.2f, %.2f) plane=(%.2f, %.2f)\n",
+           g.player.pos_x, g.player.pos_y, g.player.dir_x, g.player.dir_y,
+           g.player.camera_plane_x, g.player.camera_plane_y);
 
-	printf("✅ collected %d map lines:\n", h);
-	i = 0;
-	while (i < h) {
-		printf("  [%d] \"%s\"\n", i, lines[i]);
-		i++;
-	}
+    y = 0;
+    while (y < g.map.height) {
+        x = 0;
+        while (x < g.map.width) {
+            putchar(cell_ch(g.map.grid[y * g.map.width + x]));
+            x++;
+        }
+        putchar('\n');
+        y++;
+    }
 
-	free_lines_array(lines, h);
-	return 0;
+    /* Aufräumen */
+    free_lines_array(lines, h);
+    free(g.map.grid);
+    return 0;
 }

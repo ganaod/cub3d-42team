@@ -4,7 +4,7 @@
 # include <unistd.h>
 # include <stdlib.h>
 # include <stdio.h>
-# include <fcntl.h>	
+# include <fcntl.h>
 # include <math.h>
 # include "../lib/MLX42/include/MLX42/MLX42.h"
 # include "../lib/libft/libft/libft.h"
@@ -22,8 +22,32 @@
 # define HDR_F  (1<<4)
 # define HDR_C  (1<<5)
 
+<<<<<<< HEAD
 // map cell types
 # define EMPTY 0		// traversable space
+=======
+/* Zelltypen fürs Grid */
+# define CELL_VOID  (-1)  /* ' '  -> außerhalb/ungefüllt */
+# define CELL_EMPTY (0)   /* '0'  -> begehbar */
+# define CELL_WALL  (1)   /* '1'  -> Wand  */
+
+#ifndef FOV_PLANE
+# define FOV_PLANE 0.66
+#endif
+
+/* Richtungscodes */
+# define DIR_N 0
+# define DIR_S 1
+# define DIR_W 2
+# define DIR_E 3
+
+/* map cell types
+the algorithm casts rays until hitting WALL,
+treats EMPTY as traversable,
+and VOID handles map parsing edge cases
+where spaces might exist beyond defined boundaries. */
+# define EMPTY 0		// walkable space
+>>>>>>> 9453b13 (map grid build, new maps, small change in .h)
 # define WALL 1			// collision / rendering surface
 # define VOID 2			// invalid map space (outside boundaries)
 
@@ -190,5 +214,19 @@ void	render_wall_column(int screen_x, double wall_distance, int wall_direction);
 void	clear_screen_buffer(void);
 void	put_pixel(int x, int y, int color);
 void	present_frame_to_screen(void);
+=======
+//  ================== MAP_GRID_CELL ==================
+
+int	put_cell_from_char(t_map *m, t_player *pl, int idx, char c);
+
+//  ================== MAP_GRID_FILL ==================
+
+int	fill_grid(t_map *m, t_player *pl, char **lines, int *count);
+
+//  ================== MAP_GRID_BUILD ==================
+
+int	build_grid_from_lines(t_map *m, t_player *pl, char **lines,
+		int *player_found);
+
 
 #endif

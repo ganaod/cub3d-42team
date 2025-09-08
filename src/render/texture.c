@@ -6,21 +6,40 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 14:01:40 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/08 14:45:43 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/08 14:55:26 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/cub3d.h"
 
-/* projection mathematics create spatial relationships 
+/* 
 
-brain recognizes 3D space through surface detail patterns
-hence texturing
+Projection establishes spatial positioning and scale relationships. 
+Texturing provides surface appearance and visual detail.
+
+Structural relationship:
+	Projection layer: Determines where surfaces appear and their relative sizes
+	Texturing layer: Determines what those surfaces look like
+	Combined system: Creates complete visual representation
+
+Functional separation:
+	Projection: Solves geometric problems (distance, perspective, boundaries)
+	Texturing: Solves appearance problems (color, pattern, material identity)
+
+Integration requirement: Both layers must coordinate to produce coherent visual output.
+
+
+How do we map surface appearance data onto the geometric surfaces that projection has positioned?
 
 
 
 
 
+
+
+
+
+	
 TEXTURE MAPPING - World Position → Texture Position
 
 What it means: Calculating which pixel in the texture corresponds to a specific wall location.

@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 15:48:27 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/05 17:02:52 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/08 11:11:36 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,15 +46,19 @@ think of DDA as:
 ret: perpendicular dist (prevent fisheye distortion) */
 
 // coordinate
-double	cast_ray_to_wall(double ray_dir_x, double ray_dir_y, int *wall_side)
+t_ray_result	cast_ray_to_wall(double ray_dir_x, double ray_dir_y)
 {
-	t_dda_state	state;
-	double		wall_distance;
+	t_dda_state		state;
+	t_ray_result	result;
 
 	setup_dda_vars(ray_dir_x, ray_dir_y, &state);
-	execute_dda_traversal(&state, wall_side);
-	wall_distance = calculate_wall_distance(&state, wall_side);
-	return (wall_distance);
+	execute_dda_traversal(&state, &result.wall_side);
+	result.distance = calculate_wall_distance(&state, result.wall_side);
+	result.hit_x = g_game.player.pos_x
+		+ (result.distance * ray_dir_x);
+	result.hit_y = g_game.player.pos_y
+		+ (result.distance * ray_dir_y);	
+	return (result);
 }
 
 /* core dda algo

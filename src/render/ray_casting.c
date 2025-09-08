@@ -6,11 +6,12 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 15:48:41 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/07 11:17:18 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/08 11:18:01 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-// ray geometric ops
+// ray geometric ops: interpret geometric data (from DDA algo) for rendering
+// ray interpretation & wall face analysis
 
 #include "../inc/cub3d.h"
 
@@ -26,10 +27,7 @@ with: l/r cols show angled views (human-like peripheral vision)
 dependencies: g_game.player (pos/dir),
 			g_game_graphics (screen width)
 
-
-steps:
-
-	1. screen pixel > FOV pos
+step 1. screen pixel > FOV pos
 	. leftmost pixel (0) becomes -1 (left edge of vision)
 	. center pixel becomes 0 (straight ahead)
 	. rightmost pixel becomes +1 (right edge of vision)
@@ -37,7 +35,7 @@ steps:
 		. scale to [0,2]
 		. shift to [-1,+1]
 
-	2. calculate actual ray direction for this viewing angle
+step 2. calculate actual ray direction for this viewing angle
 	. base dir (where player faces) + angular offset (l/r tilt)
 	. visual: creates "sweep" of vision from left peripheral 
 	> right peripheral 
@@ -52,21 +50,20 @@ void	calculate_ray_direction(int screen_x, double *ray_dir_x, double *ray_dir_y)
 	*ray_dir_y = g_game.player.dir_y + camera_x * g_game.player.camera_plane_y;
 }
 
-int get_wall_face_hit(t_dda_state *state, int wall_side)
+int get_wall_face_hit(t_ray_result *ray_result)
 {
-    if (wall_side == VERTICAL_WALL)
+    if (ray_result->wall_side == VERTICAL_WALL)
     {
-        if (state->step_x > 0)
-            return (WEST);   // Hit left side of wall
+        if (ray_result->hit_x > g_game.player.pos_x)
+            return (WEST);   // Hit left face of wall cell
         else
-            return (EAST);   // Hit right side of wall
+            return (EAST);   // Hit right face of wall cell
     }
-    else if (wall_side == HORIZONTAL_WALL)
+    else // HORIZONTAL_WALL
     {
-        if (state->step_y > 0)
-            return (NORTH);  // Hit bottom side of wall
+        if (ray_result->hit_y > g_game.player.pos_y)
+            return (NORTH);  // Hit top face of wall cell
         else
-            return (SOUTH);  // Hit top side of wall
+            return (SOUTH);  // Hit bottom face of wall cell
     }
-    return (NORTH);  // Default fallback
 }

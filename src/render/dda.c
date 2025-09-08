@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 15:48:27 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/08 11:11:36 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/08 11:24:21 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@ core transaction:
 problem: find intersection of continuous line with discrete grid
 constraint: must be exact (no approximatn errs)
 performance: must execute 1000+ time/frame (real-time requirement)
-
 
 Digital Differential Analyzer (DDA) algorithm: 
 instead of checking arbitrary pts, only check grid
@@ -57,7 +56,8 @@ t_ray_result	cast_ray_to_wall(double ray_dir_x, double ray_dir_y)
 	result.hit_x = g_game.player.pos_x
 		+ (result.distance * ray_dir_x);
 	result.hit_y = g_game.player.pos_y
-		+ (result.distance * ray_dir_y);	
+		+ (result.distance * ray_dir_y);
+	result.wall_face = determine_wall_face(&state, result.wall_side);
 	return (result);
 }
 

@@ -22,10 +22,8 @@
 # define HDR_F  (1<<4)
 # define HDR_C  (1<<5)
 
-<<<<<<< HEAD
 // map cell types
 # define EMPTY 0		// traversable space
-=======
 /* Zelltypen fürs Grid */
 # define CELL_VOID  (-1)  /* ' '  -> außerhalb/ungefüllt */
 # define CELL_EMPTY (0)   /* '0'  -> begehbar */
@@ -47,7 +45,6 @@ treats EMPTY as traversable,
 and VOID handles map parsing edge cases
 where spaces might exist beyond defined boundaries. */
 # define EMPTY 0		// walkable space
->>>>>>> 9453b13 (map grid build, new maps, small change in .h)
 # define WALL 1			// collision / rendering surface
 # define VOID 2			// invalid map space (outside boundaries)
 

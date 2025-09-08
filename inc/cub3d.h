@@ -97,6 +97,8 @@ typedef struct s_dda_state
 	double			ray_dir_x;		// ray direction x
 	double			ray_dir_y;		// ray direction y
 	int				wall_hit;		// wall collision flag
+	double			hit_x;
+	double			hit_y;
 }					t_dda_state;
 
 // column rendering state
@@ -108,6 +110,11 @@ typedef struct s_column_render
 	int				wall_height;	// calculated wall height
 	int				wall_direction;	// wall side hit (0-3)
 }					t_column_render;
+
+typedef struct	s_texture_context
+{
+
+}					t_texture_context;
 
 typedef struct s_texinfo
 {

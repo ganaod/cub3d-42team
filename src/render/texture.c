@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 14:01:40 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/08 10:43:33 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/08 10:45:44 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,3 +57,20 @@ get_texture_for_direction(): Texture selection
 */
 
 #include "../inc/cub3d.h"
+
+
+/*
+
+STEP 1: Extend DDA to Return Hit Coordinates
+
+Current Signature:
+double cast_ray_to_wall(double ray_dir_x, double ray_dir_y, int *wall_side);
+
+Required Signature:
+double cast_ray_to_wall(double ray_dir_x, double ray_dir_y, int *wall_side, 
+                       double *wall_hit_x, double *wall_hit_y);
+
+
+need to calculate exact hit coordinates in dda.c/cast_ray_to_wall()
+					   
+*/

@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 14:01:40 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/08 15:09:20 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/08 15:34:09 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,8 @@ Integration requirement: Both layers must coordinate to produce coherent visual 
 
 How do we map surface appearance data onto the geometric surfaces that projection has positioned?
 
+
+
 Coordinate transformation problem:
 
 Given state:
@@ -43,7 +45,8 @@ Screen pixel position → Wall surface position → Texture coordinate → Color
 
 
 
-RENDERING METHOD APPROACHES
+Rendering method approaches:
+
 Different rendering paradigms solve this transformation differently:
 
 RASTERIZATION:
@@ -51,22 +54,53 @@ RASTERIZATION:
 	interpolate texture coordinates across projected area
 	Application: Complex 3D models with arbitrary surfaces
 
-RAYCASTING:
-	Process: Screen column → Ray → Wall intersection → Direct texture coordinate calculation
-	Application: 2D map with vertical walls
-
 RAY TRACING:
 	Process: Screen pixel → Ray → Surface intersection → Texture sample + lighting calculation
 	Application: Photorealistic rendering with complex lighting
 
+RAYCASTING:
+	Process: Screen column → Ray → Wall intersection → Direct texture coordinate calculation
+	Application: 2D map with vertical walls
+
+Screen column (SCREEN SPACE): Pixel column index [0, screen_width-1]
+Ray (WORLD SPACE): Mathematical line with origin (player_pos) + direction vector
+Wall intersection (WORLD SPACE): Exact coordinates (x, y) where ray hits wall boundary
+Texture coordinate calculation (TEXTURE SPACE): Transform world coordinates → [0,1] texture coordinates	
 
 
+	
+
+My specific transformation chain:
+
+Input: Screen column X, wall distance D, wall face direction F
+Output: Color value for each pixel in that column
+Required mappings:
+	Screen Y coordinate → Wall surface Y position
+	Wall intersection point → Texture X coordinate
+	Texture coordinates → Color value
+
+	
+clarification in terms of spaces:
+
+1. "Screen Y coordinate → Wall surface Y position"
+	Screen Y: SCREEN SPACE pixel row [0, screen_height-1]
+	Wall surface Y: WALL-LOCAL SPACE - vertical position on the wall face [0,1]
+	NOT world space Y - this is position up/down the wall surface itself
+
+2. "Wall intersection point → Texture X coordinate"
+	Wall intersection: WORLD SPACE coordinates (2.34, 4.67)
+	Texture X: TEXTURE SPACE coordinate [0,1] representing horizontal position across texture
+
+3. "Texture coordinates → Color value"
+	Texture coordinates: TEXTURE SPACE [0,1] × [0,1]
+	Color value: RGB data that gets written to SCREEN SPACE pixels
+
+	
 
 
 
 
 	
-
 
 	
 TEXTURE MAPPING - World Position → Texture Position

@@ -206,33 +206,46 @@ void	rstrip_eol(char *s);
 
 int	normalize_map(char ***lines_io, int h, int *out_w);
 
-// RENDER
+//  ================== (NO SURR-)RENDER(!!!) ==================
 // main render pipeline
-void	render_complete_frame(void);
-void	render_single_column(int screen_x);
+void			render_complete_frame(void);
+void			render_single_column(int screen_x);
+
 // ray math
-void			calculate_ray_direction(int screen_x, double *ray_dir_x, double *ray_dir_y);
+void			calculate_ray_direction(int screen_x,
+					double *ray_dir_x, double *ray_dir_y);
+
 // dda algo
 t_ray_result	cast_ray_to_wall(double ray_dir_x, double ray_dir_y);
-void	execute_dda_traversal(t_dda_state *state, int *wall_side);
-double	calculate_wall_distance(t_dda_state *state, int wall_side);
+void			execute_dda_traversal(t_dda_state *state, int *wall_side);
+double			calculate_wall_distance(t_dda_state *state, int wall_side);
+
 // dda setup utils
-void	setup_dda_vars(double ray_dir_x, double ray_dir_y, t_dda_state *state);
+void			setup_dda_vars(double ray_dir_x, double ray_dir_y,
+					t_dda_state *state);
+
 // projection calc
-int		calculate_screen_wall_height(double wall_distance);
-void	calculate_wall_boundaries(int wall_height, int *wall_start, int *wall_end);
+int				calculate_screen_wall_height(double wall_distance);
+void			calculate_wall_boundaries(int wall_height,
+					int *wall_start, int *wall_end);
+
 // texture sampling
-int get_wall_texture_color(t_texture_context *ctx, int screen_y);
-double calculate_texture_u(t_texture_context *ctx);
-double calculate_texture_v(t_texture_context *ctx, int screen_y);
-int sample_texture_pixel(t_texture_image *tex, int tex_x, int tex_y);
-t_texture_image *get_texture_for_direction(int wall_direction);
+int				get_wall_texture_color(t_texture_context *ctx, int screen_y);
+double			calculate_texture_u(t_texture_context *ctx);
+double			calculate_texture_v(t_texture_context *ctx, int screen_y);
+int				sample_texture_pixel(t_texture_image *tex,
+					int tex_x, int tex_y);
+t_texture_image	*get_texture_for_direction(int wall_direction);
+
 // wall rendering
-void	render_wall_column(int screen_x, double wall_distance, int wall_direction);
+void			render_wall_column(int screen_x, double wall_distance,
+					int wall_direction);
+
 // screen buffer ops
-void	clear_screen_buffer(void);
-void	put_pixel(int x, int y, int color);
-void	present_frame_to_screen(void);
+void			clear_screen_buffer(void);
+void			put_pixel(int x, int y, int color);
+void			present_frame_to_screen(void);
+
 
 //  ================== MAP_GRID_CELL ==================
 

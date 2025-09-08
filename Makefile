@@ -29,7 +29,15 @@ SRC_FILES   =	main.c \
 				normalize_map.c \
 				map_grid_cells.c \
 				map_grid_fill.c \
-				map_grid_build.c
+				map_grid_build.c \
+				dda.c \
+				dda_setup.c \
+				projection.c \
+				ray_casting.c \
+				render.c \
+				render_column.c \
+				screen_buffer.c \
+				texture.c
 
 SRCS        = $(addprefix $(SRC_DIR)/, $(SRC_FILES))
 OBJS        = $(SRCS:.c=.o)

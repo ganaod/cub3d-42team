@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 17:04:34 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/07 12:13:30 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/08 11:37:32 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,19 +58,32 @@ void	render_complete_frame(void)
 	}
 }
 
-/* ray processing for 1 screen col
-flow: Ray Direction → Wall Distance → Screen Height → Pixels */
+/* render_single_column:
+   processes and renders the wall slice for a single screen column.
+   flow: ray direction → wall intersection → projected wall height → draw pixels
+
+   parameters:
+     screen_x    -> column index on the screen to render
+
+   steps:
+     1. calculate the ray direction based on the column position
+     2. cast the ray to find the wall hit result and distance
+     3. compute the projected wall height for the screen
+     4. render the vertical wall slice with the correct texture/face
+*/
 void	render_single_column(int screen_x)
 {
 	double			ray_dir_x;
 	double			ray_dir_y;
-	t_column_render	col;
-	
+	t_ray_result	ray_result;
+	int				wall_height;
+
 	calculate_ray_direction(screen_x, &ray_dir_x, &ray_dir_y);
-	col.wall_distance = cast_ray_to_wall(ray_dir_x, ray_dir_y, &col.wall_direction);
-	col.wall_height = calculate_screen_wall_height(col.wall_distance);
-	render_wall_column(screen_x, col.wall_distance, col.wall_direction);
+	ray_result = cast_ray_to_wall(ray_dir_x, ray_dir_y);
+	wall_height = calculate_screen_wall_height(ray_result.distance);
+	render_wall_column(screen_x, ray_result.distance, ray_result.wall_face);
 }
+
 /*
 
 COLUMN-BASED RENDERING: MATHEMATICAL NECESSITY

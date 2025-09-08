@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 15:48:27 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/05 17:02:52 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/08 11:32:07 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,6 @@ problem: find intersection of continuous line with discrete grid
 constraint: must be exact (no approximatn errs)
 performance: must execute 1000+ time/frame (real-time requirement)
 
-
 Digital Differential Analyzer (DDA) algorithm: 
 instead of checking arbitrary pts, only check grid
 boundary crossings (efficient)
@@ -46,15 +45,20 @@ think of DDA as:
 ret: perpendicular dist (prevent fisheye distortion) */
 
 // coordinate
-double	cast_ray_to_wall(double ray_dir_x, double ray_dir_y, int *wall_side)
+t_ray_result	cast_ray_to_wall(double ray_dir_x, double ray_dir_y)
 {
-	t_dda_state	state;
-	double		wall_distance;
+	t_dda_state		state;
+	t_ray_result	result;
 
 	setup_dda_vars(ray_dir_x, ray_dir_y, &state);
-	execute_dda_traversal(&state, wall_side);
-	wall_distance = calculate_wall_distance(&state, wall_side);
-	return (wall_distance);
+	execute_dda_traversal(&state, &result.wall_side);
+	result.distance = calculate_wall_distance(&state, result.wall_side);
+	result.hit_x = g_game.player.pos_x
+		+ (result.distance * ray_dir_x);
+	result.hit_y = g_game.player.pos_y
+		+ (result.distance * ray_dir_y);
+	result.wall_face = determine_wall_face(&state, result.wall_side);
+	return (result);
 }
 
 /* core dda algo
@@ -96,4 +100,45 @@ double	calculate_wall_distance(t_dda_state *state, int wall_side)
 		return ((state->map_x - g_game.player.pos_x + (1 - state->step_x) / 2) / state->ray_dir_x);
 	else
 		return ((state->map_y - g_game.player.pos_y + (1 - state->step_y) / 2) / state->ray_dir_y);
+}
+
+/*
+** determine_wall_face:
+**	This helper function decides which face of a wall
+**	the ray has collided with during the DDA traversal.
+**
+**	- If the ray hit a vertical wall:
+**		step_x > 0 means the ray approached from the west,
+**		otherwise from the east.
+**
+**	- If the ray hit a horizontal wall:
+**		step_y > 0 means the ray approached from the north,
+**		otherwise from the south.
+**
+**	Parameters:
+**		state      -> Current DDA traversal state, including step direction.
+**		wall_side  -> Indicator if the collision was with a vertical or
+**		              horizontal wall (VERTICAL_WALL / HORIZONTAL_WALL).
+**
+**	Returns:
+**		One of the wall face constants (NORTH, SOUTH, EAST, WEST)
+**		indicating the side of the wall that was hit.
+*/
+static int	determine_wall_face(t_dda_state *state, int wall_side)
+{
+	if (wall_side == VERTICAL_WALL)
+	{
+		if (state->step_x > 0)
+			return (WEST);
+		else
+			return (EAST);
+	}
+	else if (wall_side == HORIZONTAL_WALL)
+	{
+		if (state->step_y > 0)
+			return (NORTH);
+		else
+			return (SOUTH);
+	}
+	return (NORTH);
 }

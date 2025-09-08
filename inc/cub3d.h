@@ -130,6 +130,27 @@ typedef struct s_column_render
 	int				wall_direction;	// wall side hit (0-3)
 }					t_column_render;
 
+/* ray casting: a fn that maps:
+	in: ray_origin, ray_direction
+	out: distance, wall_side, hit_coords 
+hence new struct */
+typedef struct	s_ray_result
+{
+	double			distance;		// perpendicular wall dist
+	int				wall_side;		// VERT / HORIZ
+	double			hit_x;
+	double			hit_y;
+	int				wall_face;		// n/s/e/w
+}					t_ray_result;
+
+typedef struct	s_texture_context
+{
+	int				wall_direction;
+	double			wall_hit_x;
+	double			wall_hit_y;
+	int				wall_height;
+}					t_texture_context;
+
 typedef struct s_texinfo
 {
 	char			**slot;			// texture slot
@@ -190,9 +211,9 @@ int	normalize_map(char ***lines_io, int h, int *out_w);
 void	render_complete_frame(void);
 void	render_single_column(int screen_x);
 // ray math
-void	calculate_ray_direction(int screen_x, double *ray_dir_x, double *ray_dir_y);
+void			calculate_ray_direction(int screen_x, double *ray_dir_x, double *ray_dir_y);
 // dda algo
-double	cast_ray_to_wall(double ray_dir_x, double ray_dir_y, int *wall_side);
+t_ray_result	cast_ray_to_wall(double ray_dir_x, double ray_dir_y);
 void	execute_dda_traversal(t_dda_state *state, int *wall_side);
 double	calculate_wall_distance(t_dda_state *state, int wall_side);
 // dda setup utils
@@ -201,10 +222,7 @@ void	setup_dda_vars(double ray_dir_x, double ray_dir_y, t_dda_state *state);
 int		calculate_screen_wall_height(double wall_distance);
 void	calculate_wall_boundaries(int wall_height, int *wall_start, int *wall_end);
 // texture sampling
-int		get_wall_texture_color(int wall_direction, int screen_y, int wall_height);
-int             load_wall_textures(void);
-t_texture_image *load_single_texture(char *path);
-void            cleanup_wall_textures(void);
+
 // wall rendering
 void	render_wall_column(int screen_x, double wall_distance, int wall_direction);
 // screen buffer ops

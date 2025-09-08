@@ -6,58 +6,71 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 14:01:40 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/07 16:29:54 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/08 10:45:44 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/cub3d.h"
-
-texture_image *get_texture_for_direction(int wall_direction);
-int calculate_texture_x(double wall_hit_pos, int wall_side);
-int calculate_texture_y(int screen_y, int wall_start, int wall_height);
-int sample_texture_pixel(texture_image *tex, int tex_x, int tex_y);
-
-// /*
-// TEXTURE MAPPING: Map wall texture to screen coordinates
-// */
-// int get_wall_texture_color(int wall_direction, int screen_y, int wall_height)
-// {
-//     // Determine which texture to use based on wall face
-//     texture_image *wall_texture = get_texture_for_direction(wall_direction);
-    
-//     // Calculate texture coordinates
-//     double texture_y_ratio = (double)(screen_y - wall_start_y) / wall_height;
-//     int texture_y = (int)(texture_y_ratio * wall_texture->height);
-    
-//     // Extract color from texture at calculated coordinates
-//     return (extract_texture_pixel(wall_texture, texture_x, texture_y));
-// }
-
-
-
-// TEMPORARY
 /*
-SOLID COLOR VERIFICATION
-Purpose: Verify wall face detection accuracy before texture complexity
-Strategy: Each wall face gets distinct solid color
+add surface reality through coordinate transformation from world space to texture space
 
-Testing Strategy: Walk through your map - 
-each wall should consistently show its assigned color.
+without texture mapping, you have geometric simulation but not visual conviction. 
+Texturing transforms abstract space into experiential place
+
+Your world position determines which texture region you see. 
+This creates spatial continuity - the fundamental illusion 
+that texture exists on wall surfaces rather than just being painted on screen
 
 
+texture pipeline - data flow architecture:
+
+render_single_column()
+    ↓ [Creates texture context]
+render_wall_section() 
+    ↓ [Passes context + screen_y]
+get_wall_texture_color()
+    ↓ [Calculates UV coordinates]
+sample_texture_pixel()
+    ↓ [Extracts color from texture]
+put_pixel()
+
+
+
+Function Responsibility Breakdown
+
+get_wall_texture_color(): Coordinate transformation
+
+	Input: Texture context + screen Y position
+	Process: World coordinates → UV texture coordinates
+	Output: Color value
+
+sample_texture_pixel(): Memory access
+
+	Input: Texture pointer + UV coordinates
+	Process: Bounds checking + array indexing
+	Output: RGBA pixel value
+
+get_texture_for_direction(): Texture selection
+
+	Input: Wall direction [0-3]
+	Process: Array lookup
+	Output: Texture pointer
 */
 
-int get_wall_texture_color(int wall_direction, int screen_y, int wall_height)
-{
-    // Solid colors for each wall face - highly distinct for verification
-    if (wall_direction == NORTH)
-        return (0xFF0000);  // Bright Red
-    else if (wall_direction == SOUTH)  
-        return (0x00FF00);  // Bright Green
-    else if (wall_direction == EAST)
-        return (0x0000FF);  // Bright Blue  
-    else if (wall_direction == WEST)
-        return (0xFFFF00);  // Yellow
-    
-    return (0xFF00FF);      // Magenta fallback (debug indicator)
-}
+#include "../inc/cub3d.h"
+
+
+/*
+
+STEP 1: Extend DDA to Return Hit Coordinates
+
+Current Signature:
+double cast_ray_to_wall(double ray_dir_x, double ray_dir_y, int *wall_side);
+
+Required Signature:
+double cast_ray_to_wall(double ray_dir_x, double ray_dir_y, int *wall_side, 
+                       double *wall_hit_x, double *wall_hit_y);
+
+
+need to calculate exact hit coordinates in dda.c/cast_ray_to_wall()
+					   
+*/

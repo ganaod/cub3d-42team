@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 14:01:40 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/08 15:51:07 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/08 16:02:05 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,7 +153,50 @@ How do we apply this normalization to actual wall intersection calculations?
 		
 
 
-.... MORE INTERMEDIARY STEPS HERE ....
+
+
+
+THE WALL SURFACE COORDINATE PROBLEM
+
+Current data: Ray hits wall at world coordinates (5.23, 3.67)
+Question: What does this world coordinate tell us about position on the wall surface?
+Key insight: We need to separate the wall identification from the position within wall
+
+
+DECOMPOSING THE WALL INTERSECTION
+
+Given intersection: (5.23, 3.67)
+
+	Step 1: Identify which wall cell
+	Wall cell: (floor(5.23), floor(3.67)) = (5, 3)
+
+	Step 2: Extract position within cell
+	X position within cell: 5.23 - 5 = 0.23
+	Y position within cell: 3.67 - 3 = 0.67
+
+Recognition: These fractional parts (0.23, 0.67) are already normalized [0,1]
+
+
+
+THE WALL FACE ORIENTATION PROBLEM
+Critical question: Which fractional part represents horizontal position across wall face?
+
+Wall face analysis:
+	North/South faces: Wall runs East-West → horizontal = X fractional part
+	East/West faces: Wall runs North-South → horizontal = Y fractional part
+
+Example calculations:
+North face hit: U = X_fractional = 0.23
+East face hit:  U = Y_fractional = 0.67
+
+The UV assignment:
+	U coordinate: Horizontal position across wall face
+	V coordinate: Vertical position up wall face (from screen pixel position)
+
+
+
+
+
 
 
 
@@ -174,6 +217,100 @@ How do we calculate these normalized coordinates from world intersection points?
 
 
 	
+THE VERTICAL POSITION CHALLENGE
+
+Current situation: We have U coordinate from wall intersection. But V coordinate represents vertical position on wall surface.
+Key recognition: V coordinate doesn't come from world coordinates - it comes from screen pixel position.
+
+
+
+THE SCREEN-TO-WALL MAPPING
+
+Given data:
+	Wall appears on screen: from wall_start_y to wall_end_y
+	Current screen pixel: at position screen_y
+Question: What wall surface height does this screen pixel represent?
+
+Wall rendering spans:
+	wall_start_y = 200 pixels (top of wall on screen)
+	wall_end_y = 400 pixels   (bottom of wall on screen)
+	wall_height = 200 pixels  (total wall height on screen)
+
+
+	
+THE NORMALIZATION CALCULATION
+
+For screen pixel at position 300:
+
+Step 1: Calculate offset from wall top
+pixel_offset = screen_y - wall_start_y
+pixel_offset = 300 - 200 = 100 pixels
+
+Step 2: Calculate relative position
+relative_position = pixel_offset ÷ total_wall_height
+V = 100 ÷ 200 = 0.5
+
+Meaning: This pixel represents the middle of the wall surface (50% down from top).
+
+General formula:
+V = (screen_y - wall_start_y) / (wall_end_y - wall_start_y)
+
+Result: V coordinate [0,1] where 0 = wall top, 1 = wall bottom.
+
+
+
+
+
+
+Next: How do we convert these UV coordinates to actual texture pixel indices?
+
+
+
+
+
+
+THE TEXTURE SPACE CONVERSION
+Precisely. The UV coordinates [0,1] represent relative positions that we apply to the texture image.
+Given:
+
+U = 0.3, V = 0.7 (wall surface coordinates)
+Texture image: 128 × 128 pixels
+Question: Which texture pixel corresponds to this wall position?
+
+
+THE SCALING TRANSFORMATION
+Convert relative position to absolute pixel index:
+Step 1: Scale U coordinate to texture width
+texture_x = U × texture_width
+texture_x = 0.3 × 128 = 38.4
+Step 2: Scale V coordinate to texture height
+texture_y = V × texture_height  
+texture_y = 0.7 × 128 = 89.6
+Step 3: Convert to integer indices
+pixel_x = (int)texture_x = 38
+pixel_y = (int)texture_y = 89
+
+THE PIXEL ACCESS
+Extract color from texture array:
+pixel_index = pixel_y × texture_width + pixel_x
+pixel_index = 89 × 128 + 38 = 11,422
+color = texture_data[pixel_index]
+Complete transformation:
+Wall surface position (30% across, 70% down)
+→ Texture position (30% across, 70% down)  
+→ Pixel indices (38, 89)
+→ Color value
+Recognition: The relative position relationship is preserved - 30% across wall surface = 30% across texture image.
+Final step: This color value gets written to the screen pixel that initiated the ray.
+
+
+
+
+
+
+
+
+
 
 
 

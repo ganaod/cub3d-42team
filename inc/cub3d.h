@@ -214,7 +214,7 @@ void	render_wall_column(int screen_x, double wall_distance, int wall_direction);
 void	clear_screen_buffer(void);
 void	put_pixel(int x, int y, int color);
 void	present_frame_to_screen(void);
-=======
+
 //  ================== MAP_GRID_CELL ==================
 
 int	put_cell_from_char(t_map *m, t_player *pl, int idx, char c);

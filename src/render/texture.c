@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 14:01:40 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/08 15:34:09 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/08 15:51:07 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,11 +97,88 @@ clarification in terms of spaces:
 
 	
 
+Recap:
+
+We've established:
+	Projection creates geometric skeleton, texturing adds surface appearance
+	We need to map surface appearance data onto geometric surfaces
+	We have different coordinate spaces: screen space, world space, wall-local space, texture space
+	The transformation chain is: 
+		screen space → world space → wall-local space → texture space → screen space
+
+
+	
+
+
+The Correspondence Problem:
+
+	Current state: We know we need to map wall surface positions to texture positions.
+
+	The fundamental question: How do we establish correspondence between:
+		Any wall surface (different sizes, orientations, world positions)
+		Any texture image (different pixel dimensions)
+
+
+The Standardisation requirement:
+
+	Problem: Wall surfaces have arbitrary world coordinates - different sizes, orientations
+	Question: How do we make texture mapping independent of world position? 
+		how to describe any position on any surface? 
+	Recognition: We need a universal coordinate system for wall surfaces.
+		that will give us, e.g. a universal way to say "middle"
+	
+
+How do we create this universal position description system?
+
+Normalisation approach:
+	core principle: convert absolute measurements to relative measurements:
+	relative_position = absolute_position ÷ total_dimension
+
+Range standardisation:
+	What should the relative position range be?
+
+	Options:
+		0% to 100% (percentage system)
+		0 to 1 (decimal fraction system)
+		-1 to +1 (centered system)
+
+	Choice rationale for [0,1]:
+		Mathematical convenience: Direct multiplication with pixel dimensions
+		Universal meaning: 0 = start, 1 = end, 0.5 = middle
+		Graphics convention: Established standard across computer graphics
+
+
+	
+How do we apply this normalization to actual wall intersection calculations?
+		
+
+
+.... MORE INTERMEDIARY STEPS HERE ....
+
+
+
+The UV Coordinate System:
+
+	Principle: Establish normalized coordinates for any surface
+		U coordinate: Horizontal position across surface [0,1]
+		V coordinate: Vertical position across surface [0,1]
+
+	Key insight: Every wall surface, regardless of size or world position, maps to the same [0,1] × [0,1] coordinate space.
+	
+	
+	
+
+
+How do we calculate these normalized coordinates from world intersection points?
 
 
 
 	
 
+
+
+
+		
 	
 TEXTURE MAPPING - World Position → Texture Position
 

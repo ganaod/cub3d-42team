@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 14:01:40 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/08 16:02:05 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/08 16:06:44 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -279,28 +279,40 @@ Question: Which texture pixel corresponds to this wall position?
 
 
 THE SCALING TRANSFORMATION
+
 Convert relative position to absolute pixel index:
-Step 1: Scale U coordinate to texture width
-texture_x = U × texture_width
-texture_x = 0.3 × 128 = 38.4
-Step 2: Scale V coordinate to texture height
-texture_y = V × texture_height  
-texture_y = 0.7 × 128 = 89.6
-Step 3: Convert to integer indices
-pixel_x = (int)texture_x = 38
-pixel_y = (int)texture_y = 89
+
+	Step 1: Scale U coordinate to texture width
+	texture_x = U × texture_width
+	texture_x = 0.3 × 128 = 38.4
+
+	Step 2: Scale V coordinate to texture height
+	texture_y = V × texture_height  
+	texture_y = 0.7 × 128 = 89.6
+
+	Step 3: Convert to integer indices
+	pixel_x = (int)texture_x = 38
+	pixel_y = (int)texture_y = 89
+
+
 
 THE PIXEL ACCESS
+
 Extract color from texture array:
-pixel_index = pixel_y × texture_width + pixel_x
-pixel_index = 89 × 128 + 38 = 11,422
-color = texture_data[pixel_index]
+	pixel_index = pixel_y × texture_width + pixel_x
+	pixel_index = 89 × 128 + 38 = 11,422
+	color = texture_data[pixel_index]
+	
 Complete transformation:
 Wall surface position (30% across, 70% down)
 → Texture position (30% across, 70% down)  
 → Pixel indices (38, 89)
 → Color value
-Recognition: The relative position relationship is preserved - 30% across wall surface = 30% across texture image.
+
+Recognition: The relative position relationship is preserved - 
+30% across wall surface = 30% across texture image.
+
+
 Final step: This color value gets written to the screen pixel that initiated the ray.
 
 
@@ -344,3 +356,75 @@ Computer Reality: Convert 2D texture position → 1D memory address → color va
 
 
 */
+
+
+int get_wall_texture_color(t_texture_context *ctx, int screen_y)
+{
+    t_texture_image *texture;
+    double          texture_u, texture_v;
+    int             texture_x, texture_y;
+
+    // STEP 1: Get texture for this wall direction
+    texture = get_texture_for_direction(ctx->wall_direction);
+    if (!texture || !texture->pixels)
+        return (0xFF00FF); // Magenta fallback
+
+    // STEP 2: Calculate texture U coordinate (horizontal)
+    texture_u = calculate_texture_u(ctx);
+
+    // STEP 3: Calculate texture V coordinate (vertical)  
+    texture_v = calculate_texture_v(ctx, screen_y);
+
+    // STEP 4: Convert UV [0,1] to pixel coordinates
+    texture_x = (int)(texture_u * texture->width);
+    texture_y = (int)(texture_v * texture->height);
+
+    // STEP 5: Sample pixel from texture
+    return sample_texture_pixel(texture, texture_x, texture_y);
+}
+
+double calculate_texture_u(t_texture_context *ctx)
+{
+    double wall_pos;
+
+    // Different calculation based on wall orientation
+    if (ctx->wall_direction == NORTH || ctx->wall_direction == SOUTH)
+        wall_pos = ctx->wall_hit_x; // Vertical walls use X coordinate
+    else
+        wall_pos = ctx->wall_hit_y; // Horizontal walls use Y coordinate
+
+    // Return fractional part [0,1]
+    return (wall_pos - floor(wall_pos));
+}
+
+double calculate_texture_v(t_texture_context *ctx, int screen_y)
+{
+    int wall_start_y, wall_end_y;
+
+    calculate_wall_boundaries(ctx->wall_height, &wall_start_y, &wall_end_y);
+
+    // Map screen position to texture coordinate [0,1]
+    if (wall_end_y <= wall_start_y)
+        return (0.0);
+
+    return ((double)(screen_y - wall_start_y) / (wall_end_y - wall_start_y));
+}
+
+int sample_texture_pixel(t_texture_image *tex, int tex_x, int tex_y)
+{
+    // Bounds protection
+    if (tex_x >= tex->width) tex_x = tex->width - 1;
+    if (tex_y >= tex->height) tex_y = tex->height - 1;
+    if (tex_x < 0) tex_x = 0;
+    if (tex_y < 0) tex_y = 0;
+
+    // Linear array access: 2D → 1D conversion
+    return (tex->pixels[tex_y * tex->width + tex_x]);
+}
+
+t_texture_image *get_texture_for_direction(int wall_direction)
+{
+    if (wall_direction >= 0 && wall_direction < 4)
+        return (&g_game.map.wall_textures[wall_direction]);
+    return (NULL);
+}

@@ -119,7 +119,7 @@ typedef struct	s_ray_result
 	int				wall_side;		// VERT / HORIZ
 	double			hit_x;
 	double			hit_y;
-	int				wall_face;
+	int				wall_face;		// n/s/e/w
 }					t_ray_result;
 
 typedef struct	s_texture_context
@@ -191,7 +191,6 @@ void	render_complete_frame(void);
 void	render_single_column(int screen_x);
 // ray math
 void			calculate_ray_direction(int screen_x, double *ray_dir_x, double *ray_dir_y);
-int 			get_wall_face_hit(t_ray_result *ray_result);
 // dda algo
 t_ray_result	cast_ray_to_wall(double ray_dir_x, double ray_dir_y);
 void	execute_dda_traversal(t_dda_state *state, int *wall_side);

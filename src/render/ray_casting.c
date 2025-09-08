@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 15:48:41 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/08 11:18:01 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/08 11:30:16 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,3 +67,4 @@ int get_wall_face_hit(t_ray_result *ray_result)
             return (SOUTH);  // Hit bottom face of wall cell
     }
 }
+

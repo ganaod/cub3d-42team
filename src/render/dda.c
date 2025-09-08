@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 15:48:27 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/08 11:24:21 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/08 11:32:07 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,4 +100,45 @@ double	calculate_wall_distance(t_dda_state *state, int wall_side)
 		return ((state->map_x - g_game.player.pos_x + (1 - state->step_x) / 2) / state->ray_dir_x);
 	else
 		return ((state->map_y - g_game.player.pos_y + (1 - state->step_y) / 2) / state->ray_dir_y);
+}
+
+/*
+** determine_wall_face:
+**	This helper function decides which face of a wall
+**	the ray has collided with during the DDA traversal.
+**
+**	- If the ray hit a vertical wall:
+**		step_x > 0 means the ray approached from the west,
+**		otherwise from the east.
+**
+**	- If the ray hit a horizontal wall:
+**		step_y > 0 means the ray approached from the north,
+**		otherwise from the south.
+**
+**	Parameters:
+**		state      -> Current DDA traversal state, including step direction.
+**		wall_side  -> Indicator if the collision was with a vertical or
+**		              horizontal wall (VERTICAL_WALL / HORIZONTAL_WALL).
+**
+**	Returns:
+**		One of the wall face constants (NORTH, SOUTH, EAST, WEST)
+**		indicating the side of the wall that was hit.
+*/
+static int	determine_wall_face(t_dda_state *state, int wall_side)
+{
+	if (wall_side == VERTICAL_WALL)
+	{
+		if (state->step_x > 0)
+			return (WEST);
+		else
+			return (EAST);
+	}
+	else if (wall_side == HORIZONTAL_WALL)
+	{
+		if (state->step_y > 0)
+			return (NORTH);
+		else
+			return (SOUTH);
+	}
+	return (NORTH);
 }

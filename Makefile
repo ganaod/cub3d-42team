@@ -30,14 +30,14 @@ SRC_FILES   =	main.c \
 				map_grid_cells.c \
 				map_grid_fill.c \
 				map_grid_build.c \
-				render/dda.c \
-				render/dda_setup.c \
-				render/projection.c \
-				render/ray_casting.c \
-				render/render.c \
-				render/render_column.c \
-				render/screen_buffer.c \
-				render/texture.c
+				render_dda.c \
+				render_dda_setup.c \
+				render_projection.c \
+				render_ray_casting.c \
+				render_main.c \
+				render_column.c \
+				render_screen_buffer.c \
+				render_texture.c
 
 SRCS        = $(addprefix $(SRC_DIR)/, $(SRC_FILES))
 OBJS        = $(SRCS:.c=.o)
@@ -84,5 +84,3 @@ re: fclean all
 all: $(NAME)
 
 .PHONY: all clean fclean re libft gnl mlx ftprintf
-
-

@@ -130,10 +130,6 @@ typedef struct s_column_render
 	int				wall_direction;	// wall side hit (0-3)
 }					t_column_render;
 
-/* ray casting: a fn that maps:
-	in: ray_origin, ray_direction
-	out: distance, wall_side, hit_coords 
-hence new struct */
 typedef struct	s_ray_result
 {
 	double			distance;		// perpendicular wall dist
@@ -206,7 +202,7 @@ void	rstrip_eol(char *s);
 
 int	normalize_map(char ***lines_io, int h, int *out_w);
 
-//  ================== (NO SURR-)RENDER(!!!) ==================
+//  ================== (NO SUR-)RENDER(!!!) ==================
 // main render pipeline
 void			render_complete_frame(void);
 void			render_single_column(int screen_x);

@@ -87,6 +87,7 @@ typedef struct s_player
 	double			camera_plane_y;	// camera plane y (fov)
 }					t_player;
 /* smooth player movement, continuous pos
+represented by double
 map collision detection uses discrete cell values at floor(position) */
 
 // map configuration
@@ -138,7 +139,7 @@ typedef struct	s_ray_result
 {
 	double			distance;		// perpendicular wall dist
 	int				wall_side;		// VERT / HORIZ
-	double			hit_x;
+	double			intersection_x;
 	double			hit_y;
 	int				wall_face;		// n/s/e/w
 }					t_ray_result;

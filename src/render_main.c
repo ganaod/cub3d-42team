@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 17:04:34 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/09 11:15:49 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/09 11:17:08 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,7 +135,6 @@ one distance measurement determines the entire vertical appearance.
 
 */
 
-// STILL NEEDS TO CALL TEXTURING SUB-MODULE
 
 /* render wall: 1 complete vertical strip/slice of the 3D perspective view
 convert dist to screen coordinates */

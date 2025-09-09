@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 10:56:37 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/09 09:38:35 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/09 11:22:31 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,17 +37,21 @@ void	render_ceiling_section(int screen_x, int wall_start_y)
 
 /* render wall texture pixels */
 void	render_wall_section(int screen_x, int wall_start_y, int wall_end_y,
-							int wall_direction)
+							t_ray_result *ray_result)
 {
-	int	y;
-	int	texture_color;
+	int					y;
+	int					texture_colour;
+	t_texture_context	ctx;
 
+	ctx.wall_direction = ray_result->wall_face;
+	ctx.wall_hit_x = ray_result->hit_x;
+	ctx.wall_hit_y = ray_result->hit_y;
+	ctx.wall_height = wall_end_y - wall_start_y;
 	y = wall_start_y;
-	while (y < g_game.graphics.screen_height)
+	while (y < wall_end_y)
 	{
-		texture_color = get_wall_texture_color(wall_direction, y,
-						wall_end_y - wall_start_y);
-		put_pixel(screen_x, y, g_game.map.floor_color);
+		texture_colour = get_wall_texture_colour(&ctx, y);
+		put_pixel(screen_x, y, texture_colour);
 		y++;
 	}
 }

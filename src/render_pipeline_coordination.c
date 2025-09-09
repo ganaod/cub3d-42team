@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   render_main.c                                      :+:      :+:    :+:   */
+/*   render_pipeline_coordination.c                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 17:04:34 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/09 11:17:08 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/09 11:44:31 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,25 @@ execution pipeline:
 					get_wall_texture_colour() // UV calculation + sampling
 						put_pixel()   // Buffer write
 
-result: 2D map data → 3D visual representation 	*/
+result: 2D map data → 3D visual representation 	
+
+
+
+Systematic File Naming Convention
+
+Pattern: render_[functional_area]_[abstraction_level]_[specific_operation]_[process_method]
+
+Functional Areas (Sub-domains):
+	pipeline - Top-level coordination
+	mathematics - Pure mathematical transforms
+	visual - Visual composition/arrangement
+	texture - Surface appearance
+	infrastructure - Low-level operations
+
+
+
+
+*/
 
 
 /* 1. initialise buffer
@@ -137,7 +155,9 @@ one distance measurement determines the entire vertical appearance.
 
 
 /* render wall: 1 complete vertical strip/slice of the 3D perspective view
-convert dist to screen coordinates */
+convert dist to screen coordinates 
+
+receives ray intersection data, adds wall_height, passes both forward */
 void	render_wall_column(int screen_x, t_ray_result *ray_result, int wall_height)
 {
 	int	wall_start_y;

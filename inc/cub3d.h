@@ -121,8 +121,6 @@ typedef struct s_dda_state
 }					t_dda_state;
 
 // column rendering state
-// like dda state: temporary algorithmic struct, not a persistent game entity
-// groups related data to conform to 42 norm
 typedef struct s_column_render
 {
 	double			wall_distance;	// perpendicular distance to wall
@@ -202,7 +200,8 @@ void	rstrip_eol(char *s);
 
 int	normalize_map(char ***lines_io, int h, int *out_w);
 
-//  ================== (NO SUR-)RENDER(!!!) ==================
+//  ================== RENDER ==================
+
 // main render pipeline
 void			render_complete_frame(void);
 void			render_single_column(int screen_x);
@@ -226,7 +225,7 @@ void			calculate_wall_boundaries(int wall_height,
 					int *wall_start, int *wall_end);
 
 // texture sampling
-int				get_wall_texture_color(t_texture_context *ctx, int screen_y);
+int				get_wall_texture_colour(t_texture_context *ctx, int screen_y);
 double			calculate_texture_u(t_texture_context *ctx);
 double			calculate_texture_v(t_texture_context *ctx, int screen_y);
 int				sample_texture_pixel(t_texture_image *tex,
@@ -234,12 +233,17 @@ int				sample_texture_pixel(t_texture_image *tex,
 t_texture_image	*get_texture_for_direction(int wall_direction);
 
 // wall rendering
-void			render_wall_column(int screen_x, double wall_distance,
-					int wall_direction);
+void			render_wall_column(int screen_x, t_ray_result *ray_result, int wall_height);
+
+// column section rendering
+void			render_ceiling_section(int screen_x, int wall_start_y);
+void			render_wall_section(int screen_x, int wall_start_y, int wall_end_y, 
+					t_ray_result *ray_result);
+void			render_floor_section(int screen_x, int wall_end_y);
 
 // screen buffer ops
 void			clear_screen_buffer(void);
-void			put_pixel(int x, int y, int color);
+void			put_pixel(int x, int y, int colour);
 void			present_frame_to_screen(void);
 
 

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   dda.c                                              :+:      :+:    :+:   */
+/*   render_mathematics_dda_wall_intersection.c         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 15:48:27 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/08 11:32:07 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/09 13:51:28 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,28 @@ think of DDA as:
 	Step to that grid line, check for wall
 	Repeat until wall found
 
-ret: perpendicular dist (prevent fisheye distortion) */
+ret: perpendicular dist (prevent fisheye distortion) 
+
+
+// dda temp algorithm state
+typedef struct s_dda_state
+{
+	int				map_x;			// current grid x pos
+	int				map_y;			// current grid y pos
+	int				step_x;			// x step dir (-1 / +1)
+	int				step_y;			// y step dir (-1 / +1)
+	double			delta_dist_x;	// dist to traverse 1 x grid cell
+	double			delta_dist_y;	// dist to traverse 1 y grid cell
+	double			side_dist_x;	// dist to next x grid boundary
+	double			side_dist_y;	// dist to next y grid boundary
+	double			ray_dir_x;		// ray direction x
+	double			ray_dir_y;		// ray direction y
+	int				wall_hit;		// wall collision flag
+}					t_dda_state;
+
+
+
+*/
 
 // coordinate
 t_ray_result	cast_ray_to_wall(double ray_dir_x, double ray_dir_y)

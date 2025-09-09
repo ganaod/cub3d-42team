@@ -1,38 +1,64 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   render.c                                           :+:      :+:    :+:   */
+/*   render_main.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 17:04:34 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/08 11:37:32 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/09 11:11:48 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/cub3d.h"
 
-/* execution pipeline:
+/* 
+rendering module
+core operations:
 
-render.c (render_complete_frame)
-	↓
-render.c (render_single_column)  
-	↓
-ray_math.c (calculate_ray_direction)
-	↓
-dda.c (cast_ray_to_wall)
-	↓
-projection.c (calculate_screen_wall_height)
-	↓
-render.c (render_wall_column)
-	↓
-column_render.c (render_ceiling_section, render_wall_section, render_floor_section)
-	↓
-texture.c (get_wall_texture_color) [called from render_wall_section]
-	↓
-screen_buffer.c (put_pixel)
+	1. Ray Direction:    Screen column → World ray vector
+	2. Ray Intersection: Ray vector → Wall hit point + distance  
+	3. Projection:       Distance → Screen wall height
+	4. Boundaries:       Wall height → Pixel start/end positions
+	5. Texture Mapping:  Hit point + screen pixel → Texture coordinates
+	6. Texture Sampling: Texture coordinates → Colour value
+	7. Pixel Drawing:    Colour → Screen buffer
 
-result: 2D map data → 3D visual representation */
+key decisions:
+
+	column-based rendering
+		Why: Ray casting gives distance per column, not per pixel
+		Mathematical necessity: One ray → one distance → entire vertical strip
+
+	Decision 2: Data flow preservation
+		Why: Texture sampling needs ray intersection data
+		Method: Pass t_ray_result through call chain instead of decomposing early
+
+	Decision 3: Texture context construction at render_wall_section level
+		Why: This level has both ray data AND precise wall boundaries
+		Upstream levels: Missing wall boundaries
+		Downstream levels: Don't exist (next is texture functions)
+
+	Decision 4: 42 Norm parameter bundling
+		Constraint: Max 4 parameters per function
+		Reality: Texture calculation needs 5+ pieces of data
+		Solution: Bundle into t_texture_context struct
+
+
+execution pipeline:
+
+	render_complete_frame()           // Frame iteration
+		render_single_column()        // Ray → geometry coordination  
+			calculate_ray_direction() // Screen → ray transform
+			cast_ray_to_wall()        // Ray → intersection
+			calculate_screen_wall_height() // Distance → pixels
+			render_wall_column()      // Visual composition
+				render_wall_section() // Texture context + pixel iteration
+					get_wall_texture_colour() // UV calculation + sampling
+						put_pixel()   // Buffer write
+
+result: 2D map data → 3D visual representation 	*/
+
 
 /* 1. initialise buffer
 . clear screen buff to known state (black pixels)
@@ -81,7 +107,7 @@ void	render_single_column(int screen_x)
 	calculate_ray_direction(screen_x, &ray_dir_x, &ray_dir_y);
 	ray_result = cast_ray_to_wall(ray_dir_x, ray_dir_y);
 	wall_height = calculate_screen_wall_height(ray_result.distance);
-	render_wall_column(screen_x, ray_result.distance, ray_result.wall_face);
+	render_wall_column(screen_x, &ray_result, wall_height);
 }
 
 /*

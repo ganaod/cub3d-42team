@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 14:01:40 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/09 09:16:36 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/09 09:35:52 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -186,8 +186,8 @@ Wall face analysis:
 	East/West faces: Wall runs North-South → horizontal = Y fractional part
 
 Example calculations:
-North face hit: U = X_fractional = 0.23
-East face hit:  U = Y_fractional = 0.67
+	North face hit: U = X_fractional = 0.23
+	East face hit:  U = Y_fractional = 0.67
 
 The UV assignment:
 	U coordinate: Horizontal position across wall face
@@ -427,4 +427,21 @@ t_texture_image *get_texture_for_direction(int wall_direction)
     if (wall_direction >= 0 && wall_direction < 4)
         return (&g_game.map.wall_textures[wall_direction]);
     return (NULL);
+}
+
+/* temp / demo fn - hardcoded wall colours 
+. demonstrates basic wall colouring principle without texture files
+. usage: replace get_wall_texture_colour() in render_wall_section() in render_column.c */
+int get_wall_hardcoded_color(int wall_direction)
+{
+	if (wall_direction == NORTH)
+		return (0xFF4169E1);	// Royal Blue
+	else if (wall_direction == SOUTH)  
+		return (0xFF32CD32);	// Lime Green
+	else if (wall_direction == EAST)
+		return (0xFFDC143C);	// Crimson Red  
+	else if (wall_direction == WEST)
+		return (0xFFFF8C00);	// Dark Orange
+	else
+		return (0xFFFF00FF);	// Magenta fallback
 }

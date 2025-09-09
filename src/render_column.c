@@ -6,15 +6,19 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 10:56:37 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/07 15:45:59 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/09 09:38:35 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-/* column section helpers
+/* column with its sections:
+
 re. texture, from subject:
 	"display different wall textures"
 	"set the floor and ceiling to two different colours"
-hence only in render_wall_section() */
+
+hence 
+1 helper per section, texturing
+only in render_wall_section() */
 
 #include "../inc/cub3d.h"
 

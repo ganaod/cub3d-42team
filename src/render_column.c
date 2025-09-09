@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 10:56:37 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/09 11:22:31 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/09 11:24:27 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void	render_ceiling_section(int screen_x, int wall_start_y)
 	y = 0;
 	while (y < wall_start_y)
 	{
-		put_pixel(screen_x, y, g_game.map.ceiling_color);
+		put_pixel(screen_x, y, g_game.map.ceiling_colour);
 		y++;
 	}
 }
@@ -64,7 +64,7 @@ void	render_floor_section(int screen_x, int wall_end_y)
 	y = wall_end_y;
 	while (y < g_game.graphics.screen_height)
 	{
-		put_pixel(screen_x, y, g_game.map.floor_color);
+		put_pixel(screen_x, y, g_game.map.floor_colour);
 		y++;
 	}
 }

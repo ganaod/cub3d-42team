@@ -70,8 +70,8 @@ typedef struct s_texture_image
 {
 	mlx_image_t		*mlx_image;		// mlx42 image pointer
 	uint32_t		*pixels;		// pixel buffer
-	int				width;			// image width
-	int				height;			// image height
+	int				image_width;			// image width
+	int				image_height;			// image height
 }					t_texture_image;
 
 // player state
@@ -86,7 +86,7 @@ typedef struct s_player
 }					t_player;
 /* smooth player movement, continuous pos
 represented by double
-map collision detection uses discrete cell values at floor(position) */
+overlaid on discrete integer map grid */
 
 // map configuration
 typedef struct s_map
@@ -122,7 +122,7 @@ typedef struct s_dda_state
 	double			side_dist_y;
 	double			ray_dir_x;
 	double			ray_dir_y;
-	int				wall_hit;
+	int				wall_intersection;
 }					t_dda_state;
 
 // column rendering state
@@ -138,7 +138,7 @@ typedef struct	s_ray_result
 	double			distance;		// perpendicular wall dist
 	int				wall_side;		// VERT / HORIZ
 	double			intersection_x;
-	double			hit_y;
+	double			intersection_y;
 	int				wall_face;		// n/s/e/w
 }					t_ray_result;
 
@@ -146,8 +146,8 @@ typedef struct	s_ray_result
 typedef struct	s_texture_context
 {
 	int				wall_direction;
-	double			wall_hit_x;
-	double			wall_hit_y;
+	double			wall_intersection_x;
+	double			wall_intersection_y;
 	int				wall_height;
 }					t_texture_context;
 

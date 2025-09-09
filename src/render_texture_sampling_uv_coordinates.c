@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   render_texture.c                                   :+:      :+:    :+:   */
+/*   render_texture_sampling_uv_coordinates.c           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 14:01:40 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/09 09:35:52 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/09 11:48:54 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -358,76 +358,122 @@ Computer Reality: Convert 2D texture position → 1D memory address → color va
 */
 
 
-int get_wall_texture_color(t_texture_context *ctx, int screen_y)
+int	get_wall_texture_colour(t_texture_context *ctx, int screen_y)
 {
-    t_texture_image *texture;
-    double          texture_u, texture_v;
-    int             texture_x, texture_y;
+	t_texture_image	*texture;
+	double			texture_u;
+	double			texture_v;
+	int				texture_x;
+	int				texture_y;
 
-    // STEP 1: Get texture for this wall direction
-    texture = get_texture_for_direction(ctx->wall_direction);
-    if (!texture || !texture->pixels)
-        return (0xFF00FF); // Magenta fallback
-
-    // STEP 2: Calculate texture U coordinate (horizontal)
-    texture_u = calculate_texture_u(ctx);
-
-    // STEP 3: Calculate texture V coordinate (vertical)  
-    texture_v = calculate_texture_v(ctx, screen_y);
-
-    // STEP 4: Convert UV [0,1] to pixel coordinates
-    texture_x = (int)(texture_u * texture->width);
-    texture_y = (int)(texture_v * texture->height);
-
-    // STEP 5: Sample pixel from texture
-    return sample_texture_pixel(texture, texture_x, texture_y);
+	texture = get_texture_for_direction(ctx->wall_direction);
+	if (!texture || !texture->pixels)
+		return (0xFF00FF);
+	texture_u = calculate_texture_u(ctx);
+	texture_v = calculate_texture_v(ctx, screen_y);
+	texture_x = (int)(texture_u * texture->width);
+	texture_y = (int)(texture_v * texture->height);
+	return (sample_texture_pixel(texture, texture_x, texture_y));
 }
 
-double calculate_texture_u(t_texture_context *ctx)
+double	calculate_texture_u(t_texture_context *ctx)
 {
-    double wall_pos;
+	double	wall_pos;
 
-    // Different calculation based on wall orientation
-    if (ctx->wall_direction == NORTH || ctx->wall_direction == SOUTH)
-        wall_pos = ctx->wall_hit_x; // Vertical walls use X coordinate
-    else
-        wall_pos = ctx->wall_hit_y; // Horizontal walls use Y coordinate
-
-    // Return fractional part [0,1]
-    return (wall_pos - floor(wall_pos));
+	if (ctx->wall_direction == NORTH || ctx->wall_direction == SOUTH)
+		wall_pos = ctx->wall_hit_x;
+	else
+		wall_pos = ctx->wall_hit_y;
+	return (wall_pos - floor(wall_pos));
 }
 
-double calculate_texture_v(t_texture_context *ctx, int screen_y)
+double	calculate_texture_v(t_texture_context *ctx, int screen_y)
 {
-    int wall_start_y, wall_end_y;
+	int	wall_start_y;
+	int	wall_end_y;
 
-    calculate_wall_boundaries(ctx->wall_height, &wall_start_y, &wall_end_y);
-
-    // Map screen position to texture coordinate [0,1]
-    if (wall_end_y <= wall_start_y)
-        return (0.0);
-
-    return ((double)(screen_y - wall_start_y) / (wall_end_y - wall_start_y));
+	calculate_wall_boundaries(ctx->wall_height, &wall_start_y, &wall_end_y);
+	if (wall_end_y <= wall_start_y)
+		return (0.0);
+	return ((double)(screen_y - wall_start_y) / (wall_end_y - wall_start_y));
 }
 
-int sample_texture_pixel(t_texture_image *tex, int tex_x, int tex_y)
+int	sample_texture_pixel(t_texture_image *tex, int tex_x, int tex_y)
 {
-    // Bounds protection
-    if (tex_x >= tex->width) tex_x = tex->width - 1;
-    if (tex_y >= tex->height) tex_y = tex->height - 1;
-    if (tex_x < 0) tex_x = 0;
-    if (tex_y < 0) tex_y = 0;
-
-    // Linear array access: 2D → 1D conversion
-    return (tex->pixels[tex_y * tex->width + tex_x]);
+	if (tex_x >= tex->width)
+		tex_x = tex->width - 1;
+	if (tex_y >= tex->height)
+		tex_y = tex->height - 1;
+	if (tex_x < 0)
+		tex_x = 0;
+	if (tex_y < 0)
+		tex_y = 0;
+	return (tex->pixels[tex_y * tex->width + tex_x]);
 }
 
-t_texture_image *get_texture_for_direction(int wall_direction)
+t_texture_image	*get_texture_for_direction(int wall_direction)
 {
-    if (wall_direction >= 0 && wall_direction < 4)
-        return (&g_game.map.wall_textures[wall_direction]);
-    return (NULL);
+	if (wall_direction >= 0 && wall_direction < 4)
+		return (&g_game.map.wall_textures[wall_direction]);
+	return (NULL);
 }
+
+
+/*
+
+Texture System Pipeline - Five Core Functions:
+get_wall_texture_colour() - Main Orchestrator
+
+Input: Texture context + screen Y position
+Process: Coordinates entire texture sampling pipeline
+Output: Final colour value
+Role: The conductor - calls all other texture functions in sequence
+
+calculate_texture_u() - Horizontal Coordinate
+
+Input: Wall hit coordinates from ray intersection
+Process: Extracts fractional part for horizontal position [0,1]
+Logic: Vertical walls use X coordinate, horizontal walls use Y coordinate
+Output: U coordinate representing position across wall surface
+
+calculate_texture_v() - Vertical Coordinate
+
+Input: Screen Y position + wall height
+Process: Maps screen pixel position to wall surface position [0,1]
+Logic: (screen_y - wall_start_y) / wall_height
+Output: V coordinate representing position up/down wall surface
+
+sample_texture_pixel() - Memory Access
+
+Input: Texture image + pixel coordinates
+Process: Bounds protection + 2D→1D array indexing
+Logic: pixels[tex_y * tex_width + tex_x]
+Output: Raw colour value from texture memory
+
+get_texture_for_direction() - Texture Selection
+
+Input: Wall direction (NORTH/SOUTH/EAST/WEST)
+Process: Array lookup in global texture storage
+Output: Pointer to appropriate texture image
+
+The Complete Transform Chain:
+Wall hit (2.34, 4.67) + Screen pixel Y=300
+    ↓ calculate_texture_u()
+U=0.34 (horizontal position across wall)
+    ↓ calculate_texture_v()  
+V=0.6 (vertical position up wall)
+    ↓ UV→pixel conversion
+Texture coordinates (34, 60) in 100x100 texture
+    ↓ sample_texture_pixel()
+Colour value 0xFF8B4513 (from texture memory)
+
+
+
+*/
+
+
+
+
 
 /* temp / demo fn - hardcoded wall colours 
 . demonstrates basic wall colouring principle without texture files

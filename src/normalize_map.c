@@ -6,7 +6,7 @@
 /*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 10:09:54 by blohrer           #+#    #+#             */
-/*   Updated: 2025/09/05 14:37:26 by blohrer          ###   ########.fr       */
+/*   Updated: 2025/09/09 11:08:27 by blohrer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ static int	build_rect_lines(char ***out_new, char **old_lines, int h, int w)
 	char	**new_lines;
 	int		i;
 
-	if (!out_new || !old_lines || h <= 0 || w < 0)
+	if (!out_new || !old_lines || h <= 0 || w <= 0)
 		return (0);
 	new_lines = (char **)malloc(sizeof(char *) * (h + 1));
 	if (!new_lines)

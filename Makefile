@@ -38,6 +38,9 @@ SRC_FILES   =	main.c \
 				render_pipeline_coordination.c \
 				render_texture_sampling_uv_coordinates.c \
 				render_visual_column_sections.c
+				map_check_flood.c \
+				map_check_utils.c \
+				map_check.c
 
 SRCS        = $(addprefix $(SRC_DIR)/, $(SRC_FILES))
 OBJS        = $(SRCS:.c=.o)

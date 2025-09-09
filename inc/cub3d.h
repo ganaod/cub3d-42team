@@ -28,11 +28,9 @@
 # define CELL_VOID  (-1)  /* ' '  -> außerhalb/ungefüllt */
 # define CELL_EMPTY (0)   /* '0'  -> begehbar */
 # define CELL_WALL  (1)   /* '1'  -> Wand  */
-
 #ifndef FOV_PLANE
 # define FOV_PLANE 0.66
 #endif
-
 /* Richtungscodes */
 # define DIR_N 0
 # define DIR_S 1
@@ -168,6 +166,17 @@ typedef struct s_game
 // global game state
 extern t_game		g_game;
 
+typedef struct s_ffctx
+{
+	const t_map *m;   /* map + grid */
+	char       *vis;  /* visited flags, size w*h */
+	int        *q;    /* queue array, size w*h */
+	int         w;    /* width  */
+	int         h;    /* height */
+	int         head; /* queue head */
+	int         tail; /* queue tail */
+}	t_ffctx;
+
 //  ================== PARSE_UTILS ==================
 
 int	skip_ws(const char *s, int i);
@@ -260,5 +269,21 @@ int	fill_grid(t_map *m, t_player *pl, char **lines, int *count);
 int	build_grid_from_lines(t_map *m, t_player *pl, char **lines,
 		int *player_found);
 
+//  ================== MAP_CHECK_FLOOD ==================
+
+void	ffctx_init(t_ffctx *c, const t_map *m, char *vis, int *q);
+int	flood_from_start(t_ffctx *c, int start_idx);
+
+//  ================== MAP_CHECK_UTILS ==================
+
+int	idx_2d_to_1d(int x, int y, int w);
+int	in_bounds(int x, int y, int w, int h);
+void	queue_push(int *q, int *tail, int v);
+int	queue_pop(int *q, int *head, int tail, int *out);
+
+//  ================== MAP_CHECK_FLOOD ==================
+
+int	flood_from_border(t_ffctx *c);
+int	map_is_closed(const t_map *m);
 
 #endif

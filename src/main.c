@@ -255,6 +255,7 @@ int main(int argc, char **argv) {
     int   player_found;
     int   y;
     int   x;
+    int   ok;
 
     if (argc != 2) { fprintf(stderr, "usage: %s file.cub\n", argv[0]); return 2; }
     fd = open(argv[1], O_RDONLY);
@@ -264,20 +265,30 @@ int main(int argc, char **argv) {
     if (!collect_map_lines(&g.map, fd, &lines, &h)) { fprintf(stderr, "❌ collect_map_lines failed\n"); close(fd); return 4; }
     close(fd);
 
-    /* normalize_map braucht eine Breite-Variable: wir können direkt g.map.width füllen */
+    /* normalize_map passt lines rechteckig an (Spaces rechts) */
     if (!normalize_map(&lines, h, &g.map.width)) {
         fprintf(stderr, "❌ normalize_map failed\n");
         free_lines_array(lines, h);
         return 5;
     }
 
-    /* NEUE Signatur: h/w werden intern aus lines bestimmt */
+    /* Grid bauen (ermittelt width/height intern neu & setzt Player) */
     player_found = 0;
     if (!build_grid_from_lines(&g.map, &g.player, lines, &player_found)) {
         fprintf(stderr, "❌ build_grid_from_lines failed (player_found=%d)\n", player_found);
         free_lines_array(lines, h);
         return 6;
     }
+
+    /* 👉 NEU: Map-Closed-Check (Flood-Fill über CELL_VOID vom Rand) */
+    ok = map_is_closed(&g.map);
+    if (!ok) {
+        fprintf(stderr, "❌ map_is_closed: map is OPEN (leckt ins VOID)\n");
+        free_lines_array(lines, h);
+        free(g.map.grid);
+        return 7;
+    }
+    printf("✅ map_is_closed: map is CLOSED\n");
 
     /* Ausgabe */
     printf("✅ grid built: w=%d h=%d player_found=%d\n", g.map.width, g.map.height, player_found);

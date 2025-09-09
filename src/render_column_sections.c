@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   render_column.c                                    :+:      :+:    :+:   */
+/*   render_column_sections.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 10:56:37 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/09 11:24:27 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/09 14:32:56 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ void	render_wall_section(int screen_x, int wall_start_y, int wall_end_y,
 		y++;
 	}
 }
+// DEMO: texture_colour = get_wall_hardcoded_color(wall_direction);
 
 /* render floor pixels below wall */
 void	render_floor_section(int screen_x, int wall_end_y)

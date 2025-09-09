@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   dda.c                                              :+:      :+:    :+:   */
+/*   render_math_dda.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 15:48:27 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/08 11:32:07 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/09 14:55:42 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,9 +31,12 @@ problem: find intersection of continuous line with discrete grid
 constraint: must be exact (no approximatn errs)
 performance: must execute 1000+ time/frame (real-time requirement)
 
+
+
+
 Digital Differential Analyzer (DDA) algorithm: 
-instead of checking arbitrary pts, only check grid
-boundary crossings (efficient)
+	instead of checking arbitrary pts, only check grid
+	boundary crossings (efficient)
 
 think of DDA as:
 	Standing at player position
@@ -42,7 +45,29 @@ think of DDA as:
 	Step to that grid line, check for wall
 	Repeat until wall found
 
-ret: perpendicular dist (prevent fisheye distortion) */
+ret: perpendicular dist (prevent fisheye distortion) 
+
+
+// DDA traversal state
+typedef struct s_dda_state {
+    int    map_x, map_y;        // Current grid position
+    int    step_x, step_y;      // Step direction (-1 or +1)
+    double side_dist_x, side_dist_y;  // Distance to next boundary
+    double delta_dist_x, delta_dist_y; // Distance per grid step
+} t_dda_state;
+
+bridges discrete map space & continuous world space
+steps thru integer grid cells while maintaining continuous dist precision for accurate intersection calculations
+
+
+// wall side types
+# define VERTICAL_WALL	0
+# define HORIZONTAL_WALL 1
+
+*/
+
+
+
 
 // coordinate
 t_ray_result	cast_ray_to_wall(double ray_dir_x, double ray_dir_y)

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   projection.c                                       :+:      :+:    :+:   */
+/*   render_math_projection.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 11:18:50 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/07 14:51:04 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/09 14:44:52 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,9 +36,9 @@ Normalized case: focal_length = screen_height
 Result: wall_height_pixels = screen_height / wall_distance
 
 Mathematical behavior:
-- Distance 1.0 → Wall fills screen (height = screen_height)
-- Distance 2.0 → Wall half screen (height = screen_height/2)
-- Distance → ∞ → Wall approaches 0 pixels	*/
+	. Distance 1.0 → Wall fills screen (height = screen_height)
+	. Distance 2.0 → Wall half screen (height = screen_height/2)
+	. Distance → ∞ → Wall approaches 0 pixels	*/
 
 #include "../inc/cub3d.h"
 

@@ -40,33 +40,33 @@
 # define DIR_E 3
 
 /* map space: cell types */
-# define EMPTY 0		// traversable space
-# define WALL 1			// collision / rendering surface
-# define VOID 2			// invalid map space, parsing edge case (outside boundaries)
+# define EMPTY	0		// traversable space
+# define WALL	1			// collision / rendering surface
+# define VOID	2			// invalid map space, parsing edge case (outside boundaries)
 
 // wall face directions: abs world coords, fixed to map
 // not relative to player
 // (for texture selection)
-# define NORTH 0
-# define SOUTH 1
-# define WEST 2
-# define EAST 3
+# define NORTH	0
+# define SOUTH	1
+# define WEST	2
+# define EAST	3
 
 // wall side types (for DDA)
-# define VERTICAL_WALL	0
-# define HORIZONTAL_WALL 1
+# define VERTICAL_WALL		0
+# define HORIZONTAL_WALL	1
 
 // screen space:
 // 2D array of discrete pixels representing the 3D view
-# define DEFAULT_WIDTH	1024		// screen sampling resolution
-# define DEFAULT_HEIGHT	768			// vertical pixel count
+# define DEFAULT_WIDTH		1024		// screen sampling resolution
+# define DEFAULT_HEIGHT		768			// vertical pixel count
 /* Coordinate Mapping:
 Screen X: [0 to 1023] - Left to right pixel columns
 Screen Y: [0 to 767]  - Top to bottom pixel rows
 Origin: (0,0) at top-left corner	*/
 
 // ray space: vision simulation
-# define FOV 			0.66		// field of view / radians (~38 degrees)
+# define FOV				0.66		// field of view / radians (~38 degrees)
 
 typedef struct s_texture_image
 {
@@ -86,7 +86,7 @@ typedef struct s_player
 	double			camera_plane_x;	// camera plane x (fov)
 	double			camera_plane_y;	// camera plane y (fov)
 }					t_player;
-/* player movement is continuous
+/* smooth player movement, continuous pos
 map collision detection uses discrete cell values at floor(position) */
 
 // map configuration

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   render_mathematics_dda_wall_intersection.c         :+:      :+:    :+:   */
+/*   render_math_dda.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 15:48:27 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/09 13:51:28 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/09 14:37:09 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,23 +45,17 @@ think of DDA as:
 ret: perpendicular dist (prevent fisheye distortion) 
 
 
-// dda temp algorithm state
-typedef struct s_dda_state
-{
-	int				map_x;			// current grid x pos
-	int				map_y;			// current grid y pos
-	int				step_x;			// x step dir (-1 / +1)
-	int				step_y;			// y step dir (-1 / +1)
-	double			delta_dist_x;	// dist to traverse 1 x grid cell
-	double			delta_dist_y;	// dist to traverse 1 y grid cell
-	double			side_dist_x;	// dist to next x grid boundary
-	double			side_dist_y;	// dist to next y grid boundary
-	double			ray_dir_x;		// ray direction x
-	double			ray_dir_y;		// ray direction y
-	int				wall_hit;		// wall collision flag
-}					t_dda_state;
+// DDA traversal state
+typedef struct s_dda_state {
+    int    map_x, map_y;        // Current grid position
+    int    step_x, step_y;      // Step direction (-1 or +1)
+    double side_dist_x, side_dist_y;  // Distance to next boundary
+    double delta_dist_x, delta_dist_y; // Distance per grid step
+} t_dda_state;
 
-
+// wall side types
+# define VERTICAL_WALL	0
+# define HORIZONTAL_WALL 1
 
 */
 

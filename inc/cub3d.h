@@ -44,7 +44,7 @@
 
 // wall face directions: abs world coords, fixed to map
 // not relative to player
-// (for texture selection)
+// for texture selection
 # define NORTH	0
 # define SOUTH	1
 # define WEST	2

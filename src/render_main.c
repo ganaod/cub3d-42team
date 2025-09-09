@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 17:04:34 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/09 11:11:48 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/09 11:15:49 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,7 +139,7 @@ one distance measurement determines the entire vertical appearance.
 
 /* render wall: 1 complete vertical strip/slice of the 3D perspective view
 convert dist to screen coordinates */
-void	render_wall_column(int screen_x, int wall_height, int wall_direction)
+void	render_wall_column(int screen_x, t_ray_result *ray_result, int wall_height)
 {
 	int	wall_start_y;
 	int	wall_end_y;
@@ -147,7 +147,7 @@ void	render_wall_column(int screen_x, int wall_height, int wall_direction)
 	wall_start_y = (g_game.graphics.screen_height - wall_height) / 2;
 	wall_end_y = wall_start_y + wall_height;
 	render_ceiling_section(screen_x, wall_start_y);
-	render_wall_section(screen_x, wall_start_y, wall_end_y, wall_direction);
+	render_wall_section(screen_x, wall_start_y, wall_end_y, ray_result);
 	render_floor_section(screen_x, wall_end_y);
 }
 /* vertically center the wall with ceiling above & floor below

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   render_pipeline_coordination.c                     :+:      :+:    :+:   */
+/*   render__flow_coordination.c                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 17:04:34 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/09 11:44:31 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/10 09:31:50 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,22 +58,6 @@ execution pipeline:
 						put_pixel()   // Buffer write
 
 result: 2D map data → 3D visual representation 	
-
-
-
-Systematic File Naming Convention
-
-Pattern: render_[functional_area]_[abstraction_level]_[specific_operation]_[process_method]
-
-Functional Areas (Sub-domains):
-	pipeline - Top-level coordination
-	mathematics - Pure mathematical transforms
-	visual - Visual composition/arrangement
-	texture - Surface appearance
-	infrastructure - Low-level operations
-
-
-
 
 */
 

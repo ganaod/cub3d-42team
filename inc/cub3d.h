@@ -13,7 +13,6 @@
 
 # define EXIT_SUCCESS 0
 # define EXIT_FAILURE 1
-// # define BUFFER_SIZE 1024
 
 # define HDR_NO (1<<0)
 # define HDR_SO (1<<1)
@@ -22,8 +21,6 @@
 # define HDR_F  (1<<4)
 # define HDR_C  (1<<5)
 
-// map cell types
-# define EMPTY 0		// traversable space
 /* Zelltypen fürs Grid */
 # define CELL_VOID  (-1)  /* ' '  -> außerhalb/ungefüllt */
 # define CELL_EMPTY (0)   /* '0'  -> begehbar */
@@ -31,16 +28,12 @@
 #ifndef FOV_PLANE
 # define FOV_PLANE 0.66
 #endif
+
 /* Richtungscodes */
 # define DIR_N 0
 # define DIR_S 1
 # define DIR_W 2
 # define DIR_E 3
-
-/* map space: cell types */
-# define EMPTY	0		// traversable space
-# define WALL	1			// collision / rendering surface
-# define VOID	2			// invalid map space, parsing edge case (outside boundaries)
 
 // wall face directions: abs world coords, fixed to map
 // not relative to player
@@ -68,8 +61,8 @@ Origin: (0,0) at top-left corner	*/
 
 typedef struct s_texture_image
 {
-	mlx_image_t		*mlx_image;		// mlx42 image pointer
-	uint32_t		*pixels;		// pixel buffer
+	mlx_image_t		*mlx_image;				// mlx42 image pointer
+	uint32_t		*pixels;				// pixel buffer
 	int				image_width;			// image width
 	int				image_height;			// image height
 }					t_texture_image;
@@ -77,12 +70,12 @@ typedef struct s_texture_image
 // player state
 typedef struct s_player
 {
-	double			pos_x;			// world position x
-	double			pos_y;			// world position y
-	double			dir_x;			// view direction x
-	double			dir_y;			// view direction y
-	double			camera_plane_x;	// camera plane x (fov)
-	double			camera_plane_y;	// camera plane y (fov)
+	double			world_pos_x;			// world position x
+	double			world_pos_y;			// world position y
+	double			world_dir_x;			// view direction x
+	double			world_dir_y;			// view direction y
+	double			world_camera_plane_x;	// camera plane x (fov)
+	double			world_camera_plane_y;	// camera plane y (fov)
 }					t_player;
 /* smooth player movement, continuous pos
 represented by double
@@ -116,39 +109,39 @@ typedef struct s_dda_state
 	int				map_y;
 	int				step_x;
 	int				step_y;
-	double			delta_dist_x;
+	double			delta_dist_x;							// distance per grid step
 	double			delta_dist_y;
-	double			side_dist_x;
-	double			side_dist_y;
-	double			ray_dir_x;
-	double			ray_dir_y;
-	int				wall_intersection;
+	double			world_dist_to_next_boundary_x;			// dist from origin to next boundary
+	double			world_dist_to_next_boundary_y;
+	double			world_ray_dir_x;						// normalised ray dir vector
+	double			world_ray_dir_y;
+	int				wall_intersection_found;				// boolean flag
 }					t_dda_state;
 
 // column rendering state
 typedef struct s_column_render
 {
-	double			wall_distance;	// perpendicular distance to wall
-	int				wall_height;	// calculated wall height
-	int				wall_direction;	// wall side hit (0-3)
+	double			world_wall_distance;					// perpendicular distance to wall
+	int				screen_wall_height;						// calculated wall height
+	int				world_wall_face;						// wall face hit (0-3)
 }					t_column_render;
 
 typedef struct	s_ray_result
 {
-	double			distance;		// perpendicular wall dist
-	int				wall_side;		// VERT / HORIZ
-	double			intersection_x;
-	double			intersection_y;
-	int				wall_face;		// n/s/e/w
+	double			world_distance;					// perpendicular wall dist
+	int				world_wall_side;				// VERT / HORIZ
+	double			world_intersection_x;
+	double			world_intersection_y;
+	int				world_wall_face;				// n/s/e/w
 }					t_ray_result;
 
 // state needed to map 3D wall intersection > 2D texture coordinates
 typedef struct	s_texture_context
 {
-	int				wall_direction;
-	double			wall_intersection_x;
-	double			wall_intersection_y;
-	int				wall_height;
+	int				world_wall_face;				// absolute wall face (N/S/E/W)
+	double			world_wall_intersection_x;
+	double			world_wall_intersection_y;
+	int				screen_wall_height;
 }					t_texture_context;
 
 typedef struct s_texinfo
@@ -218,50 +211,6 @@ void	rstrip_eol(char *s);
 int	normalize_map(char ***lines_io, int h, int *out_w);
 
 //  ================== RENDER ==================
-
-// main render pipeline
-void			render_complete_frame(void);
-void			render_single_column(int screen_x);
-
-// ray math
-void			calculate_ray_direction(int screen_x,
-					double *ray_dir_x, double *ray_dir_y);
-
-// dda algo
-t_ray_result	cast_ray_to_wall(double ray_dir_x, double ray_dir_y);
-void			execute_dda_traversal(t_dda_state *state, int *wall_side);
-double			calculate_wall_distance(t_dda_state *state, int wall_side);
-
-// dda setup utils
-void			setup_dda_vars(double ray_dir_x, double ray_dir_y,
-					t_dda_state *state);
-
-// projection calc
-int				calculate_screen_wall_height(double wall_distance);
-void			calculate_wall_boundaries(int wall_height,
-					int *wall_start, int *wall_end);
-
-// texture sampling
-int				get_wall_texture_colour(t_texture_context *ctx, int screen_y);
-double			calculate_texture_u(t_texture_context *ctx);
-double			calculate_texture_v(t_texture_context *ctx, int screen_y);
-int				sample_texture_pixel(t_texture_image *tex,
-					int tex_x, int tex_y);
-t_texture_image	*get_texture_for_direction(int wall_direction);
-
-// wall rendering
-void			render_wall_column(int screen_x, t_ray_result *ray_result, int wall_height);
-
-// column section rendering
-void			render_ceiling_section(int screen_x, int wall_start_y);
-void			render_wall_section(int screen_x, int wall_start_y, int wall_end_y, 
-					t_ray_result *ray_result);
-void			render_floor_section(int screen_x, int wall_end_y);
-
-// screen buffer ops
-void			clear_screen_buffer(void);
-void			put_pixel(int x, int y, int colour);
-void			present_frame_to_screen(void);
 
 
 //  ================== MAP_GRID_CELL ==================

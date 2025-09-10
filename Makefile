@@ -30,14 +30,7 @@ SRC_FILES   =	main.c \
 				map_grid_cells.c \
 				map_grid_fill.c \
 				map_grid_build.c \
-				render_infrastructure_pixel_buffer_operations.c \
-				render_mathematics_dda_state_initialization.c \
-				render_mathematics_dda_wall_intersection.c \
-				render_mathematics_projection_screen_coordinates.c \
-				render_mathematics_ray_direction_calculation.c \
-				render_pipeline_coordination.c \
-				render_texture_sampling_uv_coordinates.c \
-				render_visual_column_sections.c \
+
 				map_check_flood.c \
 				map_check_utils.c \
 				map_check.c

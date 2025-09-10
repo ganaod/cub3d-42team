@@ -25,6 +25,7 @@
 # define CELL_VOID  (-1)  /* ' '  -> außerhalb/ungefüllt */
 # define CELL_EMPTY (0)   /* '0'  -> begehbar */
 # define CELL_WALL  (1)   /* '1'  -> Wand  */
+
 #ifndef FOV_PLANE
 # define FOV_PLANE 0.66
 #endif
@@ -77,9 +78,6 @@ typedef struct s_player
 	double			world_camera_plane_x;	// camera plane x (fov)
 	double			world_camera_plane_y;	// camera plane y (fov)
 }					t_player;
-/* smooth player movement, continuous pos
-represented by double
-overlaid on discrete integer map grid */
 
 // map configuration
 typedef struct s_map

@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   ray_casting.c                                      :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/05 15:48:41 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/08 11:30:16 by go-donne         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 // ray geometric ops: interpret geometric data (from DDA algo) for rendering
 // ray interpretation & wall face analysis
 

@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   render__pipeline_coordination.c                    :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/05 17:04:34 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/10 12:17:25 by go-donne         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../inc/cub3d.h"
 
 /* rendering module
@@ -127,7 +115,7 @@ void	render_single_column(int screen_x)
 	int				screen_wall_height;
 
 	calculate_ray_direction(screen_x, &world_ray_dir_x, &world_ray_dir_y);
-	ray_result  =cast_ray_to_wall(world_ray_dir_x, world_ray_dir_y);
+	ray_result = cast_ray_to_wall(world_ray_dir_x, world_ray_dir_y);
 	screen_wall_height = calculate_screen_wall_height(ray_result.world_distance);
 	render_wall_column(screen_x, &ray_result, screen_wall_height);
 }

@@ -1,19 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   render__flow_coordination.c                        :+:      :+:    :+:   */
+/*   render__pipeline_coordination.c                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 17:04:34 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/10 09:31:50 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/10 12:16:52 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/cub3d.h"
 
-/* 
-rendering module
+/* rendering module
+
+2D map data → 3D visual representation 	
+
 core operations:
 
 	1. Ray Direction:    Screen column → World ray vector
@@ -45,6 +47,30 @@ key decisions:
 		Solution: Bundle into t_texture_context struct
 
 
+		
+COLUMN-BASED RENDERING: MATHEMATICAL NECESSITY
+Core Insight: One ray cast = One distance measurement = One entire vertical wall strip
+
+Why Columns, Not Rows:
+
+	Ray-to-distance mapping: Each ray gives distance to nearest wall
+	Wolfenstein constraint: All walls same height → distance determines entire column height
+	Perspective projection: Wall height = screen_height / distance (applies to whole column)
+	Texture efficiency: Sample texture once per column, not per pixel
+
+Visual Reality:
+	Column 0: Ray → Distance 5.2 → Wall height 150px → Draw 150px vertical strip
+	Column 1: Ray → Distance 4.8 → Wall height 162px → Draw 162px vertical strip  
+	Column 2: Ray → Distance 6.1 → Wall height 127px → Draw 127px vertical strip
+	
+Mathematical Truth: Each ray provides sufficient information to render an entire vertical screen column.
+Performance: 320 ray calculations instead of 320×240 = 76,800 pixel calculations.
+
+The column approach exploits the constraint that walls are uniform height - 
+one distance measurement determines the entire vertical appearance.
+
+		
+
 execution pipeline:
 
 	render_complete_frame()           // Frame iteration
@@ -56,9 +82,6 @@ execution pipeline:
 				render_wall_section() // Texture context + pixel iteration
 					get_wall_texture_colour() // UV calculation + sampling
 						put_pixel()   // Buffer write
-
-result: 2D map data → 3D visual representation 	
-
 */
 
 
@@ -86,72 +109,46 @@ void	render_complete_frame(void)
 	}
 }
 
-/* render_single_column:
-   processes and renders the wall slice for a single screen column.
-   flow: ray direction → wall intersection → projected wall height → draw pixels
+/* render_single_column
 
-   parameters:
-     screen_x    -> column index on the screen to render
+parameters:
+	screen_x    -> column index on the screen to render
 
-   steps:
-     1. calculate the ray direction based on the column position
-     2. cast the ray to find the wall hit result and distance
-     3. compute the projected wall height for the screen
-     4. render the vertical wall slice with the correct texture/face
-*/
+steps:
+	1. calculate the ray direction based on the column position
+	2. cast the ray to find the wall hit result and distance
+	3. compute the projected wall height for the screen
+	4. render the vertical wall slice with the correct texture/face */
 void	render_single_column(int screen_x)
 {
-	double			ray_dir_x;
-	double			ray_dir_y;
+	double			world_ray_dir_x;
+	double			world_ray_dir_y;
 	t_ray_result	ray_result;
-	int				wall_height;
+	int				screen_wall_height;
 
-	calculate_ray_direction(screen_x, &ray_dir_x, &ray_dir_y);
-	ray_result = cast_ray_to_wall(ray_dir_x, ray_dir_y);
-	wall_height = calculate_screen_wall_height(ray_result.distance);
-	render_wall_column(screen_x, &ray_result, wall_height);
+	calculate_ray_direction(screen_x, &world_ray_dir_x, &world_ray_dir_y);
+	ray_result = cast_ray_to_wall(world_ray_dir_x, world_ray_dir_y);
+	screen_wall_height = calculate_screen_wall_height(ray_result.world_distance);
+	render_wall_column(screen_x, &ray_result, screen_wall_height);
 }
 
-/*
-
-COLUMN-BASED RENDERING: MATHEMATICAL NECESSITY
-Core Insight: One ray cast = One distance measurement = One entire vertical wall strip
-
-Why Columns, Not Rows:
-
-	Ray-to-distance mapping: Each ray gives distance to nearest wall
-	Wolfenstein constraint: All walls same height → distance determines entire column height
-	Perspective projection: Wall height = screen_height / distance (applies to whole column)
-	Texture efficiency: Sample texture once per column, not per pixel
-
-Visual Reality:
-	Column 0: Ray → Distance 5.2 → Wall height 150px → Draw 150px vertical strip
-	Column 1: Ray → Distance 4.8 → Wall height 162px → Draw 162px vertical strip  
-	Column 2: Ray → Distance 6.1 → Wall height 127px → Draw 127px vertical strip
-	
-Mathematical Truth: Each ray provides sufficient information to render an entire vertical screen column.
-Performance: 320 ray calculations instead of 320×240 = 76,800 pixel calculations.
-
-The column approach exploits the constraint that walls are uniform height - 
-one distance measurement determines the entire vertical appearance.
-
-*/
-
-
 /* render wall: 1 complete vertical strip/slice of the 3D perspective view
-convert dist to screen coordinates 
+
+bridge between the continuous world distance and the discrete screen pixels
 
 receives ray intersection data, adds wall_height, passes both forward */
-void	render_wall_column(int screen_x, t_ray_result *ray_result, int wall_height)
+void	render_wall_column(int screen_x, t_ray_result *ray_result,
+	int screen_wall_height)
 {
-	int	wall_start_y;
-	int	wall_end_y;
+    int	screen_wall_start_y;
+    int	screen_wall_end_y;
 
-	wall_start_y = (g_game.graphics.screen_height - wall_height) / 2;
-	wall_end_y = wall_start_y + wall_height;
-	render_ceiling_section(screen_x, wall_start_y);
-	render_wall_section(screen_x, wall_start_y, wall_end_y, ray_result);
-	render_floor_section(screen_x, wall_end_y);
+    screen_wall_start_y = (g_game.graphics.screen_height - screen_wall_height) / 2;
+    screen_wall_end_y = screen_wall_start_y + screen_wall_height;
+    render_ceiling_section(screen_x, screen_wall_start_y);
+    render_wall_section(screen_x, screen_wall_start_y, screen_wall_end_y,
+	ray_result);
+    render_floor_section(screen_x, screen_wall_end_y);
 }
 /* vertically center the wall with ceiling above & floor below
 to simulate eye-level perspective:

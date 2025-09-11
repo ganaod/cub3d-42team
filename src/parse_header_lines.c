@@ -6,7 +6,7 @@
 /*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 15:00:53 by blohrer           #+#    #+#             */
-/*   Updated: 2025/09/04 08:13:18 by blohrer          ###   ########.fr       */
+/*   Updated: 2025/09/11 10:59:20 by blohrer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,6 @@ int	parse_header_lines(t_map *m, int fd)
 	if (!read_header_loop(m, fd, &flags))
 		return (0);
 	if (!header_complete(flags))
-		return (0);
+		return (parse_error("Header error: need NO/SO/WE/EA/F/C)"), 0);
 	return (1);
 }

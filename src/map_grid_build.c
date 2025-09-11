@@ -6,7 +6,7 @@
 /*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 09:17:36 by blohrer           #+#    #+#             */
-/*   Updated: 2025/09/08 10:04:47 by blohrer          ###   ########.fr       */
+/*   Updated: 2025/09/11 11:06:15 by blohrer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,19 +66,21 @@ int	build_grid_from_lines(t_map *m, t_player *pl, char **lines,
 	if (!m || !pl || !lines || !player_found)
 		return (0);
 	if (!compute_dims_from_lines(lines, &w, &h))
-		return (0);
+		return (parse_error("Map error: empty map"), 0);
 	if (!alloc_grid(m, w, h))
-		return (0);
+		return (parse_error("Map error: grid allocation failed"), 0);
 	if (!fill_grid(m, pl, lines, &count))
 	{
 		free_grid(m);
-		return (0);
+		return (parse_error("Map error: inval character or multiple players"),
+			0);
 	}
 	*player_found = count;
 	if (count != 1)
 	{
 		free_grid(m);
-		return (0);
+		return (parse_error("Player error: exactly one start (N/S/E/W)"),
+			0);
 	}
 	return (1);
 }

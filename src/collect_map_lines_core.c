@@ -6,7 +6,7 @@
 /*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 13:29:28 by blohrer           #+#    #+#             */
-/*   Updated: 2025/09/05 08:44:40 by blohrer          ###   ########.fr       */
+/*   Updated: 2025/09/11 11:09:40 by blohrer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,6 @@ static int	adopt_first_map_line(t_map *m, char ***lines, int *cap, int *h)
 	m->first_map_line = NULL;
 	return (1);
 }
-
 
 static int	read_lines_loop(int fd, char ***lines, int *cap, int *h)
 {
@@ -77,12 +76,14 @@ int	collect_map_lines(t_map *m, int fd, char ***out_lines, int *out_h)
 	h = 0;
 	if (!adopt_first_map_line(m, &lines, &cap, &h))
 	{
-		return (0);
+		if (!m->first_map_line)
+			return (parse_error("Map error: missing map after header"), 0);
+		return (parse_error("Map error: invalid first map line"), 0);
 	}
 	if (!read_lines_loop(fd, &lines, &cap, &h))
 	{
 		free_lines_array(lines, h);
-		return (0);
+		return (parse_error("Map error: invalid or empty line inside map"), 0);
 	}
 	*out_lines = lines;
 	*out_h = h;

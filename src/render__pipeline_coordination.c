@@ -76,7 +76,6 @@ execution pipeline:
 /* 1. initialise buffer
 . clear screen buff to known state (black pixels)
 . prepare canvas for additive composition
-(compose final image by adding visual elements (ceiling + wall + floor))
 
 2. raycasting core loop
 . for each screen col: cast ray, find wall, draw vert strip

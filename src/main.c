@@ -293,8 +293,8 @@ int main(int argc, char **argv) {
     /* Ausgabe */
     printf("✅ grid built: w=%d h=%d player_found=%d\n", g.map.width, g.map.height, player_found);
     printf("   player: pos=(%.2f, %.2f) dir=(%.2f, %.2f) plane=(%.2f, %.2f)\n",
-           g.player.pos_x, g.player.pos_y, g.player.dir_x, g.player.dir_y,
-           g.player.camera_plane_x, g.player.camera_plane_y);
+           g.player.world_pos_x, g.player.world_pos_y, g.player.world_dir_x, g.player.world_dir_y,
+           g.player.world_camera_plane_x, g.player.world_camera_plane_y);
 
     y = 0;
     while (y < g.map.height) {

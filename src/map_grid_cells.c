@@ -6,7 +6,7 @@
 /*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 16:03:35 by blohrer           #+#    #+#             */
-/*   Updated: 2025/09/08 09:47:46 by blohrer          ###   ########.fr       */
+/*   Updated: 2025/09/11 10:34:38 by blohrer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,13 +40,13 @@ static void	set_player_from_char(t_player *p, int x, int y, char c)
 
 	if (!p)
 		return ;
-	p->pos_x = (double)x + 0.5;
-	p->pos_y = (double)y + 0.5;
+	p->world_pos_x = (double)x + 0.5;
+	p->world_pos_y = (double)y + 0.5;
 	dir_vec_from_char(c, &dx, &dy);
-	p->dir_x = dx;
-	p->dir_y = dy;
-	p->camera_plane_x = -dy * FOV_PLANE;
-	p->camera_plane_y = dx * FOV_PLANE;
+	p->world_dir_x = dx;
+	p->world_dir_y = dy;
+	p->world_camera_plane_x = -dy * FOV_PLANE;
+	p->world_camera_plane_y = dx * FOV_PLANE;
 }
 
 int	put_cell_from_char(t_map *m, t_player *pl, int idx, char c)

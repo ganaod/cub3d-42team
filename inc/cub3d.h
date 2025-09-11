@@ -241,4 +241,8 @@ int	queue_pop(int *q, int *head, int tail, int *out);
 int	flood_from_border(t_ffctx *c);
 int	map_is_closed(const t_map *m);
 
+//  ================== UTILS ==================
+
+void	parse_error(const char *msg);
+
 #endif

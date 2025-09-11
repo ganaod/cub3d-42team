@@ -30,9 +30,9 @@ SRC_FILES   =	main.c \
 				map_grid_cells.c \
 				map_grid_fill.c \
 				map_grid_build.c \
-
 				map_check_flood.c \
 				map_check_utils.c \
+				utils.c \
 				map_check.c
 
 SRCS        = $(addprefix $(SRC_DIR)/, $(SRC_FILES))

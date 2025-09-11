@@ -107,17 +107,17 @@ steps:
 	2. cast the ray to find the wall hit result and distance
 	3. compute the projected wall height for the screen
 	4. render the vertical wall slice with the correct texture/face */
-void	render_single_column(int screen_x)
+void	render_single_column(int screen_column_x)
 {
 	double			world_ray_dir_x;
 	double			world_ray_dir_y;
-	t_ray_result	ray_result;
-	int				screen_wall_height;
+	t_ray_result	wall_hit_data;
+	int				projected_wall_height;
 
-	calculate_ray_direction(screen_x, &world_ray_dir_x, &world_ray_dir_y);
-	ray_result = cast_ray_to_wall(world_ray_dir_x, world_ray_dir_y);
-	screen_wall_height = calculate_screen_wall_height(ray_result.world_distance);
-	render_wall_column(screen_x, &ray_result, screen_wall_height);
+	calculate_ray_direction(screen_column_x, &world_ray_dir_x, &world_ray_dir_y);
+	wall_hit_data = cast_ray_to_wall(world_ray_dir_x, world_ray_dir_y);
+	projected_wall_height = calculate_screen_wall_height(wall_hit_data.world_distance);
+	render_wall_column(screen_column_x, &wall_hit_data, projected_wall_height);
 }
 
 /* render wall: 1 complete vertical strip/slice of the 3D perspective view
@@ -125,42 +125,17 @@ void	render_single_column(int screen_x)
 bridge between the continuous world distance and the discrete screen pixels
 
 receives ray intersection data, adds wall_height, passes both forward */
-void	render_wall_column(int screen_x, t_ray_result *ray_result,
-	int screen_wall_height)
+void	render_wall_column(int screen_column_x, t_ray_result *wall_hit_data,
+			int projected_wall_height)
 {
-    int	screen_wall_start_y;
-    int	screen_wall_end_y;
+	int	screen_wall_start_y_pixel;
+	int	screen_wall_end_y_pixel;
 
-    screen_wall_start_y = (g_game.graphics.screen_height - screen_wall_height) / 2;
-    screen_wall_end_y = screen_wall_start_y + screen_wall_height;
-    render_ceiling_section(screen_x, screen_wall_start_y);
-    render_wall_section(screen_x, screen_wall_start_y, screen_wall_end_y,
-	ray_result);
-    render_floor_section(screen_x, screen_wall_end_y);
+	screen_wall_start_y_pixel = (g_game.graphics.screen_height
+			- projected_wall_height) / 2;
+	screen_wall_end_y_pixel = screen_wall_start_y_pixel + projected_wall_height;
+	render_ceiling_section(screen_column_x, screen_wall_start_y_pixel);
+	render_wall_section(screen_column_x, screen_wall_start_y_pixel,
+		screen_wall_end_y_pixel, wall_hit_data);
+	render_floor_section(screen_column_x, screen_wall_end_y_pixel);
 }
-/* vertically center the wall with ceiling above & floor below
-to simulate eye-level perspective:
-
-screen coordinate sys:
-y=0    ┌─────────────────┐  ← Top of screen
-       │    CEILING      │
-       │                 │
-y=284  ├─────────────────┤  ← wall_start_y
-       │                 │
-       │      WALL       │  ← Wall centered on screen
-       │                 │
-y=484  ├─────────────────┤  ← wall_end_y  
-       │                 │
-       │     FLOOR       │
-       │                 │
-y=767  └─────────────────┘  ← Bottom of screen
-
-screen_height = 768
-wall_height = 200
-wall_start_y = (768 - 200) / 2 = 284   // Center the wall
-wall_end_y = 284 + 200 = 484           // Wall bottom edge
-
-Rendering Order (top-down):
-	y = 0 → 283: Paint ceiling pixels
-	y = 284 → 483: Paint wall texture pixels
-	y = 484 → 767: Paint floor pixels	*/

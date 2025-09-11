@@ -86,7 +86,7 @@ typedef struct s_map
 	int				width;				// map width in cells
 	int				height;				// map height in cells
 	char			*texture_paths[4];	// wall texture file paths
-	uint32_t		floor_color;		// 0xrrggbb
+	uint32_t		floor_	;		// 0xrrggbb
 	uint32_t		ceiling_color;		// 0xrrggbb
 	char			*first_map_line;	// first line of map
 	t_texture_image	*wall_textures[4];	// wall textures

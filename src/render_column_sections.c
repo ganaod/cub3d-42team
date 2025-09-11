@@ -1,22 +1,15 @@
-/* screen with its 3 conceptual zones:
+/* screen-frame with its 3 zones:
 
-                  ┌───────────────────────────────────────────────┐
-                  │                                               │
-                  │              CEILING (Rays above              │
-                  │            the horizontal centreline)         │
-                  │                                               │
-Screen-Y = wall_start_y_pixel ├───────────────────────────────────────────────┤  
-                  │                                               │
-                  │                 WALL SECTION                  │
-                  │              (Ray intersection               │
-                  │               determines height)              │
-                  │                                               │
-Screen-Y = wall_end_y_pixel   ├───────────────────────────────────────────────┤
-                  │                                               │
-                  │                 FLOOR (Rays below             │
-                  │            the horizontal centreline)         │
-                  │                                               │
-                  └───────────────────────────────────────────────┘
+┌─────────────────┐
+│     CEILING     │ (rays above horizontal centreline)
+│                 │
+├╴╴╴╴╴╴╴╴╴╴╴╴╴╴╴╴╴┤ ← screen_y = wall_start_y_pixel
+│      WALL       │ (ray intersection determines height)
+│                 │	
+├╴╴╴╴╴╴╴╴╴╴╴╴╴╴╴╴╴┤ ← screen_y = wall_end_y_pixel
+│      FLOOR      │
+│                 │	(rays below horizontal centreline)
+└─────────────────┘
 
 re. texture, from subject:
 	"display different wall textures"
@@ -28,7 +21,6 @@ only in render_wall_section() */
 
 #include "../inc/cub3d.h"
 
-/* render ceiling pixels above wall */
 void	render_ceiling_section(int screen_column_x, int wall_start_y_pixel)
 {
 	int	current_pixel_y;
@@ -41,7 +33,6 @@ void	render_ceiling_section(int screen_column_x, int wall_start_y_pixel)
 	}
 }
 
-/* render wall texture pixels */
 void	render_wall_section(int screen_column_x, int wall_start_y_pixel,
 						int wall_end_y_pixel, t_ray_result *wall_hit_data)
 {
@@ -62,19 +53,17 @@ void	render_wall_section(int screen_column_x, int wall_start_y_pixel,
 		current_pixel_y++;
 	}
 }
-
 // DEMO: replace get_wall_texture_colour() call with:
 // texture_colour = get_wall_hardcoded_color(wall_direction)
 
-/* render floor pixels below wall */
-void	render_floor_section(int screen_x, int wall_end_y)
+void	render_floor_section(int screen_column_x, int wall_end_y_pixel)
 {
-	int	y;
-	
-	y = wall_end_y;
-	while (y < g_game.graphics.screen_height)
+	int	current_pixel_y;
+
+	current_pixel_y = wall_end_y_pixel;
+	while (current_pixel_y < g_game.graphics.screen_height)
 	{
-		put_pixel(screen_x, y, g_game.map.floor_colour);
-		y++;
+		put_pixel(screen_column_x, current_pixel_y, g_game.map.floor_color);
+		current_pixel_y++;
 	}
 }

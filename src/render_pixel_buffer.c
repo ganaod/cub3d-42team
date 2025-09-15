@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 14:04:27 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/15 17:00:27 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/15 17:21:28 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,30 @@ direct screen buffer ops */
 
 /* CLEAR SCREEN BUFFER
 Initialize frame buffer to known state for additive composition
-Performance: Fast memset operation, executes once per frame */
+Performance: Fast memset operation, executes once per frame 
+
+Mathematical decomposition:
+1. Calculate total pixel count (2D screen area)
+2. Calculate bytes per pixel (data type size)  
+3. Calculate total buffer size (pixel count × bytes per pixel)
+4. Initialize all bytes to 0 (black pixels in RGBA format) */
 void	clear_screen_buffer(void)
 {
-	ft_memset(g_game.graphics.frame->pixels, 0, 
-		g_game.graphics.screen_width * g_game.graphics.screen_height * sizeof(uint32_t));
+	size_t	screen_pixel_count;
+	size_t	bytes_per_pixel;
+	size_t	total_buffer_size_bytes;
+
+	// Step 1: Calculate total pixels (2D area)
+	screen_pixel_count = g_game.graphics.screen_width * g_game.graphics.screen_height;
+	
+	// Step 2: Calculate memory per pixel (RGBA32 format)
+	bytes_per_pixel = sizeof(uint32_t);
+	
+	// Step 3: Calculate total memory required
+	total_buffer_size_bytes = screen_pixel_count * bytes_per_pixel;
+	
+	// Step 4: Initialize all memory to 0 (black pixels)
+	ft_memset(g_game.graphics.frame->pixels, 0, total_buffer_size_bytes);
 }
 
 void present_frame_to_screen(void)

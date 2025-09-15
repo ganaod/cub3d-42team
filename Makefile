@@ -33,7 +33,8 @@ SRC_FILES   =	main.c \
 				map_check_flood.c \
 				map_check_utils.c \
 				utils.c \
-				map_check.c
+				map_check.c \
+				parse_paths_check.c
 
 SRCS        = $(addprefix $(SRC_DIR)/, $(SRC_FILES))
 OBJS        = $(SRCS:.c=.o)

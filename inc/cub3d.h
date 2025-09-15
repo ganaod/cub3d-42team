@@ -196,6 +196,7 @@ int	parse_header_color(t_map *m, const char *line, int i, int *flags);
 //  ================== PARSE_HEADER ==================
 
 int	parse_header_lines(t_map *m, int fd);
+int	check_texture_paths_exist(const t_map *m);
 
 //  ================== COLLECT_MAP_LINES ==================
 
@@ -244,5 +245,6 @@ int	map_is_closed(const t_map *m);
 //  ================== UTILS ==================
 
 void	parse_error(const char *msg);
+
 
 #endif

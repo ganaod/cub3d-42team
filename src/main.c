@@ -262,6 +262,11 @@ int main(int argc, char **argv) {
     if (fd < 0) { perror("open"); return 1; }
 
     if (!parse_header_lines(&g.map, fd)) { fprintf(stderr, "❌ header parse failed\n"); close(fd); return 3; }
+    // if (!check_texture_paths_exist(&g.map)) {
+	// 	close(fd);
+	// 	free(g.map.grid);
+	// 	return (4);
+	// }
     if (!collect_map_lines(&g.map, fd, &lines, &h)) { fprintf(stderr, "❌ collect_map_lines failed\n"); close(fd); return 4; }
     close(fd);
 
@@ -312,3 +317,4 @@ int main(int argc, char **argv) {
     free(g.map.grid);
     return 0;
 }
+

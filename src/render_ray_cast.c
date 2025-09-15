@@ -1,5 +1,17 @@
-// Ray geometric operations: mathematical transformations for 3D vision simulation
-// Core responsibility: Screen coordinate → World ray vector transformations
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   render_ray_cast.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/15 13:48:28 by go-donne          #+#    #+#             */
+/*   Updated: 2025/09/15 13:58:11 by go-donne         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+/* Ray geometric operations: mathematical transformations for 3D vision simulation
+Core responsibility: Screen coordinate → World ray vector transformations */
 
 #include "../inc/cub3d.h"
 
@@ -15,14 +27,15 @@ Visual effect:
 	Without: All columns show same straight-ahead view (telescope effect)
 	With: Left/right columns show angled views (human-like peripheral vision)
 
-
-Step 1: Screen pixel → FOV position
+breakdown:
+	
+	step 1: screen pixel → FOV position
 	- Leftmost pixel (0) becomes -1 (left edge of vision)
 	- Center pixel becomes 0 (straight ahead)  
 	- Rightmost pixel becomes +1 (right edge of vision)
 	- Normalization formula: scale to [0,2], then shift to [-1,+1]
 
-Step 2: Calculate actual ray direction for this viewing angle
+	step 2: calculate actual ray direction for this viewing angle
 	- Base direction (where player faces) + angular offset (left/right tilt)
 	- Visual: Creates "sweep" of vision from left peripheral → right peripheral
 	- Implementation: Vector addition with scaling */
@@ -39,8 +52,7 @@ void	calculate_ray_direction(int screen_column_x,
 		+ camera_plane_offset * g_game.player.world_camera_plane_y;
 }
 
-/* WALL FACE DETERMINATION
-Determines which face of a wall cell the ray intersected
+/* determine which face of a wall cell the ray intersected			// face of a wall or wall face?
 
 GEOMETRIC ANALYSIS:
 - Vertical walls (extend along X-axis): Compare world_intersection_x with world_pos_x
@@ -49,7 +61,7 @@ GEOMETRIC ANALYSIS:
 CARDINAL DIRECTION MAPPING:
 	NORTH: Top face of wall cell (ray came from below)
 	SOUTH: Bottom face of wall cell (ray came from above)  
-	EAST: Right face of wall cell (ray came from left)
+	EAST: Right face of wall cell (ray came from left)				// right face of wall cell? or right-side of map space, which is an east wall?
 	WEST: Left face of wall cell (ray came from right)
 
 INPUT: Ray intersection result containing world coordinates and wall orientation
@@ -87,7 +99,7 @@ cast_ray_to_wall() should call determine_intersected_wall_face()
 
 
 
-/* EXPLORATORY DEMONSTRATION: TUNNEL VISION EFFECT
+/* DEMO: TUNNEL VISION EFFECT
 Purpose: Show what happens WITHOUT peripheral vision transformation
 Result: All screen columns display identical straight-ahead view (telescope effect)
 
@@ -106,33 +118,36 @@ VISUAL RESULT:
 - Creates "looking through telescope" effect
 - All screen columns show same wall distance/texture
 - Player can only see directly ahead, no peripheral awareness */
-// void	calculate_ray_direction_tunnel_vision(int screen_column_x, 
-// 			double *world_ray_direction_x, double *world_ray_direction_y)
-// {
-// 	(void)screen_column_x;  // Intentionally ignore column position
+void	calculate_ray_direction_tunnel_vision(int screen_column_x, 
+			double *world_ray_direction_x, double *world_ray_direction_y)
+{
+	(void)screen_column_x;  // Intentionally ignore column position
 	
-// 	// Force all rays to point straight ahead - no peripheral vision
-// 	*world_ray_direction_x = g_game.player.world_dir_x;
-// 	*world_ray_direction_y = g_game.player.world_dir_y;
-// }
+	// Force all rays to point straight ahead - no peripheral vision
+	*world_ray_direction_x = g_game.player.world_dir_x;
+	*world_ray_direction_y = g_game.player.world_dir_y;
+}
 
-// /* ALTERNATIVE: REDUCED PERIPHERAL VISION
-// Demonstrates partial peripheral vision reduction */
-// void	calculate_ray_direction_narrow_fov(int screen_column_x, 
-// 			double *world_ray_direction_x, double *world_ray_direction_y)
-// {
-// 	double	camera_plane_offset;
-// 	double	fov_reduction_factor;
 
-// 	// Reduce field of view by 75% (normal FOV * 0.25)
-// 	fov_reduction_factor = 0.25;
+
+
+/* ALTERNATIVE: REDUCED PERIPHERAL VISION
+Demonstrates partial peripheral vision reduction */
+void	calculate_ray_direction_narrow_fov(int screen_column_x, 
+			double *world_ray_direction_x, double *world_ray_direction_y)
+{
+	double	camera_plane_offset;
+	double	fov_reduction_factor;
+
+	// Reduce field of view by 75% (normal FOV * 0.25)
+	fov_reduction_factor = 0.25;
 	
-// 	camera_plane_offset = 2.0 * screen_column_x 
-// 		/ (double)g_game.graphics.screen_width - 1.0;
+	camera_plane_offset = 2.0 * screen_column_x 
+		/ (double)g_game.graphics.screen_width - 1.0;
 	
-// 	// Dramatically reduce peripheral vision spread
-// 	*world_ray_direction_x = g_game.player.world_dir_x 
-// 		+ (camera_plane_offset * fov_reduction_factor) * g_game.player.world_camera_plane_x;
-// 	*world_ray_direction_y = g_game.player.world_dir_y 
-// 		+ (camera_plane_offset * fov_reduction_factor) * g_game.player.world_camera_plane_y;
-// }
+	// Dramatically reduce peripheral vision spread
+	*world_ray_direction_x = g_game.player.world_dir_x 
+		+ (camera_plane_offset * fov_reduction_factor) * g_game.player.world_camera_plane_x;
+	*world_ray_direction_y = g_game.player.world_dir_y 
+		+ (camera_plane_offset * fov_reduction_factor) * g_game.player.world_camera_plane_y;
+}

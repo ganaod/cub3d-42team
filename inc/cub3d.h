@@ -26,9 +26,25 @@
 # define CELL_EMPTY (0)   /* '0'  -> begehbar */
 # define CELL_WALL  (1)   /* '1'  -> Wand  */
 
+
 #ifndef FOV_PLANE
 # define FOV_PLANE 0.66
 #endif
+
+/* FOV: for clarity, defined in degrees,
+then derive camera plane size */
+
+# define FOV_DEGREES	60.0
+// good perspective without excessive distortion
+
+# define FOV_RADIANS	(FOV_DEGREES * (M_PI / 180.0))
+/* convert FOV from degrees > radians for C's math fns
+M_PI is a constant defined in <math.h> for the value of Pi */
+
+# define FOV_PLANE_TEMP		tan(FOV_RADIANS / 2.0)
+/* calculate half-wodth of camera plan at dist of 1 unit 
+this val is used for ray projection */
+
 
 /* Richtungscodes */
 # define DIR_N 0
@@ -56,9 +72,6 @@
 Screen X: [0 to 1023] - Left to right pixel columns
 Screen Y: [0 to 767]  - Top to bottom pixel rows
 Origin: (0,0) at top-left corner	*/
-
-// ray space: vision simulation
-# define FOV				0.66		// field of view / radians (~38 degrees)
 
 typedef struct s_texture_image
 {

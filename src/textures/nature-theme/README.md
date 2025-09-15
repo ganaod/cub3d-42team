@@ -1,3 +1,9 @@
+.png sunset image & will look into 3 other easily-distinguishable images
+MLX42 (my version) uses mlx_load_image() which directly supports PNG files
+i'll need to change it with GIMP to 128x128 pixels (power of 2 constraint)
+
+
+
 this is just me playing around, having some fun, getting to know the texture-related parts of the program
 
 I generally like nature-themed imagery, hence:

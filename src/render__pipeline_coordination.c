@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   render__pipeline_coordination.c                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/15 10:54:39 by go-donne          #+#    #+#             */
+/*   Updated: 2025/09/15 13:59:41 by go-donne         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../inc/cub3d.h"
 
 /* rendering module
@@ -118,6 +130,8 @@ void	render_single_column(int screen_column_x)
 	projected_wall_height = calculate_screen_wall_height(wall_hit_data.world_distance);
 	render_wall_column(screen_column_x, &wall_hit_data, projected_wall_height);
 }
+/* demos:
+calculate_ray_direction_tunnel_vision(screen_column_x, &world_ray_dir_x, &world_ray_dir_y); */
 
 /* render wall: 1 complete vertical strip/slice of the 3D perspective view
 

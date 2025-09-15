@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 14:04:27 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/15 18:55:10 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/15 18:55:41 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,14 +45,8 @@ void	put_pixel(int screen_x, int screen_y, int pixel_color)
 {
 	int		screen_pixel_index;
 
-	// Bounds checking
-	if (screen_x < 0 || screen_x >= g_game.graphics.screen_width ||
-		screen_y < 0 || screen_y >= g_game.graphics.screen_height)
-		return;
-
 	// Calculate pixel position in buffer
 	screen_pixel_index = screen_y * g_game.graphics.screen_width + screen_x;
-
 	// Set pixel color in MLX42 frame buffer
 	g_game.graphics.frame->pixels[screen_pixel_index] = pixel_color;
 }

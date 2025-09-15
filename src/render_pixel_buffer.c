@@ -6,12 +6,9 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 14:04:27 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/15 17:21:28 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/15 18:55:10 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-/* Rasterization and pixel buffer operations
-direct screen buffer ops */
 
 #include "../inc/cub3d.h"
 
@@ -43,34 +40,19 @@ void	clear_screen_buffer(void)
 	ft_memset(g_game.graphics.frame->pixels, 0, total_buffer_size_bytes);
 }
 
-void present_frame_to_screen(void)
-{
-    // Display the completed frame buffer to the window
-    mlx_put_image_to_window(
-        g_game.graphics.mlx_ptr,
-        g_game.graphics.window_ptr,
-        g_game.graphics.image_ptr,
-        0, 0
-    );
-}
-
 /* direct pixel access to image buffer */
-void put_pixel(int x, int y, int color)
+void	put_pixel(int screen_x, int screen_y, int pixel_color)
 {
-    int pixel_index;
-    int *pixel_data;
+	int		screen_pixel_index;
 
-    // Bounds checking
-    if (x < 0 || x >= g_game.graphics.screen_width ||
-        y < 0 || y >= g_game.graphics.screen_height)
-        return;
+	// Bounds checking
+	if (screen_x < 0 || screen_x >= g_game.graphics.screen_width ||
+		screen_y < 0 || screen_y >= g_game.graphics.screen_height)
+		return;
 
-    // Calculate pixel position in buffer
-    pixel_index = y * g_game.graphics.screen_width + x;
+	// Calculate pixel position in buffer
+	screen_pixel_index = screen_y * g_game.graphics.screen_width + screen_x;
 
-    // Get pixel data as integer array
-    pixel_data = (int *)g_game.graphics.image_data;
-
-    // Set pixel color
-    pixel_data[pixel_index] = color;
+	// Set pixel color in MLX42 frame buffer
+	g_game.graphics.frame->pixels[screen_pixel_index] = pixel_color;
 }

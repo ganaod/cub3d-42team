@@ -164,13 +164,12 @@ typedef struct	s_ray_result
 	int				world_wall_side;				// VERT / HORIZ
 	double			world_intersection_x;
 	double			world_intersection_y;
-	int				world_wall_face;				// n/s/e/w
+	int				world_wall_face;
 }					t_ray_result;
 
-// state needed to map 3D wall intersection > 2D texture coordinates
 typedef struct	s_texture_context
 {
-	int				world_wall_face;				// absolute wall face (N/S/E/W)
+	int				world_wall_face;
 	double			world_wall_intersection_x;
 	double			world_wall_intersection_y;
 	int				screen_wall_height;

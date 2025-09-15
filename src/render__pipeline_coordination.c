@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 10:54:39 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/15 13:59:41 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/15 16:59:26 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ one distance measurement determines the entire vertical appearance.
 
 		
 
-execution pipeline:
+rendering execution pipeline:
 
 	render_complete_frame()           // Frame iteration
 		render_single_column()        // Ray → geometry coordination  
@@ -95,60 +95,86 @@ execution pipeline:
 . rays spread across player's FOV */
 void	render_complete_frame(void)
 {
-	int	screen_x;
+	int	screen_column_x;
 	int	screen_width;
 
 	clear_screen_buffer();
 	screen_width = g_game.graphics.screen_width;
-	screen_x = 0;
-	while (screen_x < screen_width)
+	screen_column_x = 0;
+	while (screen_column_x < screen_width)
 	{
-		render_single_column(screen_x);
-		screen_x++;
+		render_single_column(screen_column_x);
+		screen_column_x++;
 	}
 }
 
-/* render_single_column
+/* SINGLE COLUMN RENDERING PIPELINE
+Core raycasting sequence for one vertical screen strip
 
-parameters:
-	screen_x    -> column index on the screen to render
+Mathematical transformations:
+	1. Ray Direction:    Screen column → World ray vector
+	2. Ray Intersection: Ray vector → Wall hit point + distance  
+	3. Projection:       Distance → Screen wall height
+	4. Rendering:        Wall data → Textured vertical pixels
 
-steps:
-	1. calculate the ray direction based on the column position
-	2. cast the ray to find the wall hit result and distance
-	3. compute the projected wall height for the screen
-	4. render the vertical wall slice with the correct texture/face */
+Input: Screen column index [0 to screen_width-1]
+Output: One complete vertical strip in frame buffer */
 void	render_single_column(int screen_column_x)
 {
-	double			world_ray_dir_x;
-	double			world_ray_dir_y;
-	t_ray_result	wall_hit_data;
+	double			world_ray_direction_x;
+	double			world_ray_direction_y;
+	t_ray_result	wall_intersection_data;
 	int				projected_wall_height;
 
-	calculate_ray_direction(screen_column_x, &world_ray_dir_x, &world_ray_dir_y);
-	wall_hit_data = cast_ray_to_wall(world_ray_dir_x, world_ray_dir_y);
-	projected_wall_height = calculate_screen_wall_height(wall_hit_data.world_distance);
-	render_wall_column(screen_column_x, &wall_hit_data, projected_wall_height);
+	// Step 1: Transform screen column to ray direction using FOV constants
+	calculate_ray_direction(screen_column_x, &world_ray_direction_x, &world_ray_direction_y);
+	
+	// Step 2: Cast ray using DDA algorithm, get complete intersection data
+	wall_intersection_data = cast_ray_to_wall(world_ray_direction_x, world_ray_direction_y);
+	
+	// Step 3: Convert world distance to screen pixels via perspective projection
+	projected_wall_height = calculate_screen_wall_height(wall_intersection_data.world_distance);
+	
+	// Step 4: Render complete vertical wall strip with texture
+	render_wall_column(screen_column_x, &wall_intersection_data, projected_wall_height);
 }
 /* demos:
-calculate_ray_direction_tunnel_vision(screen_column_x, &world_ray_dir_x, &world_ray_dir_y); */
+calculate_ray_direction_tunnel_vision(screen_column_x, &world_ray_dir_x, &world_ray_dir_y); 
+calculate_ray_direction_narrow_fov(...); */
 
 /* render wall: 1 complete vertical strip/slice of the 3D perspective view
 
 bridge between the continuous world distance and the discrete screen pixels
-
 receives ray intersection data, adds wall_height, passes both forward */
-void	render_wall_column(int screen_column_x, t_ray_result *wall_hit_data,
-			int projected_wall_height)
+
+/* WALL COLUMN RENDERING COORDINATION
+Manages complete vertical strip composition of the 3D perspective view:
+
+Visual structure:
+	├── Ceiling section (solid color, top to wall_start)
+	├── Wall section (textured, wall_start to wall_end)  
+	└── Floor section (solid color, wall_end to bottom)
+
+bridge between the continuous world distance and the discrete screen pixels
+receives ray intersection data, adds wall_height, passes both forward
+
+Mathematical boundaries:
+	wall_start = (screen_height - wall_height) / 2
+	wall_end = wall_start + wall_height */
+void	render_wall_column(int screen_column_x, t_ray_result *wall_intersection_data,
+		int projected_wall_height)
 {
 	int	screen_wall_start_y_pixel;
 	int	screen_wall_end_y_pixel;
 
-	screen_wall_start_y_pixel = (g_game.graphics.screen_height
-			- projected_wall_height) / 2;
+	// Calculate wall boundaries for centered projection
+	screen_wall_start_y_pixel = (g_game.graphics.screen_height 
+		- projected_wall_height) / 2;
 	screen_wall_end_y_pixel = screen_wall_start_y_pixel + projected_wall_height;
+
+	// Render three vertical sections
 	render_ceiling_section(screen_column_x, screen_wall_start_y_pixel);
 	render_wall_section(screen_column_x, screen_wall_start_y_pixel,
-		screen_wall_end_y_pixel, wall_hit_data);
+		screen_wall_end_y_pixel, wall_intersection_data);
 	render_floor_section(screen_column_x, screen_wall_end_y_pixel);
 }

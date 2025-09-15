@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   render_infrastructure_pixel_buffer_operatio        :+:      :+:    :+:   */
+/*   render_pixel_buffer.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 14:04:27 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/09 11:41:52 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/15 17:00:27 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,27 +15,13 @@ direct screen buffer ops */
 
 #include "../inc/cub3d.h"
 
-/* screen buffer management:
-clear & present frame buffer ops
-
-. calc total pixels in screen buffer
-. get ptr to image data as int array for faster clearing
-. clear entire screen to black (0x000000) */
+/* CLEAR SCREEN BUFFER
+Initialize frame buffer to known state for additive composition
+Performance: Fast memset operation, executes once per frame */
 void	clear_screen_buffer(void)
 {
-	int	total_pixels;
-	int	*pixel_data;
-	int	i;
-
-	total_pixels = g_game.graphics.screen_width
-					* g_game.graphics.screen_height;
-	pixel_data = (int *)g_game.graphics.image_data;
-	i = 0;
-	while (i < total_pixels)
-	{
-		pixel_data[i] = 0x000000;
-		i++;
-	}
+	ft_memset(g_game.graphics.frame->pixels, 0, 
+		g_game.graphics.screen_width * g_game.graphics.screen_height * sizeof(uint32_t));
 }
 
 void present_frame_to_screen(void)

@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 13:48:28 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/15 16:37:12 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/15 17:15:23 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,26 +53,28 @@ void calculate_ray_direction(int screen_column_x,
 		+ fov_space_camera_plane_offset * g_game.player.world_camera_plane_y;
 }
 
-/* determine which wall face the ray intersected
+/* WALL FACE DETERMINATION FROM RAY-WALL INTERSECTION
 
 GEOMETRIC ANALYSIS:
-- Vertical walls (extend along X-axis): Compare world_intersection_x with world_pos_x
-- Horizontal walls (extend along Y-axis): Compare world_intersection_y with world_pos_y
+- Ray traveling East (+X) hits West face of wall cell
+- Ray traveling West (-X) hits East face of wall cell  
+- Ray traveling South (+Y) hits North face of wall cell
+- Ray traveling North (-Y) hits South face of wall cell
 
-CARDINAL DIRECTION MAPPING:
-	NORTH: Top face of wall cell (ray came from below)
-	SOUTH: Bottom face of wall cell (ray came from above)  
-	EAST: Right face of wall cell (ray came from left)				// right face of wall cell? or right-side of map space, which is an east wall?
-	WEST: Left face of wall cell (ray came from right)
+WALL FACE NOMENCLATURE:
+- NORTH face: Top edge of wall cell
+- SOUTH face: Bottom edge of wall cell
+- EAST face: Right edge of wall cell  
+- WEST face: Left edge of wall cell
 
-INPUT: Ray intersection result containing world coordinates and wall orientation
-OUTPUT: Cardinal direction constant (NORTH/SOUTH/EAST/WEST) */
+INPUT: Ray intersection result with world coordinates and wall orientation
+OUTPUT: Wall face constant (NORTH/SOUTH/EAST/WEST) */
 int	determine_intersected_wall_face(t_ray_result *wall_intersection_data)
 {
 	if (wall_intersection_data->world_wall_side == VERTICAL_WALL)
 	{
 		if (wall_intersection_data->world_intersection_x > g_game.player.world_pos_x)
-			return (WEST);
+			return (WEST);	// Ray traveled East, hit WEST FACE of wall cell
 		else
 			return (EAST);
 	}
@@ -87,20 +89,79 @@ int	determine_intersected_wall_face(t_ray_result *wall_intersection_data)
 
 /*
 
-TO DO
+The logic in determine_intersected_wall_face() is a form of geometric deduction. 
+It relies on the principle that the orientation of a surface (a wall face) 
+is directly related to the direction of the ray that hits it. 
+The code is effectively a simple rule-based expert system 
+that interprets the geometric state of the ray-wall intersection to make a decision.
 
-update all call sites to use the new function signatures:
 
-render_single_column() calls calculate_ray_direction()
-cast_ray_to_wall() should call determine_intersected_wall_face()
+The core idea is to break down the problem into two orthogonal cases:
+
+Is it a vertical wall? 
+This means the ray hit an east or west face. 
+The deciding factor is whether the ray traveled mostly in the x-direction.
+
+Is it a horizontal wall? 
+This means the ray hit a north or south face. 
+The deciding factor is whether the ray traveled mostly in the y-direction.
+
+
+Within each case, the logic uses a directional comparison:
+
+For vertical walls, it compares the hit point's x-coordinate to the player's x-coordinate. 
+A hit point to the east of the player means the ray traveled east, and thus must have hit a west-facing wall.
+
+For horizontal walls, it compares the hit point's y-coordinate to the player's y-coordinate. 
+A hit point to the south of the player means the ray traveled south, and thus must have hit a north-facing wall.
+
+This method is efficient and simple because it avoids complex calculations 
+by using the results of the raycasting algorithm itself 
+(the hit coordinates and the wall orientation) to infer the wall face.
+
+
+
+Program Architecture: Abstraction and Cohesion
+
+The question of whether determine_intersected_wall_face() belongs in your ray-casting file 
+or a new file is about program cohesion.
+
+
+Ray-casting: The primary purpose of ray-casting is to trace a ray from a viewpoint 
+into a scene and find the first object it hits.
+
+Texturing: The primary purpose of texturing is to determine how to apply an image to a surface.
+
+
+The determine_intersected_wall_face() function is a bridge between these two modules. 
+It takes the output of the ray-casting algorithm (the t_ray_result) 
+and transforms it into the input needed for the texturing logic.
+
+
+Recommendation: The function is very closely tied to the result of a ray cast, 
+so keeping it in the ray-casting file is a cohesive design choice. 
+It completes the ray's journey by fully classifying the intersection event.
+
+
+An alternative is to have a separate "rendering" or "drawing" module 
+that takes the raw ray-casting results and performs all subsequent operations, 
+including wall-face determination and texturing. 
+However, for a project like cub3d, a simpler structure with a ray_casting.c file 
+that handles everything from ray creation to the final intersection result 
+(including wall face) is a clean and common design. 
+
+Separating it might introduce unnecessary complexity and file-hopping. 
+Your current structure is well-justified from an architectural standpoint.
+
+
 
 */
 
 
 
+// DEMOS - ALTERNATIVES:
 
-
-/* DEMO: TUNNEL VISION EFFECT
+/* TUNNEL VISION EFFECT
 Purpose: Show what happens WITHOUT peripheral vision transformation
 Result: All screen columns display identical straight-ahead view (telescope effect)
 
@@ -132,7 +193,7 @@ void	calculate_ray_direction_tunnel_vision(int screen_column_x,
 
 
 
-/* ALTERNATIVE: REDUCED PERIPHERAL VISION
+/* REDUCED PERIPHERAL VISION
 Demonstrates partial peripheral vision reduction */
 void	calculate_ray_direction_narrow_fov(int screen_column_x, 
 			double *world_ray_direction_x, double *world_ray_direction_y)

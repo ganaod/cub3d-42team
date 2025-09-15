@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   render_math_projection.c                           :+:      :+:    :+:   */
+/*   render_projection.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 11:18:50 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/09 14:44:52 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/15 17:06:05 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,17 +42,20 @@ Mathematical behavior:
 
 #include "../inc/cub3d.h"
 
-/* Mathematical constraint analysis:
+/* CALCULATE SCREEN WALL HEIGHT
+Perspective projection: Convert world distance to screen pixels
+
+Mathematical constraint analysis:
 DDA returns distance to wall face, minimum theoretically > 0
 However: floating point precision near grid boundaries could 
 produce values approaching 0, causing overflow in division
 Protection threshold: 0.001 units (1/1000 of grid cell)
-Smaller distances treated as "player touching wall" */
+Smaller distances treated as "player touching wall"
 
-/* Core perspective projection: Similar triangles ratio
-wall_height_pixels = screen_height / wall_distance */	   
+Core perspective projection: Similar triangles ratio
+wall_height_pixels = screen_height / wall_distance	   
 
-/* Rendering constraint: Prevent buffer overflow from extreme proximity
+Rendering constraint: Prevent buffer overflow from extreme proximity
 Maximum 2x screen height allows for reasonable "wall fills view" effect
 without creating unmanageable pixel counts for column renderer */
 int	calculate_screen_wall_height(double wall_distance)

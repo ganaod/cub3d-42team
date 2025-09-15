@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 11:18:50 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/15 17:28:21 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/15 18:22:44 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,6 @@ Ceiling above, floor below - simulates looking straight ahead
 Mathematical centering: 
 wall_start = screen_center - wall_height/2
 wall_end = wall_start + wall_height */
-
 void	calculate_wall_boundaries(int wall_height, int *wall_start, int *wall_end)
 {
 	int	screen_center;

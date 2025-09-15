@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   render_texture_sampling_uv_coordinates.c           :+:      :+:    :+:   */
+/*   render_texture.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 14:01:40 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/09 14:01:52 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/15 18:25:08 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,13 @@ int	get_wall_texture_colour(t_texture_context *ctx, int screen_y)
 	return (sample_texture_pixel(texture, texture_x, texture_y));
 }
 
+static t_texture_image	*get_texture_for_direction(int wall_direction)
+{
+	if (wall_direction >= 0 && wall_direction < 4)
+		return (&g_game.map.wall_textures[wall_direction]);
+	return (NULL);
+}
+
 /* correspondence between: 
 	any map wall surface (diff sizes, orientations, world positions) &
 	any texture image (diff pixel dimensions)
@@ -76,7 +83,7 @@ map space wall orientations:
 	└── For texture U: Use wall_hit_y (position along Y-axis)
 
 2. extract fractional part  */
-double	calculate_texture_u(t_texture_context *ctx)
+static double	calculate_texture_u(t_texture_context *ctx)
 {
 	double	wall_pos;
 
@@ -89,7 +96,7 @@ double	calculate_texture_u(t_texture_context *ctx)
 
 /* input: screen pixel pos (abs)
 process: normalisation ( (current - start) / (total range) )*/
-double	calculate_texture_v(t_texture_context *ctx, int screen_y)
+static double	calculate_texture_v(t_texture_context *ctx, int screen_y)
 {
 	int	wall_start_y;
 	int	wall_end_y;
@@ -100,7 +107,7 @@ double	calculate_texture_v(t_texture_context *ctx, int screen_y)
 	return ((double)(screen_y - wall_start_y) / (wall_end_y - wall_start_y));
 }
 
-int	sample_texture_pixel(t_texture_image *tex, int tex_x, int tex_y)
+static int	sample_texture_pixel(t_texture_image *tex, int tex_x, int tex_y)
 {
 	if (tex_x >= tex->width)
 		tex_x = tex->width - 1;
@@ -111,13 +118,6 @@ int	sample_texture_pixel(t_texture_image *tex, int tex_x, int tex_y)
 	if (tex_y < 0)
 		tex_y = 0;
 	return (tex->pixels[tex_y * tex->width + tex_x]);
-}
-
-t_texture_image	*get_texture_for_direction(int wall_direction)
-{
-	if (wall_direction >= 0 && wall_direction < 4)
-		return (&g_game.map.wall_textures[wall_direction]);
-	return (NULL);
 }
 
 

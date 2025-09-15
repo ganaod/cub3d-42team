@@ -244,7 +244,39 @@ void	rstrip_eol(char *s);
 int	normalize_map(char ***lines_io, int h, int *out_w);
 
 //  ================== RENDER ==================
+// main.c
+void			render_complete_frame(void);
+void			render_single_column(int screen_column_x);
 
+// column.c
+void			render_wall_column(int screen_column_x, t_ray_result *wall_intersection_data, int projected_wall_height);
+void			render_ceiling_section(int screen_column_x, int wall_start_y_pixel);
+void			render_wall_section(int screen_column_x, int wall_start_y_pixel, int wall_end_y_pixel, t_ray_result *wall_hit_data);
+void			render_floor_section(int screen_column_x, int wall_end_y_pixel);
+
+// ray_cast.c
+void			calculate_ray_direction(int screen_column_x, double *world_ray_direction_x, double *world_ray_direction_y);
+t_ray_result	cast_ray_to_wall(double world_ray_dir_x, double world_ray_dir_y);
+int				determine_intersected_wall_face(t_ray_result *wall_intersection_data);
+
+// dda.c
+void			execute_dda_traversal(t_dda_state *dda_state, int *world_wall_side);
+double			calculate_wall_distance(t_dda_state *dda_state, int world_wall_side);
+
+// dda_setup.c
+void			setup_dda_vars(double world_ray_dir_x, double world_ray_dir_y, t_dda_state *dda_state);
+
+// projection.c
+int				calculate_screen_wall_height(double world_wall_distance);
+void			calculate_wall_boundaries(int wall_height, int *wall_start, int *wall_end);
+
+// texture.c
+int				get_wall_texture_colour(t_texture_context *ctx, int screen_y);
+
+// pixel_buffer.c
+void			clear_screen_buffer(void);
+void			present_frame_to_screen(void);
+void			put_pixel(int x, int y, int color);
 
 //  ================== MAP_GRID_CELL ==================
 

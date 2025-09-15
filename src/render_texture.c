@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 14:01:40 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/15 18:25:08 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/15 18:49:54 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,27 +35,18 @@ texture sampling: extract colour vals
 
 int	get_wall_texture_colour(t_texture_context *ctx, int screen_y)
 {
-	t_texture_image  *texture;    // STEP 1: Texture selection
-    double           texture_u;   // STEP 2: Abstract U coordinate [0,1]  
-    double           texture_v;   // STEP 3: Abstract V coordinate [0,1]
-    int              texture_x;   // STEP 4: Concrete X pixel index
-    int              texture_y;   // STEP 5: Concrete Y pixel index
+	t_texture_image	*texture_image;
+	double			texture_coord_u;
+	double			texture_coord_v;
+	int				texture_pixel_x;
+	int				texture_pixel_y;
 
-	texture = get_texture_for_direction(ctx->wall_direction);
-	if (!texture || !texture->pixels)
-		return (0xFF00FF);
-	texture_u = calculate_texture_u(ctx);
-	texture_v = calculate_texture_v(ctx, screen_y);
-	texture_x = (int)(texture_u * texture->width);
-	texture_y = (int)(texture_v * texture->height);
-	return (sample_texture_pixel(texture, texture_x, texture_y));
-}
-
-static t_texture_image	*get_texture_for_direction(int wall_direction)
-{
-	if (wall_direction >= 0 && wall_direction < 4)
-		return (&g_game.map.wall_textures[wall_direction]);
-	return (NULL);
+	texture_image = &g_game.map.wall_textures[ctx->world_wall_face];
+	texture_coord_u = calculate_texture_u(ctx);
+	texture_coord_v = calculate_texture_v(ctx, screen_y);
+	texture_pixel_x = (int)(texture_coord_u * texture_image->image_width);
+	texture_pixel_y = (int)(texture_coord_v * texture_image->image_height);
+	return (sample_texture_pixel(texture_image, texture_pixel_x, texture_pixel_y));
 }
 
 /* correspondence between: 
@@ -85,39 +76,39 @@ map space wall orientations:
 2. extract fractional part  */
 static double	calculate_texture_u(t_texture_context *ctx)
 {
-	double	wall_pos;
+	double	world_wall_position;
 
-	if (ctx->wall_direction == NORTH || ctx->wall_direction == SOUTH)
-		wall_pos = ctx->wall_hit_x;
+	if (ctx->world_wall_face == NORTH || ctx->world_wall_face == SOUTH)
+		world_wall_position = ctx->world_wall_intersection_x;
 	else
-		wall_pos = ctx->wall_hit_y;
-	return (wall_pos - floor(wall_pos));
+		world_wall_position = ctx->world_wall_intersection_y;
+	return (world_wall_position - floor(world_wall_position));
 }
 
 /* input: screen pixel pos (abs)
 process: normalisation ( (current - start) / (total range) )*/
 static double	calculate_texture_v(t_texture_context *ctx, int screen_y)
 {
-	int	wall_start_y;
-	int	wall_end_y;
+	int	screen_wall_start_y;
+	int	screen_wall_end_y;
 
-	calculate_wall_boundaries(ctx->wall_height, &wall_start_y, &wall_end_y);
-	if (wall_end_y <= wall_start_y)
+	calculate_wall_boundaries(ctx->screen_wall_height, &screen_wall_start_y, &screen_wall_end_y);
+	if (screen_wall_end_y <= screen_wall_start_y)
 		return (0.0);
-	return ((double)(screen_y - wall_start_y) / (wall_end_y - wall_start_y));
+	return ((double)(screen_y - screen_wall_start_y) / (screen_wall_end_y - screen_wall_start_y));
 }
 
-static int	sample_texture_pixel(t_texture_image *tex, int tex_x, int tex_y)
+static int	sample_texture_pixel(t_texture_image *texture_image, int texture_pixel_x, int texture_pixel_y)
 {
-	if (tex_x >= tex->width)
-		tex_x = tex->width - 1;
-	if (tex_y >= tex->height)
-		tex_y = tex->height - 1;
-	if (tex_x < 0)
-		tex_x = 0;
-	if (tex_y < 0)
-		tex_y = 0;
-	return (tex->pixels[tex_y * tex->width + tex_x]);
+	if (texture_pixel_x >= texture_image->image_width)
+		texture_pixel_x = texture_image->image_width - 1;
+	if (texture_pixel_y >= texture_image->image_height)
+		texture_pixel_y = texture_image->image_height - 1;
+	if (texture_pixel_x < 0)
+		texture_pixel_x = 0;
+	if (texture_pixel_y < 0)
+		texture_pixel_y = 0;
+	return (texture_image->pixels[texture_pixel_y * texture_image->image_width + texture_pixel_x]);
 }
 
 
@@ -178,27 +169,4 @@ Texture coordinates (34, 60) in 100x100 texture
     ↓ sample_texture_pixel()
 Colour value 0xFF8B4513 (from texture memory)
 
-
-
 */
-
-
-
-
-
-// /* temp / demo fn - hardcoded wall colours 
-// . demonstrates basic wall colouring principle without texture files
-// . usage: replace get_wall_texture_colour() in render_wall_section() */
-// int get_wall_hardcoded_color(int wall_direction)
-// {
-// 	if (wall_direction == NORTH)
-// 		return (0xFF4169E1);	// Royal Blue
-// 	else if (wall_direction == SOUTH)  
-// 		return (0xFF32CD32);	// Lime Green
-// 	else if (wall_direction == EAST)
-// 		return (0xFFDC143C);	// Crimson Red  
-// 	else if (wall_direction == WEST)
-// 		return (0xFFFF8C00);	// Dark Orange
-// 	else
-// 		return (0xFFFF00FF);	// Magenta fallback
-// }

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   render_column_sections.c                           :+:      :+:    :+:   */
+/*   render_column.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 10:54:44 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/15 18:19:00 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/15 18:44:08 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ void	render_wall_section(int screen_column_x, int wall_start_y_pixel,
 	current_pixel_y = wall_start_y_pixel;
 	while (current_pixel_y < wall_end_y_pixel)
 	{
-		pixel_color = get_wall_texture_color(&texture_mapping_info,
+		pixel_color = get_wall_texture_colour(&texture_mapping_info,
 						current_pixel_y);
 		put_pixel(screen_column_x, current_pixel_y, pixel_color);
 		current_pixel_y++;

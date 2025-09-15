@@ -21,6 +21,17 @@
 # define HDR_F  (1<<4)
 # define HDR_C  (1<<5)
 
+// screen space:
+// 2D array of discrete pixels representing the 3D view
+# define DEFAULT_WIDTH		1024		// screen sampling resolution
+# define DEFAULT_HEIGHT		768			// vertical pixel count
+/* Coordinate Mapping:
+Screen X: [0 to 1023] - Left to right pixel columns
+Screen Y: [0 to 767]  - Top to bottom pixel rows
+Origin: (0,0) at top-left corner	*/
+
+
+
 /* Zelltypen fürs Grid */
 # define CELL_VOID  (-1)  /* ' '  -> außerhalb/ungefüllt */
 # define CELL_EMPTY (0)   /* '0'  -> begehbar */
@@ -74,14 +85,9 @@ M_PI is a constant defined in <math.h> for the value of Pi */
 # define VERTICAL_WALL		0
 # define HORIZONTAL_WALL	1
 
-// screen space:
-// 2D array of discrete pixels representing the 3D view
-# define DEFAULT_WIDTH		1024		// screen sampling resolution
-# define DEFAULT_HEIGHT		768			// vertical pixel count
-/* Coordinate Mapping:
-Screen X: [0 to 1023] - Left to right pixel columns
-Screen Y: [0 to 767]  - Top to bottom pixel rows
-Origin: (0,0) at top-left corner	*/
+// for wall height 
+#define MINIMUM_WALL_DISTANCE_THRESHOLD  0.001
+#define MAXIMUM_WALL_HEIGHT_PIXELS       (g_game.graphics.screen_height * 2)
 
 typedef struct s_texture_image
 {

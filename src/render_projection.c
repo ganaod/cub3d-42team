@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 11:18:50 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/15 17:06:05 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/15 17:28:21 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,18 +57,27 @@ wall_height_pixels = screen_height / wall_distance
 
 Rendering constraint: Prevent buffer overflow from extreme proximity
 Maximum 2x screen height allows for reasonable "wall fills view" effect
-without creating unmanageable pixel counts for column renderer */
-int	calculate_screen_wall_height(double wall_distance)
+without creating unmanageable pixel counts for column renderer  */
+int	calculate_screen_wall_height(double world_wall_distance)
 {
-	int	wall_height_pixels;
+	int		screen_wall_height_pixels;
+	double	world_wall_distance_protected;
 	
-	if (wall_distance < 0.001)
-		wall_distance = 0.001;
-	wall_height_pixels = (int)(g_game.graphics.screen_height
-							/ wall_distance);
-	if (wall_height_pixels > g_game.graphics.screen_height * 2)
-		wall_height_pixels = g_game.graphics.screen_height * 2;
-	return (wall_height_pixels);
+	// Mathematical constraint: Prevent division by near-zero values
+	// Floating-point precision near grid boundaries could produce values → 0
+	world_wall_distance_protected = world_wall_distance;
+	if (world_wall_distance_protected < MINIMUM_WALL_DISTANCE_THRESHOLD)
+		world_wall_distance_protected = MINIMUM_WALL_DISTANCE_THRESHOLD;
+	
+	// Core perspective projection: Similar triangles ratio
+	screen_wall_height_pixels = (int)(g_game.graphics.screen_height 
+		/ world_wall_distance_protected);
+	
+	// Rendering constraint: Prevent excessive wall heights
+	if (screen_wall_height_pixels > MAXIMUM_WALL_HEIGHT_PIXELS)
+		screen_wall_height_pixels = MAXIMUM_WALL_HEIGHT_PIXELS;
+		
+	return (screen_wall_height_pixels);
 }
 
 /* WALL VERTICAL POSITIONING: Eye-level perspective simulation

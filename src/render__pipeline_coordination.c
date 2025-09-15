@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 10:54:39 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/15 16:59:26 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/15 18:16:21 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,7 +118,11 @@ Mathematical transformations:
 	4. Rendering:        Wall data → Textured vertical pixels
 
 Input: Screen column index [0 to screen_width-1]
-Output: One complete vertical strip in frame buffer */
+Output: One complete vertical strip in frame buffer 
+
+demos - drop-in replacement:
+calculate_ray_direction_tunnel_vision(screen_column_x, &world_ray_dir_x, &world_ray_dir_y); 
+calculate_ray_direction_narrow_fov(screen_column_x, &world_ray_dir_x, &world_ray_dir_y); */
 void	render_single_column(int screen_column_x)
 {
 	double			world_ray_direction_x;
@@ -138,9 +142,6 @@ void	render_single_column(int screen_column_x)
 	// Step 4: Render complete vertical wall strip with texture
 	render_wall_column(screen_column_x, &wall_intersection_data, projected_wall_height);
 }
-/* demos:
-calculate_ray_direction_tunnel_vision(screen_column_x, &world_ray_dir_x, &world_ray_dir_y); 
-calculate_ray_direction_narrow_fov(...); */
 
 /* render wall: 1 complete vertical strip/slice of the 3D perspective view
 

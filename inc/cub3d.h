@@ -30,20 +30,30 @@
 #ifndef FOV_PLANE
 # define FOV_PLANE 0.66
 #endif
+// this was a hardcoded approximation of tan 38 degrees
 
-/* FOV: for clarity, defined in degrees,
-then derive camera plane size */
-
-# define FOV_DEGREES	60.0
+// FOV GEOMETRIC CONFIGURATION
+# define FOV_DEGREES					60.0
 // good perspective without excessive distortion
 
-# define FOV_RADIANS	(FOV_DEGREES * (M_PI / 180.0))
+# define FOV_RADIANS					(FOV_DEGREES * (M_PI / 180.0))
 /* convert FOV from degrees > radians for C's math fns
 M_PI is a constant defined in <math.h> for the value of Pi */
 
-# define FOV_PLANE_TEMP		tan(FOV_RADIANS / 2.0)
-/* calculate half-wodth of camera plan at dist of 1 unit 
-this val is used for ray projection */
+# define FOV_HALF_ANGLE_RADIANS			(FOV_RADIANS / 2.0)
+// Half-angle needed for tangent calculation
+
+# define FOV_CAMERA_PLANE_MAGNITUDE		tan(FOV_HALF_ANGLE_RADIANS)
+// Camera plane vector magnitude for desired FOV
+// This value determines angular spread of vision
+
+
+// SCREEN > FOV COORDINATE TRANSFORMATION
+# define SCREEN_TO_FOV_SCALE_FACTOR		2.0
+// Scales normalized screen coordinates [0,1] to [0,2]
+
+# define FOV_CENTER_OFFSET				1.0  
+// Shifts scaled coordinates [0,2] to FOV space [-1,+1]
 
 
 /* Richtungscodes */

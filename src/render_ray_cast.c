@@ -6,12 +6,12 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 13:48:28 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/15 13:58:11 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/15 16:37:12 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 /* Ray geometric operations: mathematical transformations for 3D vision simulation
-Core responsibility: Screen coordinate → World ray vector transformations */
+Core responsibility: screen coordinate → world ray vector transformations */
 
 #include "../inc/cub3d.h"
 
@@ -33,26 +33,27 @@ breakdown:
 	- Leftmost pixel (0) becomes -1 (left edge of vision)
 	- Center pixel becomes 0 (straight ahead)  
 	- Rightmost pixel becomes +1 (right edge of vision)
-	- Normalization formula: scale to [0,2], then shift to [-1,+1]
+	- Normalization formula: scale to [0,2], then /offset to [-1,+1]
 
 	step 2: calculate actual ray direction for this viewing angle
 	- Base direction (where player faces) + angular offset (left/right tilt)
 	- Visual: Creates "sweep" of vision from left peripheral → right peripheral
 	- Implementation: Vector addition with scaling */
-void	calculate_ray_direction(int screen_column_x, 
-			double *world_ray_direction_x, double *world_ray_direction_y)
+void calculate_ray_direction(int screen_column_x, 
+	double *world_ray_direction_x, double *world_ray_direction_y)
 {
-	double	camera_plane_offset;
-
-	camera_plane_offset = 2.0 * screen_column_x 
-		/ (double)g_game.graphics.screen_width - 1.0;
+	double fov_space_camera_plane_offset;
+	
+	fov_space_camera_plane_offset = SCREEN_TO_FOV_SCALE_FACTOR * screen_column_x 
+		/ (double)g_game.graphics.screen_width - FOV_CENTER_OFFSET;
+		
 	*world_ray_direction_x = g_game.player.world_dir_x 
-		+ camera_plane_offset * g_game.player.world_camera_plane_x;
+		+ fov_space_camera_plane_offset * g_game.player.world_camera_plane_x;
 	*world_ray_direction_y = g_game.player.world_dir_y 
-		+ camera_plane_offset * g_game.player.world_camera_plane_y;
+		+ fov_space_camera_plane_offset * g_game.player.world_camera_plane_y;
 }
 
-/* determine which face of a wall cell the ray intersected			// face of a wall or wall face?
+/* determine which wall face the ray intersected
 
 GEOMETRIC ANALYSIS:
 - Vertical walls (extend along X-axis): Compare world_intersection_x with world_pos_x

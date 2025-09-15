@@ -34,7 +34,15 @@ SRC_FILES   =	main.c \
 				map_check_utils.c \
 				utils.c \
 				map_check.c \
-				parse_paths_check.c
+				parse_paths_check.c \
+				render_main.c \
+				render_column.c \
+				render_dda.c \
+				render_dda_setup.c \
+				render_pixel_buffer.c \
+				render_projection.c \
+				render_ray_cast.c \
+				render_texture.c
 
 SRCS        = $(addprefix $(SRC_DIR)/, $(SRC_FILES))
 OBJS        = $(SRCS:.c=.o)

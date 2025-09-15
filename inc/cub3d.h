@@ -275,7 +275,6 @@ int				get_wall_texture_colour(t_texture_context *ctx, int screen_y);
 
 // pixel_buffer.c
 void			clear_screen_buffer(void);
-void			present_frame_to_screen(void);
 void			put_pixel(int x, int y, int color);
 
 //  ================== MAP_GRID_CELL ==================

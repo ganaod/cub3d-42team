@@ -6,63 +6,92 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 17:01:49 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/15 17:45:40 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/15 17:52:00 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/cub3d.h"
 
-/* initialise
-calculate all mathematical setup vars
-transform ray dir > DDA stepping params */
-void	setup_dda_vars(double ray_dir_x, double ray_dir_y, t_dda_state *state)
+static void	setup_x_axis_stepping(double world_ray_dir_x, t_dda_state *dda_state);
+static void	setup_y_axis_stepping(double world_ray_dir_y, t_dda_state *dda_state);
+
+/* DDA MATHEMATICAL SETUP INITIALIZATION
+Transform ray direction → DDA stepping parameters
+
+Mathematical purpose:
+- Convert continuous ray direction to discrete grid traversal
+- Calculate delta distances (distance per grid step)
+- Initialize stepping directions and boundary distances
+- Prepare state for efficient grid traversal */
+void	setup_dda_vars(double world_ray_dir_x, double world_ray_dir_y, 
+			t_dda_state *dda_state)
 {
-	state->map_x = (int)g_game.player.pos_x;
-	state->map_y = (int)g_game.player.pos_y;
-	state->delta_dist_x = fabs(1.0 / ray_dir_x);
-	state->delta_dist_y = fabs(1.0 / ray_dir_y);
-	state->ray_dir_x = ray_dir_x;
-	state->ray_dir_y = ray_dir_y;
-	setup_x_axis_stepping(ray_dir_x, state);
-	setup_y_axis_stepping(ray_dir_y, state);
-	state->wall_hit = 0;
+	// Initialize current grid position (integer parts of player position)
+	dda_state->map_x = (int)g_game.player.world_pos_x;
+	dda_state->map_y = (int)g_game.player.world_pos_y;
+
+	// Calculate delta distances (distance to travel per grid cell)
+	dda_state->delta_dist_x = fabs(1.0 / world_ray_dir_x);
+	dda_state->delta_dist_y = fabs(1.0 / world_ray_dir_y);
+
+	// Store ray direction for distance calculations
+	dda_state->world_ray_dir_x = world_ray_dir_x;
+	dda_state->world_ray_dir_y = world_ray_dir_y;
+
+	// Initialize axis-specific stepping parameters
+	setup_x_axis_stepping(world_ray_dir_x, dda_state);
+	setup_y_axis_stepping(world_ray_dir_y, dda_state);
+
+	// Initialize traversal state
+	dda_state->wall_intersection_found = 0;
 }
 
-/* stepping set up
-prepares:
-. which dir to step thru grid (step_x, step_y)
-. how far to 1st grid boundary (side_dist_x, side_dist_y) 
+/* X-AXIS STEPPING CONFIGURATION
+Calculate step direction and distance to first X boundary
 
-enables core dda loop:
-if x boundary closer: step in x dir ...*/
-static void	setup_x_axis_stepping(double ray_dir_x, t_dda_state *state)
+Mathematical setup:
+- Determine stepping direction: +1 (East) or -1 (West)
+- Calculate distance from player to next X grid line
+- Handles both positive and negative ray directions */
+static void	setup_x_axis_stepping(double world_ray_dir_x, t_dda_state *dda_state)
 {
-	if (ray_dir_x < 0)
+	if (world_ray_dir_x < 0)
 	{
-		state->step_x = -1;
-		state->side_dist_x = (g_game.player.pos_x - state->map_x)
-							* state->delta_dist_x;
+		// Ray pointing West (-X direction)
+		dda_state->step_x = -1;
+		dda_state->world_dist_to_next_boundary_x = 
+			(g_game.player.world_pos_x - dda_state->map_x) * dda_state->delta_dist_x;
 	}
 	else
 	{
-		state->step_x = 1;
-		state->side_dist_x = (state->map_x + 1.0 - g_game.player.pos_x)
-							* state->delta_dist_x;
+		// Ray pointing East (+X direction)
+		dda_state->step_x = 1;
+		dda_state->world_dist_to_next_boundary_x = 
+			(dda_state->map_x + 1.0 - g_game.player.world_pos_x) * dda_state->delta_dist_x;
 	}
 }
 
-static void	setup_y_axis_stepping(double ray_dir_y, t_dda_state *state)
+/* Y-AXIS STEPPING CONFIGURATION
+Calculate step direction and distance to first Y boundary
+
+Mathematical setup:
+- Determine stepping direction: +1 (South) or -1 (North)
+- Calculate distance from player to next Y grid line
+- Handles both positive and negative ray directions */
+static void	setup_y_axis_stepping(double world_ray_dir_y, t_dda_state *dda_state)
 {
-	if (ray_dir_y < 0)
+	if (world_ray_dir_y < 0)
 	{
-		state->step_y = -1;
-		state->side_dist_y = (g_game.player.pos_y - state->map_y)
-							* state->delta_dist_y;
+		// Ray pointing North (-Y direction)
+		dda_state->step_y = -1;
+		dda_state->world_dist_to_next_boundary_y = 
+			(g_game.player.world_pos_y - dda_state->map_y) * dda_state->delta_dist_y;
 	}
 	else
 	{
-		state->step_y = 1;
-		state->side_dist_y = (state->map_y + 1.0 - g_game.player.pos_y)
-							* state->delta_dist_y;
+		// Ray pointing South (+Y direction) 
+		dda_state->step_y = 1;
+		dda_state->world_dist_to_next_boundary_y = 
+			(dda_state->map_y + 1.0 - g_game.player.world_pos_y) * dda_state->delta_dist_y;
 	}
 }

@@ -73,21 +73,26 @@ M_PI is a constant defined in <math.h> for the value of Pi */
 # define DIR_W 2
 # define DIR_E 3
 
-// wall face directions: abs world coords, fixed to map
-// not relative to player
-// for texture selection
+
+/* WALL GEOMETRY
+wall face directions: abs world coords, fixed to map
+not relative to player
+for texture selection */
 # define NORTH	0
 # define SOUTH	1
 # define WEST	2
 # define EAST	3
 
-// wall side types (for DDA)
+// WALL SIDE TYPES (for DDA)
 # define VERTICAL_WALL		0
 # define HORIZONTAL_WALL	1
 
-// for wall height 
+/* RENDERING CONSTRAINTS
+wall height projection - dist/height limits */
 #define MINIMUM_WALL_DISTANCE_THRESHOLD  0.001
 #define MAXIMUM_WALL_HEIGHT_PIXELS       (g_game.graphics.screen_height * 2)
+
+
 
 typedef struct s_texture_image
 {

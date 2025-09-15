@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 15:48:27 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/15 17:40:46 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/15 17:50:00 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,16 @@ think of DDA as:
 ret: perpendicular dist (prevent fisheye distortion) 
 
 
-// DDA traversal state
+
+bridges discrete map space & continuous world space
+
+steps thru integer grid cells while maintaining continuous dist precision for accurate intersection calculations
+
+
+
+
+dda traversal state held in:
+
 typedef struct s_dda_state {
     int    map_x, map_y;        // Current grid position
     int    step_x, step_y;      // Step direction (-1 or +1)
@@ -56,11 +65,8 @@ typedef struct s_dda_state {
     double delta_dist_x, delta_dist_y; // Distance per grid step
 } t_dda_state;
 
-bridges discrete map space & continuous world space
-steps thru integer grid cells while maintaining continuous dist precision for accurate intersection calculations
 
-
-// wall side types
+wall side types
 # define VERTICAL_WALL	0
 # define HORIZONTAL_WALL 1
 
@@ -69,21 +75,32 @@ steps thru integer grid cells while maintaining continuous dist precision for ac
 
 
 
-// coordinate
-t_ray_result	cast_ray_to_wall(double ray_dir_x, double ray_dir_y)
+t_ray_result	cast_ray_to_wall(double world_ray_dir_x, double world_ray_dir_y)
 {
-	t_dda_state		state;
-	t_ray_result	result;
+	t_dda_state		dda_state;
+	t_ray_result	wall_intersection_result;
 
-	setup_dda_vars(ray_dir_x, ray_dir_y, &state);
-	execute_dda_traversal(&state, &result.wall_side);
-	result.distance = calculate_wall_distance(&state, result.wall_side);
-	result.hit_x = g_game.player.pos_x
-		+ (result.distance * ray_dir_x);
-	result.hit_y = g_game.player.pos_y
-		+ (result.distance * ray_dir_y);
-	result.wall_face = determine_wall_face(&state, result.wall_side);
-	return (result);
+	// Step 1: Initialize DDA traversal state using existing setup function
+	setup_dda_vars(world_ray_dir_x, world_ray_dir_y, &dda_state);
+
+	// Step 2: Execute DDA algorithm to find wall intersection
+	execute_dda_traversal(&dda_state, &wall_intersection_result.world_wall_side);
+
+	// Step 3: Calculate perpendicular distance (prevents fisheye distortion)
+	wall_intersection_result.world_distance = 
+		calculate_wall_distance(&dda_state, wall_intersection_result.world_wall_side);
+
+	// Step 4: Calculate precise intersection coordinates
+	wall_intersection_result.world_intersection_x = g_game.player.world_pos_x 
+		+ (wall_intersection_result.world_distance * world_ray_dir_x);
+	wall_intersection_result.world_intersection_y = g_game.player.world_pos_y 
+		+ (wall_intersection_result.world_distance * world_ray_dir_y);
+
+	// Step 5: Determine wall face using coordinate-based method (SINGLE SOURCE OF TRUTH)
+	wall_intersection_result.world_wall_face = 
+		determine_intersected_wall_face(&wall_intersection_result);
+
+	return (wall_intersection_result);
 }
 
 /* core dda algo
@@ -94,24 +111,29 @@ dda stepping loop:
 . update dist for axis stepped along
 . check if new grid cell contains wall
 . repeat until wall found */
-void	execute_dda_traversal(t_dda_state *state, int *wall_side)
+void	execute_dda_traversal(t_dda_state *dda_state, int *world_wall_side)
 {
-	while (!state->wall_hit)
+	while (!dda_state->wall_intersection_found)
 	{
-		if (state->side_dist_x < state->side_dist_y)
+		// Determine which boundary is closer
+		if (dda_state->world_dist_to_next_boundary_x < dda_state->world_dist_to_next_boundary_y)
 		{
-			state->side_dist_x += state->delta_dist_x;
-			state->map_x += state->step_x;
-			*wall_side = VERTICAL_WALL;
+			// Step to next vertical boundary
+			dda_state->world_dist_to_next_boundary_x += dda_state->delta_dist_x;
+			dda_state->map_x += dda_state->step_x;
+			*world_wall_side = VERTICAL_WALL;
 		}
 		else
 		{
-			state->side_dist_y += state->delta_dist_y;
-			state->map_y += state->step_y;
-			*wall_side = HORIZONTAL_WALL;
+			// Step to next horizontal boundary
+			dda_state->world_dist_to_next_boundary_y += dda_state->delta_dist_y;
+			dda_state->map_y += dda_state->step_y;
+			*world_wall_side = HORIZONTAL_WALL;
 		}
-		if (g_game.map.grid[state->map_y * g_game.map.width + state->map_x] == WALL)
-			state->wall_hit = 1;
+
+		// Check if current grid cell contains wall
+		if (g_game.map.grid[dda_state->map_y * g_game.map.width + dda_state->map_x] == CELL_WALL)
+			dda_state->wall_intersection_found = 1;
 	}
 }
 
@@ -119,10 +141,16 @@ void	execute_dda_traversal(t_dda_state *state, int *wall_side)
 . calc perpendicular dist to prevent fisheye distortion
 . use exact intersection pt on wall face
 . ret dist from player > wall intersection */
-double	calculate_wall_distance(t_dda_state *state, int wall_side)
+double	calculate_wall_distance(t_dda_state *dda_state, int world_wall_side)
 {
-	if (wall_side == VERTICAL_WALL)
-		return ((state->map_x - g_game.player.pos_x + (1 - state->step_x) / 2) / state->ray_dir_x);
+	if (world_wall_side == VERTICAL_WALL)
+	{
+		return ((dda_state->map_x - g_game.player.world_pos_x 
+			+ (1 - dda_state->step_x) / 2) / dda_state->world_ray_dir_x);
+	}
 	else
-		return ((state->map_y - g_game.player.pos_y + (1 - state->step_y) / 2) / state->ray_dir_y);
+	{
+		return ((dda_state->map_y - g_game.player.world_pos_y 
+			+ (1 - dda_state->step_y) / 2) / dda_state->world_ray_dir_y);
+	}
 }

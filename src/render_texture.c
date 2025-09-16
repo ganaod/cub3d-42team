@@ -6,15 +6,14 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 14:01:40 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/15 18:50:49 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/16 11:24:26 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/cub3d.h"
-
-/* projection established spatial positioning, scale relationships
-texturing provides surface appearance, visual detail
-coordinate both for complete visual representation 
+/* TEXTURE
+. projection established spatial positioning, scale relationships
+. texturing provides surface appearance, visual detail
+. coordinate both for complete visual representation 
 
 how to map surface appearance onto geometric surfaces positioned by projection? 
 coordinate transformation problem:
@@ -23,30 +22,31 @@ coordinate transformation problem:
 	required output: each screen pixel needs colour val
 mapping challenge:
 	screen pixel pos > wall surface pos > texture coord > colour val
-
-ray casting:
-	screen col (pixel col index) > ray (world space)
-	> wall intersection (world space), exact coords
-	> texture coord calc. colour val gets written to screen space pixels 
 	
 texture mapping: world pos > texture pos
 texture sampling: extract colour vals 
 	read pixel colour from texture at calculated coords */
 
-int	get_wall_texture_colour(t_texture_context *ctx, int screen_y)
+#include "../inc/cub3d.h"
+
+static double	world_wall_texture_u(t_texture_context *ctx);
+static double	screen_wall_texture_v(t_texture_context *ctx, int screen_y);
+static int		texture_pixel_colour(t_texture_image *texture_image, int texture_pixel_x, int texture_pixel_y);
+
+int	screen_pixel_texture_colour(t_texture_context *ctx, int screen_y)
 {
-	t_texture_image	*texture_image;
+	t_texture_image	*wall_texture_image;
 	double			texture_coord_u;
 	double			texture_coord_v;
 	int				texture_pixel_x;
 	int				texture_pixel_y;
 
-	texture_image = &g_game.map.wall_textures[ctx->world_wall_face];
-	texture_coord_u = calculate_texture_u(ctx);
-	texture_coord_v = calculate_texture_v(ctx, screen_y);
-	texture_pixel_x = (int)(texture_coord_u * texture_image->image_width);
-	texture_pixel_y = (int)(texture_coord_v * texture_image->image_height);
-	return (sample_texture_pixel(texture_image, texture_pixel_x, texture_pixel_y));
+	wall_texture_image = &g_game.map.wall_textures[ctx->world_wall_face];
+	texture_coord_u = world_wall_texture_u(ctx);
+	texture_coord_v = screen_wall_texture_v(ctx, screen_y);
+	texture_pixel_x = (int)(texture_coord_u * wall_texture_image->image_width);
+	texture_pixel_y = (int)(texture_coord_v * wall_texture_image->image_height);
+	return (texture_pixel_colour(wall_texture_image, texture_pixel_x, texture_pixel_y));
 }
 
 /* correspondence between: 
@@ -54,13 +54,11 @@ int	get_wall_texture_colour(t_texture_context *ctx, int screen_y)
 	any texture image (diff pixel dimensions)
 requires universal coord sys.
 normalisation: converting abs > relative measurements
-	relative_pos = abs_pos / total_dimension
+	(relative_pos = abs_pos / total_dimension)
 range standardisation: decimal fraction sys, [0,1]
 	convenience: direct multiplication with pixel dimensions
 	graphics standard
-applied here: 
-*/
-
+applied here: */
 /* 1. identify wall cell
 which coord represents horiz pos across wall depends on wall orientation
 
@@ -74,7 +72,11 @@ map space wall orientations:
 	└── For texture U: Use wall_hit_y (position along Y-axis)
 
 2. extract fractional part  */
-static double	calculate_texture_u(t_texture_context *ctx)
+
+/* Input: World coordinates (where ray hit wall)
+Output: Texture U coordinate (0.0-1.0 range)
+Process: Transform world position → normalised texture coordinate */
+static double	world_wall_texture_u(t_texture_context *ctx)
 {
 	double	world_wall_position;
 
@@ -86,8 +88,9 @@ static double	calculate_texture_u(t_texture_context *ctx)
 }
 
 /* input: screen pixel pos (abs)
-process: normalisation ( (current - start) / (total range) )*/
-static double	calculate_texture_v(t_texture_context *ctx, int screen_y)
+out: texture v coord
+	process: normalisation ( (current - start) / (total range) )*/
+static double	screen_wall_texture_v(t_texture_context *ctx, int screen_y)
 {
 	int	screen_wall_start_y;
 	int	screen_wall_end_y;
@@ -98,7 +101,7 @@ static double	calculate_texture_v(t_texture_context *ctx, int screen_y)
 	return ((double)(screen_y - screen_wall_start_y) / (screen_wall_end_y - screen_wall_start_y));
 }
 
-static int	sample_texture_pixel(t_texture_image *texture_image, int texture_pixel_x, int texture_pixel_y)
+static int	texture_pixel_colour(t_texture_image *texture_image, int texture_pixel_x, int texture_pixel_y)
 {
 	if (texture_pixel_x >= texture_image->image_width)
 		texture_pixel_x = texture_image->image_width - 1;
@@ -110,63 +113,3 @@ static int	sample_texture_pixel(t_texture_image *texture_image, int texture_pixe
 		texture_pixel_y = 0;
 	return (texture_image->pixels[texture_pixel_y * texture_image->image_width + texture_pixel_x]);
 }
-
-
-/*
-
-Texture System Pipeline - Five Core Functions:
-
-get_wall_texture_colour() - Main Orchestrator
-
-	Input: Texture context + screen Y position
-	Process: Coordinates entire texture sampling pipeline
-	Output: Final colour value
-	Role: The conductor - calls all other texture functions in sequence
-
-	
-calculate_texture_u() - Horizontal Coordinate
-
-	Input: Wall hit coordinates from ray intersection
-	Process: Extracts fractional part for horizontal position [0,1]
-	Logic: Vertical walls use X coordinate, horizontal walls use Y coordinate
-	Output: U coordinate representing position across wall surface
-
-	
-calculate_texture_v() - Vertical Coordinate
-
-	Input: Screen Y position + wall height
-	Process: Maps screen pixel position to wall surface position [0,1]
-	Logic: (screen_y - wall_start_y) / wall_height
-	Output: V coordinate representing position up/down wall surface
-
-	
-sample_texture_pixel() - Memory Access
-
-	Input: Texture image + pixel coordinates
-	Process: Bounds protection + 2D→1D array indexing
-	Logic: pixels[tex_y * tex_width + tex_x]
-	Output: Raw colour value from texture memory
-
-	
-get_texture_for_direction() - Texture Selection
-
-	Input: Wall direction (NORTH/SOUTH/EAST/WEST)
-	Process: Array lookup in global texture storage
-	Output: Pointer to appropriate texture image
-
-
-
-
-The Complete Transform Chain:
-
-Wall hit (2.34, 4.67) + Screen pixel Y=300
-    ↓ calculate_texture_u()
-U=0.34 (horizontal position across wall)
-    ↓ calculate_texture_v()  
-V=0.6 (vertical position up wall)
-    ↓ UV→pixel conversion
-Texture coordinates (34, 60) in 100x100 texture
-    ↓ sample_texture_pixel()
-Colour value 0xFF8B4513 (from texture memory)
-
-*/

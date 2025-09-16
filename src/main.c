@@ -234,87 +234,241 @@
 // 	return 0;
 // }
 
+// Returns 1 on success, 0 on error
+static int load_one_texture_png(const char *path, t_texture_image *out)
+{
+    mlx_texture_t *t = mlx_load_png(path);
+    if (!t) {
+        ft_printf("ERROR: mlx_load_png failed for '%s'\n", path);
+        return 0;
+    }
+
+    // t->pixels is RGBA8, width * height * 4 bytes
+    out->image_width  = (int)t->width;
+    out->image_height = (int)t->height;
+    out->mlx_image    = NULL;
+
+    size_t count = (size_t)out->image_width * (size_t)out->image_height;
+    out->pixels = malloc(count * sizeof(uint32_t));
+    if (!out->pixels) {
+        mlx_delete_texture(t);
+        ft_printf("ERROR: malloc texture pixels failed for '%s'\n", path);
+        return 0;
+    }
+
+    // Pack RGBA bytes into a 32-bit pixel your renderer uses.
+    // If your renderer expects ARGB, pack as 0xAARRGGBB (adjust if you use another order).
+    for (size_t i = 0; i < count; ++i) {
+        uint8_t r = t->pixels[i * 4 + 0];
+        uint8_t g = t->pixels[i * 4 + 1];
+        uint8_t b = t->pixels[i * 4 + 2];
+        uint8_t a = t->pixels[i * 4 + 3];
+        out->pixels[i] = (uint32_t)(a << 24 | r << 16 | g << 8 | b); // ARGB
+    }
+
+    mlx_delete_texture(t);
+    return 1;
+}
+
+
 static void free_lines_array(char **lines, int h) {
     int i = 0;
     while (i < h) { free(lines[i]); i++; }
     free(lines);
 }
 
-static char cell_ch(int v) {
-    if (v == CELL_WALL)  return '#';
-    if (v == CELL_EMPTY) return '.';
-    if (v == CELL_VOID)  return ' ';
-    return '?';
+// static char cell_ch(int v) {
+//     if (v == CELL_WALL)  return '#';
+//     if (v == CELL_EMPTY) return '.';
+//     if (v == CELL_VOID)  return ' ';
+//     return '?';
+// }
+
+/* Fenster + Framebuffer erzeugen */
+static int init_window_and_frame(t_game *g, int w, int h, const char *title)
+{
+    // TODO(1): ggf. w/h aus Config übernehmen
+    g->graphics.screen_width = w;
+    g->graphics.screen_height = h;
+
+    // TODO(2): MLX initialisieren
+    g->graphics.mlx = mlx_init(w, h, title, false);
+    if (!g->graphics.mlx)
+        return (0);
+
+    // TODO(3): Framebuffer-Image erzeugen (RGBA32)
+    g->graphics.frame = mlx_new_image(g->graphics.mlx, w, h);
+    if (!g->graphics.frame)
+        return (0);
+
+    // Hinweis: put_pixel/clear_screen_buffer schreiben in frame->pixels
+    return (1);
 }
 
-int main(int argc, char **argv) {
-    t_game g = (t_game){0};
-    char **lines;
-    int   h;
-    int   fd;
-    int   player_found;
-    int   y;
-    int   x;
-    int   ok;
 
-    if (argc != 2) { fprintf(stderr, "usage: %s file.cub\n", argv[0]); return 2; }
+
+
+/* Player-Felder (parser -> world_*) synchronisieren */
+static void sync_player_world_fields_from_parser(t_game *g)
+{
+    // TODO: Setze Blickrichtung und Kameraebene passend zu Startorientierung
+    // Beispiel: Start nach Osten
+    g->player.world_dir_x = 1.0;
+    g->player.world_dir_y = 0.0;
+
+    // FOV über Kamera-Ebene: Länge = tan(FOV/2); orthogonal zur Dir
+    g->player.world_camera_plane_x = 0.0;
+    g->player.world_camera_plane_y = FOV_CAMERA_PLANE_MAGNITUDE;
+}
+
+/* Loop-Hook: pro Frame zeichnen */
+static void game_loop_tick(void *param)
+{
+    (void)param;
+
+    if (!g_game.running)
+        return;
+
+    // TODO: Input/Movement (später)
+    // TODO: g_movement_speed/rotation_speed & deltaTime verwenden
+
+    render_complete_frame(); // zeichnet in g_game.graphics.frame->pixels
+    // Bild ist bereits via mlx_image_to_window() im Fenster
+}
+static void free_map(t_map *m)
+{
+    if (!m) return;
+
+    // 1D-Grid freigeben
+    free(m->grid);
+    m->grid = NULL;
+
+    // Texturpfade (falls via strdup o.ä.)
+    for (int i = 0; i < 4; ++i) {
+        free(m->texture_paths[i]);
+        m->texture_paths[i] = NULL;
+    }
+
+    // Falls du echte MLX-Images in wall_textures hast:
+    for (int i = 0; i < 4; ++i) {
+        if (m->wall_textures[i].mlx_image) {
+            // Hinweis: g_game.graphics.mlx muss noch gültig sein
+            mlx_delete_image(g_game.graphics.mlx, m->wall_textures[i].mlx_image);
+            m->wall_textures[i].mlx_image = NULL;
+        }
+        free(m->wall_textures[i].pixels);
+        m->wall_textures[i].pixels = NULL;      // wird von MLX verwaltet, nicht separat freigeben
+        m->wall_textures[i].image_width = 0;
+        m->wall_textures[i].image_height = 0;
+    }
+}
+static int load_all_wall_textures(t_map *m)
+{
+    // Validate paths parsed from header
+    for (int i = 0; i < 4; ++i) {
+        if (!m->texture_paths[i] || !*m->texture_paths[i]) {
+            ft_printf("ERROR: missing texture path for face %d\n", i);
+            return 0;
+        }
+    }
+
+    // Load each face
+    if (!load_one_texture_png(m->texture_paths[NORTH], &m->wall_textures[NORTH])) return 0;
+    if (!load_one_texture_png(m->texture_paths[SOUTH], &m->wall_textures[SOUTH])) return 0;
+    if (!load_one_texture_png(m->texture_paths[WEST],  &m->wall_textures[WEST]))  return 0;
+    if (!load_one_texture_png(m->texture_paths[EAST],  &m->wall_textures[EAST]))  return 0;
+
+    return 1;
+}
+
+int main(int argc, char **argv)
+{
+    t_game  g = (t_game){0};
+    char  **lines = NULL;
+    int     h = 0;
+    int     fd;
+    int     player_found = 0;
+
+    if (argc != 2) {
+        parse_error("usage: ./cub3d file.cub");
+        return (2);
+    }
     fd = open(argv[1], O_RDONLY);
-    if (fd < 0) { perror("open"); return 1; }
+    if (fd < 0) {
+        parse_error("open failed");
+        return (1);
+    }
 
-    if (!parse_header_lines(&g.map, fd)) { fprintf(stderr, "❌ header parse failed\n"); close(fd); return 3; }
-    // if (!check_texture_paths_exist(&g.map)) {
-	// 	close(fd);
-	// 	free(g.map.grid);
-	// 	return (4);
-	// }
-    if (!collect_map_lines(&g.map, fd, &lines, &h)) { fprintf(stderr, "❌ collect_map_lines failed\n"); close(fd); return 4; }
+    /* 1) Header parsen */
+    if (!parse_header_lines(&g.map, fd)) {
+        parse_error("header parse failed");
+        close(fd);
+        free_map(&g.map);
+        return (3);
+    }
+
+    /* 2) Map-Zeilen sammeln + normalisieren */
+    if (!collect_map_lines(&g.map, fd, &lines, &h)) {
+        parse_error("collect_map_lines failed");
+        close(fd);
+        free_map(&g.map);
+        return (4);
+    }
     close(fd);
 
-    /* normalize_map passt lines rechteckig an (Spaces rechts) */
     if (!normalize_map(&lines, h, &g.map.width)) {
-        fprintf(stderr, "❌ normalize_map failed\n");
+        parse_error("normalize_map failed");
         free_lines_array(lines, h);
-        return 5;
+        free_map(&g.map);
+        return (5);
     }
 
-    /* Grid bauen (ermittelt width/height intern neu & setzt Player) */
-    player_found = 0;
-    if (!build_grid_from_lines(&g.map, &g.player, lines, &player_found)) {
-        fprintf(stderr, "❌ build_grid_from_lines failed (player_found=%d)\n", player_found);
+    /* 3) Grid bauen + Closed-Check */
+    if (!build_grid_from_lines(&g.map, &g.player, lines, &player_found)
+        || player_found != 1)
+    {
+        parse_error("grid build failed (player count)");
         free_lines_array(lines, h);
-        return 6;
+        free_map(&g.map);
+        return (6);
     }
-
-    /* 👉 NEU: Map-Closed-Check (Flood-Fill über CELL_VOID vom Rand) */
-    ok = map_is_closed(&g.map);
-    if (!ok) {
-        fprintf(stderr, "❌ map_is_closed: map is OPEN (leckt ins VOID)\n");
+    if (!map_is_closed(&g.map)) {
+        parse_error("map is open (leaks into VOID)");
         free_lines_array(lines, h);
-        free(g.map.grid);
-        return 7;
+        free_map(&g.map);
+        return (7);
     }
-    printf("✅ map_is_closed: map is CLOSED\n");
-
-    /* Ausgabe */
-    printf("✅ grid built: w=%d h=%d player_found=%d\n", g.map.width, g.map.height, player_found);
-    printf("   player: pos=(%.2f, %.2f) dir=(%.2f, %.2f) plane=(%.2f, %.2f)\n",
-           g.player.world_pos_x, g.player.world_pos_y, g.player.world_dir_x, g.player.world_dir_y,
-           g.player.world_camera_plane_x, g.player.world_camera_plane_y);
-
-    y = 0;
-    while (y < g.map.height) {
-        x = 0;
-        while (x < g.map.width) {
-            putchar(cell_ch(g.map.grid[y * g.map.width + x]));
-            x++;
-        }
-        putchar('\n');
-        y++;
-    }
-
-    /* Aufräumen */
     free_lines_array(lines, h);
-    free(g.map.grid);
-    return 0;
-}
 
+    /* 4) Grafik initialisieren (Fenster + Framebuffer) */
+    if (!init_window_and_frame(&g, DEFAULT_WIDTH, DEFAULT_HEIGHT, "cub3d")) {
+        parse_error("mlx init failed");
+        free_map(&g.map);
+        return (8);
+    }
+
+    /* 5) Texturen laden */
+    if (!load_all_wall_textures(&g.map)) {
+        parse_error("failed to load wall textures");
+        mlx_terminate(g.graphics.mlx);
+        free_map(&g.map);
+        return (9);
+    }
+
+    /* 6) Player-Werte -> world_* Felder spiegeln (für Raycaster) */
+    g.movement_speed = 3.0 / 60.0;   // Defaults; später deltaTime verwenden
+    g.rotation_speed = 2.0 / 60.0;
+    sync_player_world_fields_from_parser(&g);
+
+    /* 7) Frame-Loop */
+    g.running = 1;
+    g_game = g; // global setzen, alle Render-Files nutzen g_game
+    mlx_image_to_window(g_game.graphics.mlx, g_game.graphics.frame, 0, 0);
+    mlx_loop_hook(g_game.graphics.mlx, game_loop_tick, NULL);
+    mlx_loop(g_game.graphics.mlx);
+
+    /* 8) Cleanup */
+    mlx_terminate(g_game.graphics.mlx);
+    free_map(&g_game.map);
+    return (0);
+}

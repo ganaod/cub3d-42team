@@ -63,7 +63,7 @@ M_PI is a constant defined in <math.h> for the value of Pi */
 # define SCREEN_TO_FOV_SCALE_FACTOR		2.0
 // Scales normalized screen coordinates [0,1] to [0,2]
 
-# define FOV_CENTER_OFFSET				1.0  
+# define FOV_CENTER_OFFSET				1.0
 // Shifts scaled coordinates [0,2] to FOV space [-1,+1]
 
 
@@ -116,15 +116,16 @@ typedef struct s_player
 // map configuration
 typedef struct s_map
 {
-	int				*grid;				// 2d map as 1d array
-	int				width;				// map width in cells
-	int				height;				// map height in cells
-	char			*texture_paths[4];	// wall texture file paths
-	uint32_t		floor_	;		// 0xrrggbb
-	uint32_t		ceiling_color;		// 0xrrggbb
-	char			*first_map_line;	// first line of map
-	t_texture_image	*wall_textures[4];	// wall textures
-}					t_map;
+	int             *grid;               // 1D grid, size = width*height
+	int             width;
+	int             height;
+	char            *texture_paths[4];
+	uint32_t        floor_color;         // <— war floor_; jetzt floor_color
+	uint32_t        ceiling_color;
+	char            *first_map_line;
+	t_texture_image wall_textures[4];    // <— KEINE Pointer: struct-Array erwartet
+} t_map;
+
 
 // graphics system
 typedef struct s_graphics

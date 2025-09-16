@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   render_column.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
+/*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 10:54:44 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/15 18:44:08 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/16 15:12:21 by blohrer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 │                 │
 ├╴╴╴╴╴╴╴╴╴╴╴╴╴╴╴╴╴┤ ← screen_y = wall_start_y_pixel
 │      WALL       │ (ray intersection determines height)
-│                 │	
+│                 │
 ├╴╴╴╴╴╴╴╴╴╴╴╴╴╴╴╴╴┤ ← screen_y = wall_end_y_pixel
 │      FLOOR      │
 │                 │	(rays below horizontal centreline)
@@ -27,7 +27,7 @@ re. texture, from subject:
 	"display different wall textures"
 	"set the floor and ceiling to two different colours"
 
-hence 
+hence
 1 helper per section, texturing
 only in render_wall_section() */
 
@@ -61,7 +61,7 @@ void	render_wall_section(int screen_column_x, int wall_start_y_pixel,
 	current_pixel_y = wall_start_y_pixel;
 	while (current_pixel_y < wall_end_y_pixel)
 	{
-		pixel_color = get_wall_texture_colour(&texture_mapping_info,
+		pixel_color = screen_pixel_texture_colour(&texture_mapping_info,
 						current_pixel_y);
 		put_pixel(screen_column_x, current_pixel_y, pixel_color);
 		current_pixel_y++;

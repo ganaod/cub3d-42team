@@ -19,6 +19,7 @@ LIBRARIES   =  $(MLX_PATH)/build/libmlx42.a \
 
 SRC_DIR     = src
 SRC_FILES   =	main.c \
+				global_state.c \
 				parse_utils.c \
 				parse_header.c \
 				parse_header_lines.c \
@@ -35,7 +36,7 @@ SRC_FILES   =	main.c \
 				utils.c \
 				map_check.c \
 				parse_paths_check.c \
-				render_main.c \
+				render__main.c \
 				render_column.c \
 				render_dda.c \
 				render_dda_setup.c \

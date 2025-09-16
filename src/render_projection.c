@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 11:18:50 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/15 18:22:44 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/16 12:38:36 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,15 +25,14 @@ Why this exists? fundamental problem:
 human vision perceives depth through perspective - 
 objects shrink with distance. 
 To simulate 3D on 2D screen, we must mathematically replicate this visual scaling 
-
 	
 MATHEMATICAL FOUNDATION: Similar Triangles Perspective Projection
 	Eye-to-screen triangle ~ Eye-to-wall triangle
 	Ratio preservation: screen_height/focal_length = wall_height_world/wall_distance
 
-Wolfenstein constraint: All walls same world height (1.0 unit)
-Normalized case: focal_length = screen_height
-Result: wall_height_pixels = screen_height / wall_distance
+	Wolfenstein constraint: All walls same world height (1.0 unit)
+	Normalized case: focal_length = screen_height
+	Result: wall_height_pixels = screen_height / wall_distance
 
 Mathematical behavior:
 	. Distance 1.0 → Wall fills screen (height = screen_height)

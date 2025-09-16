@@ -270,7 +270,7 @@ int				calculate_screen_wall_height(double world_wall_distance);
 void			calculate_wall_boundaries(int wall_height, int *wall_start, int *wall_end);
 
 // texture.c
-int				get_wall_texture_colour(t_texture_context *ctx, int screen_y);
+int				screen_pixel_texture_colour(t_texture_context *ctx, int current_pixel_y);
 
 // pixel_buffer.c
 void			clear_screen_buffer(void);

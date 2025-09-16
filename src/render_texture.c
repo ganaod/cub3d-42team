@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 14:01:40 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/16 11:39:55 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/16 12:50:36 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,9 @@ normalisation: converting abs > relative measurements
 range standardisation: decimal fraction sys, [0,1]
 	convenience: direct multiplication with pixel dimensions
 	graphics standard
-applied here: */
-/* 1. identify wall cell
+
+	applied here:
+1. identify wall cell
 which coord represents horiz pos across wall depends on wall orientation
 
 map space wall orientations:
@@ -82,6 +83,8 @@ int	screen_pixel_texture_colour(t_texture_context *ctx, int current_pixel_y)
 Input Space: WORLD SPACE (wall intersection coordinates)
 Output Space: TEXTURE SPACE (horizontal position 0.0-1.0)  
 Mathematical Process: world_wall_position - floor(world_wall_position)
+	floor calculation: fractional result represents relative position within
+	grid cell, independent of cell's world location
 . Ray impact becomes surface coordinate */
 static double	world_wall_texture_u(t_texture_context *ctx)
 {

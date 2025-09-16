@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 14:01:40 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/16 11:24:26 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/16 11:39:55 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,31 +25,9 @@ mapping challenge:
 	
 texture mapping: world pos > texture pos
 texture sampling: extract colour vals 
-	read pixel colour from texture at calculated coords */
-
-#include "../inc/cub3d.h"
-
-static double	world_wall_texture_u(t_texture_context *ctx);
-static double	screen_wall_texture_v(t_texture_context *ctx, int screen_y);
-static int		texture_pixel_colour(t_texture_image *texture_image, int texture_pixel_x, int texture_pixel_y);
-
-int	screen_pixel_texture_colour(t_texture_context *ctx, int screen_y)
-{
-	t_texture_image	*wall_texture_image;
-	double			texture_coord_u;
-	double			texture_coord_v;
-	int				texture_pixel_x;
-	int				texture_pixel_y;
-
-	wall_texture_image = &g_game.map.wall_textures[ctx->world_wall_face];
-	texture_coord_u = world_wall_texture_u(ctx);
-	texture_coord_v = screen_wall_texture_v(ctx, screen_y);
-	texture_pixel_x = (int)(texture_coord_u * wall_texture_image->image_width);
-	texture_pixel_y = (int)(texture_coord_v * wall_texture_image->image_height);
-	return (texture_pixel_colour(wall_texture_image, texture_pixel_x, texture_pixel_y));
-}
-
-/* correspondence between: 
+	read pixel colour from texture at calculated coords 
+	
+correspondence between: 
 	any map wall surface (diff sizes, orientations, world positions) &
 	any texture image (diff pixel dimensions)
 requires universal coord sys.
@@ -73,24 +51,55 @@ map space wall orientations:
 
 2. extract fractional part  */
 
-/* Input: World coordinates (where ray hit wall)
-Output: Texture U coordinate (0.0-1.0 range)
-Process: Transform world position → normalised texture coordinate */
-static double	world_wall_texture_u(t_texture_context *ctx)
-{
-	double	world_wall_position;
+#include "../inc/cub3d.h"
 
-	if (ctx->world_wall_face == NORTH || ctx->world_wall_face == SOUTH)
-		world_wall_position = ctx->world_wall_intersection_x;
-	else
-		world_wall_position = ctx->world_wall_intersection_y;
-	return (world_wall_position - floor(world_wall_position));
+static double	world_wall_texture_u(t_texture_context *ctx);
+static double	screen_wall_texture_v(t_texture_context *ctx, int current_pixel_y);
+static int		texture_pixel_colour(t_texture_image *texture_image, int texture_pixel_x, int texture_pixel_y);
+
+/* Transform single screen pixel → colour value
+Input Space: SCREEN SPACE (pixel Y coordinate) + TEXTURE CONTEXT (world intersection data)
+Output Space: COLOUR VALUE (final RGB pixel data)
+Mathematical Process: Complete coordinate space pipeline orchestration
+. Called for each pixel as we paint the wall */
+int	screen_pixel_texture_colour(t_texture_context *ctx, int current_pixel_y)
+{
+	t_texture_image	*wall_texture_image;
+	double			texture_coord_u;
+	double			texture_coord_v;
+	int				texture_pixel_x;
+	int				texture_pixel_y;
+
+	wall_texture_image = &g_game.map.wall_textures[ctx->world_wall_face];
+	texture_coord_u = world_wall_texture_u(ctx);
+	texture_coord_v = screen_wall_texture_v(ctx, current_pixel_y);
+	texture_pixel_x = (int)(texture_coord_u * wall_texture_image->image_width);
+	texture_pixel_y = (int)(texture_coord_v * wall_texture_image->image_height);
+	return (texture_pixel_colour(wall_texture_image, texture_pixel_x, texture_pixel_y));
 }
 
-/* input: screen pixel pos (abs)
-out: texture v coord
-	process: normalisation ( (current - start) / (total range) )*/
-static double	screen_wall_texture_v(t_texture_context *ctx, int screen_y)
+/* World intersection → texture horizontal position
+Input Space: WORLD SPACE (wall intersection coordinates)
+Output Space: TEXTURE SPACE (horizontal position 0.0-1.0)  
+Mathematical Process: world_wall_position - floor(world_wall_position)
+. Ray impact becomes surface coordinate */
+static double	world_wall_texture_u(t_texture_context *ctx)
+{
+	double	world_wall_intersection_coordinate;
+
+	if (ctx->world_wall_face == NORTH || ctx->world_wall_face == SOUTH)
+		world_wall_intersection_coordinate = ctx->world_wall_intersection_x;
+	else
+		world_wall_intersection_coordinate = ctx->world_wall_intersection_y;
+	return (world_wall_intersection_coordinate - floor(world_wall_intersection_coordinate));
+}
+
+/* Screen pixel → texture vertical position
+Input Space: SCREEN SPACE (pixel Y position)
+Output Space: TEXTURE SPACE (vertical position 0.0-1.0)
+Mathematical Process: (current_pixel_y - wall_start_y) / (wall_end_y - wall_start_y)
+. Display location becomes surface coordinate */
+static double	screen_wall_texture_v(t_texture_context *ctx, int current_pixel_y)
 {
 	int	screen_wall_start_y;
 	int	screen_wall_end_y;
@@ -98,9 +107,14 @@ static double	screen_wall_texture_v(t_texture_context *ctx, int screen_y)
 	calculate_wall_boundaries(ctx->screen_wall_height, &screen_wall_start_y, &screen_wall_end_y);
 	if (screen_wall_end_y <= screen_wall_start_y)
 		return (0.0);
-	return ((double)(screen_y - screen_wall_start_y) / (screen_wall_end_y - screen_wall_start_y));
+	return ((double)(current_pixel_y - screen_wall_start_y) / (screen_wall_end_y - screen_wall_start_y));
 }
 
+/* Texture coordinates → memory colour
+Input Space: TEXTURE SPACE (normalized UV coordinates converted to pixel indices)
+Output Space: COLOUR VALUE (RGB data from texture memory)
+Mathematical Process: Bounds protection + 2D→1D array indexing
+. Surface position becomes pixel reality */
 static int	texture_pixel_colour(t_texture_image *texture_image, int texture_pixel_x, int texture_pixel_y)
 {
 	if (texture_pixel_x >= texture_image->image_width)

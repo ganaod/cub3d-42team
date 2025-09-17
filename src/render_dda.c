@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 15:48:27 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/17 14:11:46 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/17 14:14:03 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,22 +95,6 @@ t_ray_result	cast_ray_to_wall(double world_ray_dir_x, double world_ray_dir_y)
 		+ (wall_intersection_result.world_distance * world_ray_dir_y);
 	wall_intersection_result.world_wall_face = 
 		determine_intersected_wall_face(&wall_intersection_result);
-
-    // DEBUG: Sample specific rays based on direction values
-    // We know from previous debug: Column 0=(1.000,-0.577), Column 512=(1.000,0.000), etc.
-    if (fabs(world_ray_dir_x - 1.000) < 0.01 && 
-        (fabs(world_ray_dir_y - 0.000) < 0.01 ||     // Column 512 (center)
-         fabs(world_ray_dir_y + 0.577) < 0.01 ||     // Column 0 (left edge) 
-         fabs(world_ray_dir_y - 0.289) < 0.01 ||     // Column 768
-         fabs(world_ray_dir_y + 0.289) < 0.01))      // Column 256
-    {
-        printf("DDA result: ray=(%.3f,%.3f) distance=%.3f, wall_face=%d, hit=(%.3f,%.3f)\n",
-               world_ray_dir_x, world_ray_dir_y,
-               wall_intersection_result.world_distance, wall_intersection_result.world_wall_face,
-               wall_intersection_result.world_intersection_x, wall_intersection_result.world_intersection_y);
-    }
-    
-		
 	return (wall_intersection_result);
 }
 

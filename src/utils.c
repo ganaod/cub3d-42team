@@ -153,19 +153,6 @@ void	render_wall_column2(int screen_column_x, t_ray_result *wall_intersection_da
 // }
 
 
-// with more bounds checking:
-void put_pixel2(int screen_x, int screen_y, int pixel_color)
-{
-    if (screen_x < 0 || screen_x >= (int)g_game.graphics.frame->width || 
-        screen_y < 0 || screen_y >= (int)g_game.graphics.frame->height)
-        return;
-    
-    int screen_pixel_index = screen_y * (int)g_game.graphics.frame->width + screen_x;
-    g_game.graphics.frame->pixels[screen_pixel_index] = pixel_color;
-}
-
-
-
 void	render_wall_section2(int screen_column_x, int wall_start_y_pixel,
 						int wall_end_y_pixel, t_ray_result *wall_hit_data)
 {

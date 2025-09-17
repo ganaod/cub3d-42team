@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 10:54:39 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/17 15:00:12 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/17 15:11:30 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,13 +133,6 @@ void	render_single_column(int screen_column_x)
 	calculate_ray_direction(screen_column_x, &world_ray_direction_x, &world_ray_direction_y);
 	wall_intersection_data = cast_ray_to_wall(world_ray_direction_x, world_ray_direction_y);
 	projected_wall_height = calculate_screen_wall_height(wall_intersection_data.world_distance);
-
-	if (screen_column_x % 100 == 0) // Sample every 100th column
-	{
-		printf("PROJ[%d]: Distance=%.3f → Height=%d\n", 
-			screen_column_x, wall_intersection_data.world_distance, projected_wall_height);
-	}
-
 	render_wall_column(screen_column_x, &wall_intersection_data, projected_wall_height);
 }
 

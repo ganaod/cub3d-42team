@@ -136,10 +136,6 @@ typedef struct s_graphics
 }					t_graphics;
 
 
-#define SCREEN_WIDTH()  ((int)g_game.graphics.frame->width)
-#define SCREEN_HEIGHT() ((int)g_game.graphics.frame->height)
-
-
 typedef struct s_dda_state
 {
 	int				map_x;

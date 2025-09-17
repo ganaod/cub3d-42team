@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 14:04:27 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/17 15:06:58 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/17 15:16:38 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,6 @@ void	put_pixel(int screen_x, int screen_y, int pixel_colour)
 	screen_y < 0 || screen_y >= (int)g_game.graphics.frame->height)
 	return;
 
-	screen_pixel_index = screen_y * g_game.graphics.screen_width + screen_x;
-	g_game.graphics.frame->pixels[screen_pixel_index] = pixel_colour;
+	int screen_pixel_index = screen_y * (int)g_game.graphics.frame->width + screen_x;
+    g_game.graphics.frame->pixels[screen_pixel_index] = pixel_color;
 }

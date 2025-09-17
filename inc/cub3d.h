@@ -133,9 +133,12 @@ typedef struct s_graphics
 {
 	mlx_t			*mlx;			// mlx42 context
 	mlx_image_t		*frame;			// framebuffer (win_w x win_h, rgba8888)
-	int				screen_width;	// window width
-	int				screen_height;	// window height
 }					t_graphics;
+
+
+#define SCREEN_WIDTH()  ((int)g_game.graphics.frame->width)
+#define SCREEN_HEIGHT() ((int)g_game.graphics.frame->height)
+
 
 typedef struct s_dda_state
 {

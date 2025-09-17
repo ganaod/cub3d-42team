@@ -335,6 +335,12 @@ static int init_window_and_frame(t_game *g, int w, int h, const char *title)
         printf("Frame creation failed\n");
         return (0);
     }
+
+	printf("BUFFER VERIFICATION:\n");
+	printf("  screen_width=%d, frame->width=%u\n", 
+		g_game.graphics.screen_width, g_game.graphics.frame->width);
+	printf("  screen_height=%d, frame->height=%u\n", 
+		g_game.graphics.screen_height, g_game.graphics.frame->height);
     
     printf("Created frame: %dx%d\n", g->graphics.frame->width, g->graphics.frame->height);
     printf("Stored dimensions: %dx%d\n", g->graphics.screen_width, g->graphics.screen_height);

@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 13:48:28 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/17 13:55:50 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/17 14:01:31 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,51 +39,19 @@ breakdown:
 	- Base direction (where player faces) + angular offset (left/right tilt)
 	- Visual: Creates "sweep" of vision from left peripheral → right peripheral
 	- Implementation: Vector addition with scaling */
-// void calculate_ray_direction(int screen_column_x, 
-// 	double *world_ray_direction_x, double *world_ray_direction_y)
-// {
-// 	double fov_space_camera_plane_offset;
-	
-// 	fov_space_camera_plane_offset = SCREEN_TO_FOV_SCALE_FACTOR * screen_column_x 
-// 		/ (double)g_game.graphics.screen_width - FOV_CENTER_OFFSET;
-		
-// 	*world_ray_direction_x = g_game.player.world_dir_x 
-// 		+ fov_space_camera_plane_offset * g_game.player.world_camera_plane_x;
-// 	*world_ray_direction_y = g_game.player.world_dir_y 
-// 		+ fov_space_camera_plane_offset * g_game.player.world_camera_plane_y;
-// }
-
-
-/* possible cause of 4x rendering bug: 
-ray dir calculations spanning 1/4 of intended FOV */
 void calculate_ray_direction(int screen_column_x, 
-    double *world_ray_direction_x, double *world_ray_direction_y)
+	double *world_ray_direction_x, double *world_ray_direction_y)
 {
-    double fov_space_camera_plane_offset;
-    
-    fov_space_camera_plane_offset = SCREEN_TO_FOV_SCALE_FACTOR * screen_column_x 
-        / (double)g_game.graphics.screen_width - FOV_CENTER_OFFSET;
-    
-    // DEBUG: Print every 256th calculation
-    if (screen_column_x % 256 == 0) {
-        printf("Column %d: offset=%.3f, player_dir=(%.3f,%.3f), camera_plane=(%.3f,%.3f)\n",
-               screen_column_x, fov_space_camera_plane_offset,
-               g_game.player.world_dir_x, g_game.player.world_dir_y,
-               g_game.player.world_camera_plane_x, g_game.player.world_camera_plane_y);
-    }
-        
-    *world_ray_direction_x = g_game.player.world_dir_x 
-        + fov_space_camera_plane_offset * g_game.player.world_camera_plane_x;
-    *world_ray_direction_y = g_game.player.world_dir_y 
-        + fov_space_camera_plane_offset * g_game.player.world_camera_plane_y;
-        
-    // DEBUG: Print resulting ray directions  
-    if (screen_column_x % 256 == 0) {
-        printf("Result ray: (%.3f,%.3f)\n", *world_ray_direction_x, *world_ray_direction_y);
-    }
+	double fov_space_camera_plane_offset;
+	
+	fov_space_camera_plane_offset = SCREEN_TO_FOV_SCALE_FACTOR * screen_column_x 
+		/ (double)g_game.graphics.screen_width - FOV_CENTER_OFFSET;
+		
+	*world_ray_direction_x = g_game.player.world_dir_x 
+		+ fov_space_camera_plane_offset * g_game.player.world_camera_plane_x;
+	*world_ray_direction_y = g_game.player.world_dir_y 
+		+ fov_space_camera_plane_offset * g_game.player.world_camera_plane_y;
 }
-
-
 
 /* WALL FACE DETERMINATION FROM RAY-WALL INTERSECTION
 

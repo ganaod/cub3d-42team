@@ -43,10 +43,6 @@ Origin: (0,0) at top-left corner	*/
 # define CELL_WALL  (1)   /* '1'  -> Wand  */
 
 
-#ifndef FOV_PLANE
-# define FOV_PLANE 0.66
-#endif
-// this was a hardcoded approximation of tan 38 degrees
 
 // FOV GEOMETRIC CONFIGURATION
 # define FOV_DEGREES					60.0

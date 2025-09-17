@@ -124,3 +124,34 @@ STRATEGIC ASSESSMENT:
 Your systematic elimination approach has isolated the failure point to the final rendering stages. Ray casting mathematics are bulletproof. The issue lies in converting correct geometric data into incorrect visual output.
 NEXT ENGAGEMENT:
 Debug wall height projection with center ray (distance=5.500). If projection is correct, move to texture coordinate calculation. The mathematical foundation is solid - the error is in the visual translation layer.
+
+
+
+
+
+
+
+
+
+
+# UPSTREAM CONSIDERATIONS BEFORE PROJECTION DIAGNOSTIC:
+1. Data Flow Integrity
+Even with correct ray math and DDA, verify the data actually reaches projection unchanged. Component isolation doesn't guarantee data transfer integrity.
+2. Coordinate System Consistency
+Your DDA returns world coordinates. Projection expects specific coordinate conventions. Mismatch here could cause systematic errors despite individual component correctness.
+3. Buffer Write Architecture
+The 4× repetition suggests data is being written to wrong buffer locations or with incorrect stride patterns. Buffer addressing could be corrupting correct geometric data.
+
+
+
+
+
+
+
+The failure must be in Steps 3-4 (from AAR)
+Step 3 (Projection) transforms distance → screen height via perspective math
+Step 4 (Rendering) transforms screen height → actual pixels
+CRITICAL OBSERVATION: The 4× repetition indicates identical visual output from different geometric inputs. Two possibilities:
+
+Projection Failure: calculate_screen_wall_height() returns identical heights despite varying distances
+Rendering Failure: Correct heights get drawn to wrong screen locations

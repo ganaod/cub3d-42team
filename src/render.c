@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 10:54:39 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/17 13:31:19 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/17 15:00:12 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,17 +130,17 @@ void	render_single_column(int screen_column_x)
 	t_ray_result	wall_intersection_data;
 	int				projected_wall_height;
 
-	// Step 1: Transform screen column to ray direction using FOV constants
 	calculate_ray_direction(screen_column_x, &world_ray_direction_x, &world_ray_direction_y);
-
-	// Step 2: Cast ray using DDA algorithm, get complete intersection data
 	wall_intersection_data = cast_ray_to_wall(world_ray_direction_x, world_ray_direction_y);
-
-	// Step 3: Convert world distance to screen pixels via perspective projection
 	projected_wall_height = calculate_screen_wall_height(wall_intersection_data.world_distance);
 
-	// Step 4: Render complete vertical wall strip with texture
-	render_wall_column2(screen_column_x, &wall_intersection_data, projected_wall_height);
+	if (screen_column_x % 100 == 0) // Sample every 100th column
+	{
+		printf("PROJ[%d]: Distance=%.3f → Height=%d\n", 
+			screen_column_x, wall_intersection_data.world_distance, projected_wall_height);
+	}
+
+	render_wall_column(screen_column_x, &wall_intersection_data, projected_wall_height);
 }
 
 /* render wall: 1 complete vertical strip/slice of the 3D perspective view

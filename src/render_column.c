@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   render_column.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
+/*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 10:54:44 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/17 08:26:15 by blohrer          ###   ########.fr       */
+/*   Updated: 2025/09/17 15:02:52 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void	render_ceiling_section(int screen_column_x, int wall_start_y_pixel)
 	current_pixel_y = 0;
 	while (current_pixel_y < wall_start_y_pixel)
 	{
-		put_pixel2(screen_column_x, current_pixel_y, g_game.map.ceiling_color);
+		put_pixel(screen_column_x, current_pixel_y, g_game.map.ceiling_color);
 		current_pixel_y++;
 	}
 }
@@ -63,7 +63,7 @@ void	render_wall_section(int screen_column_x, int wall_start_y_pixel,
 	{
 		pixel_color = screen_pixel_texture_colour(&texture_mapping_info,
 						current_pixel_y);
-		put_pixel2(screen_column_x, current_pixel_y, pixel_color);
+		put_pixel(screen_column_x, current_pixel_y, pixel_color);
 		current_pixel_y++;
 	}
 }
@@ -75,7 +75,7 @@ void	render_floor_section(int screen_column_x, int wall_end_y_pixel)
 	current_pixel_y = wall_end_y_pixel;
 	while (current_pixel_y < g_game.graphics.screen_height)
 	{
-		put_pixel2(screen_column_x, current_pixel_y, g_game.map.floor_color);
+		put_pixel(screen_column_x, current_pixel_y, g_game.map.floor_color);
 		current_pixel_y++;
 	}
 }

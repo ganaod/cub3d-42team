@@ -133,9 +133,10 @@ typedef struct s_graphics
 {
 	mlx_t			*mlx;			// mlx42 context
 	mlx_image_t		*frame;			// framebuffer (win_w x win_h, rgba8888)
-	int				screen_width;	// window width
-	int				screen_height;	// window height
+	int                screen_width;    // window width
+    int                screen_height;    // window height
 }					t_graphics;
+
 
 typedef struct s_dda_state
 {
@@ -313,9 +314,9 @@ int	map_is_closed(const t_map *m);
 //  ================== UTILS ==================
 
 void	parse_error(const char *msg);
-void	render_wall_column2(int screen_column_x, t_ray_result *wall_intersection_data,
-		int projected_wall_height);
-void	put_pixel2(int screen_x, int screen_y, int pixel_color);
+// void	render_wall_column2(int screen_column_x, t_ray_result *wall_intersection_data,
+// 		int projected_wall_height);
+// void	put_pixel2(int screen_x, int screen_y, int pixel_color);
 
 
 double get_delta_time(void);

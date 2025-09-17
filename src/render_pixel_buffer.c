@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   render_pixel_buffer.c                              :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/04 14:04:27 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/17 15:14:10 by blohrer          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../inc/cub3d.h"
 
 /* CLEAR SCREEN BUFFER
@@ -46,16 +34,12 @@ void	clear_screen_buffer(void)
 // 	g_game.graphics.frame->pixels[screen_pixel_index] = pixel_color;
 // }
 
-void	put_pixel2(int x, int y, int color)
+void	put_pixel(int screen_x, int screen_y, int pixel_color)
 {
-	int	w;
-	int	h;
+	if (screen_x < 0 || screen_x >= g_game.graphics.screen_width || 
+		screen_y < 0 || screen_y >= g_game.graphics.screen_height)
+		return;
 
-	w = (int)g_game.graphics.frame->width;
-	h = (int)g_game.graphics.frame->height;
-	if (x < 0 || x >= w || y < 0 || y >= h)
-		return ;
-	// MLX42-Image ist RGBA8 → 4 Bytes pro Pixel.
-	((uint32_t *)g_game.graphics.frame->pixels)[y * w + x] = (uint32_t)color;
-		// 0xAARRGGBB
+	// CRITICAL: uint32_t casting for RGBA8 format
+	((uint32_t *)g_game.graphics.frame->pixels)[screen_y * g_game.graphics.screen_width + screen_x] = (uint32_t)pixel_color;
 }

@@ -432,12 +432,6 @@ int main(int argc, char **argv)
     }
     free_lines_array(lines, h);
 
-
-	// DEBUG: Verify constants
-    printf("=== DIAGNOSTIC INFO ===\n");
-    printf("DEFAULT_WIDTH: %d, DEFAULT_HEIGHT: %d\n", DEFAULT_WIDTH, DEFAULT_HEIGHT);
-
-
     /* 4) Grafik initialisieren (Fenster + Framebuffer) */
     if (!init_window_and_frame(&g, DEFAULT_WIDTH, DEFAULT_HEIGHT, "cub3d")) {
         parse_error("mlx init failed");

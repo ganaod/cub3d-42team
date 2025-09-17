@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 15:48:27 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/15 17:50:00 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/17 14:06:10 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,32 +74,35 @@ wall side types
 
 
 
+/*
+	Calculate perpendicular distance (prevents fisheye distortion)
+	wall_intersection_result.world_distance = 
+		calculate_wall_distance(&dda_state, wall_intersection_result.world_wall_side);
 
+*/
 t_ray_result	cast_ray_to_wall(double world_ray_dir_x, double world_ray_dir_y)
 {
 	t_dda_state		dda_state;
 	t_ray_result	wall_intersection_result;
 
-	// Step 1: Initialize DDA traversal state using existing setup function
 	setup_dda_vars(world_ray_dir_x, world_ray_dir_y, &dda_state);
-
-	// Step 2: Execute DDA algorithm to find wall intersection
 	execute_dda_traversal(&dda_state, &wall_intersection_result.world_wall_side);
-
-	// Step 3: Calculate perpendicular distance (prevents fisheye distortion)
 	wall_intersection_result.world_distance = 
 		calculate_wall_distance(&dda_state, wall_intersection_result.world_wall_side);
-
-	// Step 4: Calculate precise intersection coordinates
 	wall_intersection_result.world_intersection_x = g_game.player.world_pos_x 
 		+ (wall_intersection_result.world_distance * world_ray_dir_x);
 	wall_intersection_result.world_intersection_y = g_game.player.world_pos_y 
 		+ (wall_intersection_result.world_distance * world_ray_dir_y);
-
-	// Step 5: Determine wall face using coordinate-based method (SINGLE SOURCE OF TRUTH)
 	wall_intersection_result.world_wall_face = 
 		determine_intersected_wall_face(&wall_intersection_result);
 
+	// DEBUG: Sample every 256th ray
+	if (/* some condition to identify column 0, 256, 512, 768 */) {
+		printf("DDA result: distance=%.3f, wall_face=%d, hit_pos=(%.3f,%.3f)\n",
+				result.world_distance, result.world_wall_face,
+				result.world_intersection_x, result.world_intersection_y);
+	}	
+		
 	return (wall_intersection_result);
 }
 

@@ -1,0 +1,8 @@
+Since ray directions are correct, the 4x repetition must be in:
+
+DDA wall intersection (cast_ray_to_wall())
+Texture coordinate calculation
+Wall height projection
+
+
+The fact that ray directions are perfect eliminates a huge potential problem area - the issue is downstream in the rendering pipeline.

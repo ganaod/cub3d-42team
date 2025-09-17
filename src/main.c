@@ -291,63 +291,21 @@ static void free_lines_array(char **lines, int h) {
 
 
 
-/* Fenster + Framebuffer erzeugen */
-// static int init_window_and_frame(t_game *g, int w, int h, const char *title)
-// {
-//     // TODO(1): ggf. w/h aus Config übernehmen
-//     g->graphics.screen_width = w;
-//     g->graphics.screen_height = h;
-
-//     // TODO(2): MLX initialisieren
-//     g->graphics.mlx = mlx_init(w, h, title, false);
-//     if (!g->graphics.mlx)
-//         return (0);
-
-//     // TODO(3): Framebuffer-Image erzeugen (RGBA32)
-//     g->graphics.frame = mlx_new_image(g->graphics.mlx, w, h);
-//     if (!g->graphics.frame)
-//         return (0);
-
-//     // Hinweis: put_pixel/clear_screen_buffer schreiben in frame->pixels
-//     return (1);
-// }
-
-
-
-// TEMPORARY WITH DEBUG PRINTS
-
 static int init_window_and_frame(t_game *g, int w, int h, const char *title)
 {
-    printf("Input parameters: w=%d, h=%d\n", w, h);
-    printf("DEFAULT_WIDTH=%d, DEFAULT_HEIGHT=%d\n", DEFAULT_WIDTH, DEFAULT_HEIGHT);
-    
     g->graphics.screen_width = w;
     g->graphics.screen_height = h;
     
     g->graphics.mlx = mlx_init(w, h, title, false);
-    if (!g->graphics.mlx) {
-        printf("MLX init failed\n");
+    if (!g->graphics.mlx)
         return (0);
-    }
     
     g->graphics.frame = mlx_new_image(g->graphics.mlx, w, h);
-    if (!g->graphics.frame) {
-        printf("Frame creation failed\n");
+    if (!g->graphics.frame)
         return (0);
-    }
-
-	printf("BUFFER VERIFICATION:\n");
-	printf("  screen_width=%d, frame->width=%u\n", 
-		g_game.graphics.screen_width, g_game.graphics.frame->width);
-	printf("  screen_height=%d, frame->height=%u\n", 
-		g_game.graphics.screen_height, g_game.graphics.frame->height);
-    
-    printf("Created frame: %dx%d\n", g->graphics.frame->width, g->graphics.frame->height);
-    printf("Stored dimensions: %dx%d\n", g->graphics.screen_width, g->graphics.screen_height);
     
     return (1);
 }
-
 
 
 

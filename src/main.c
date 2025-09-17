@@ -363,20 +363,6 @@ static void sync_player_world_fields_from_parser(t_game *g)
     g->player.world_camera_plane_y = FOV_CAMERA_PLANE_MAGNITUDE;
 }
 
-/* Loop-Hook: pro Frame zeichnen */
-static void game_loop_tick(void *param)
-{
-    (void)param;
-
-    if (!g_game.running)
-        return;
-
-    // TODO: Input/Movement (später)
-    // TODO: g_movement_speed/rotation_speed & deltaTime verwenden
-
-    render_complete_frame(); // zeichnet in g_game.graphics.frame->pixels
-    // Bild ist bereits via mlx_image_to_window() im Fenster
-}
 static void free_map(t_map *m)
 {
     if (!m) return;
@@ -504,15 +490,25 @@ int main(int argc, char **argv)
     }
 
     /* 6) Player-Werte -> world_* Felder spiegeln (für Raycaster) */
-    g.movement_speed = 3.0 / 60.0;   // Defaults; später deltaTime verwenden
-    g.rotation_speed = 2.0 / 60.0;
+    g.movement_speed = 3.0;   // Einheiten pro Sekunde
+    g.rotation_speed = 2.0;   // Radiant pro Sekunde
     sync_player_world_fields_from_parser(&g);
 
     /* 7) Frame-Loop */
     g.running = 1;
     g_game = g; // global setzen, alle Render-Files nutzen g_game
+
+    // Delta-Time initialisieren
+    g_game.time_prev = mlx_get_time();
+
+    // Bild ins Fenster setzen
     mlx_image_to_window(g_game.graphics.mlx, g_game.graphics.frame, 0, 0);
+
+    // Hooks registrieren
+    mlx_close_hook(g_game.graphics.mlx, on_close, NULL);
     mlx_loop_hook(g_game.graphics.mlx, game_loop_tick, NULL);
+
+    // Hauptloop starten
     mlx_loop(g_game.graphics.mlx);
 
     /* 8) Cleanup */

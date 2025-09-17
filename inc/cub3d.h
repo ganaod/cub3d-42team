@@ -194,6 +194,8 @@ typedef struct s_game
 	int				running;		// game loop flag
 	double			movement_speed;	// player movement speed
 	double			rotation_speed;	// camera rotation speed
+	double			time_prev;
+	double			time_now;
 }					t_game;
 
 // global game state
@@ -314,5 +316,12 @@ void	render_wall_column2(int screen_column_x, t_ray_result *wall_intersection_da
 		int projected_wall_height);
 void	put_pixel2(int screen_x, int screen_y, int pixel_color);
 
+
+double get_delta_time(void);
+void rotate_player(double angle);
+void try_move_player(double new_x, double new_y);
+void handle_input(double dt);
+void game_loop_tick(void *param);
+void on_close(void *param);
 
 #endif

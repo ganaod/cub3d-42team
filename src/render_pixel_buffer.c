@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 14:04:27 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/17 15:37:48 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/17 15:47:23 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,12 +38,12 @@ void	clear_screen_buffer(void)
 
 . Calculate pixel position in buffer
 . Set pixel color in MLX42 frame buffer */
-void put_pixel(int screen_x, int screen_y, int pixel_colour)
+void	put_pixel(int screen_x, int screen_y, int pixel_color)
 {
-    if (screen_x < 0 || screen_x >= (int)g_game.graphics.frame->width || 
-        screen_y < 0 || screen_y >= (int)g_game.graphics.frame->height)
-        return;
+	if (screen_x < 0 || screen_x >= (int)g_game.graphics.frame->width || 
+		screen_y < 0 || screen_y >= (int)g_game.graphics.frame->height)
+		return;
 
-    int screen_pixel_index = screen_y * (int)g_game.graphics.frame->width + screen_x;
-    g_game.graphics.frame->pixels[screen_pixel_index] = pixel_colour;
+	// CRITICAL FIX from master: uint32_t casting for RGBA8 format
+	((uint32_t *)g_game.graphics.frame->pixels)[screen_y * (int)g_game.graphics.frame->width + screen_x] = (uint32_t)pixel_color;
 }

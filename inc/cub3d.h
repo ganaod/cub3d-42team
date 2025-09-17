@@ -310,6 +310,9 @@ int	map_is_closed(const t_map *m);
 //  ================== UTILS ==================
 
 void	parse_error(const char *msg);
+void	render_wall_column2(int screen_column_x, t_ray_result *wall_intersection_data,
+		int projected_wall_height);
+void	put_pixel2(int screen_x, int screen_y, int pixel_color);
 
 
 #endif

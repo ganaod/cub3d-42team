@@ -123,3 +123,53 @@ void	parse_error(const char *msg)
 	write(2, "\n", 1);
 }
 
+void	render_wall_column2(int screen_column_x, t_ray_result *wall_intersection_data,
+		int projected_wall_height)
+{
+	int	screen_wall_start_y_pixel;
+	int	screen_wall_end_y_pixel;
+
+	// Geklammert berechnen (nutze die bereits vorhandene Funktion!)
+	calculate_wall_boundaries(projected_wall_height,
+		&screen_wall_start_y_pixel, &screen_wall_end_y_pixel);
+
+	// Render drei Sektionen mit den GECLAMPTEN Grenzen
+	render_ceiling_section(screen_column_x, screen_wall_start_y_pixel);
+	render_wall_section(screen_column_x, screen_wall_start_y_pixel,
+		screen_wall_end_y_pixel, wall_intersection_data);
+	render_floor_section(screen_column_x, screen_wall_end_y_pixel);
+}
+
+void	put_pixel2(int screen_x, int screen_y, int pixel_color)
+{
+	int w = g_game.graphics.screen_width;
+	int h = g_game.graphics.screen_height;
+
+	if (screen_x < 0 || screen_x >= w || screen_y < 0 || screen_y >= h)
+		return; // out of bounds -> nicht schreiben
+
+	int screen_pixel_index = screen_y * w + screen_x;
+	g_game.graphics.frame->pixels[screen_pixel_index] = pixel_color;
+}
+
+void	render_wall_section2(int screen_column_x, int wall_start_y_pixel,
+						int wall_end_y_pixel, t_ray_result *wall_hit_data)
+{
+	int					current_pixel_y;
+	uint32_t			pixel_color;
+	t_texture_context	texture_mapping_info;
+
+
+	texture_mapping_info.world_wall_face = wall_hit_data->world_wall_face;
+	texture_mapping_info.world_wall_intersection_x = wall_hit_data->world_intersection_x;
+	texture_mapping_info.world_wall_intersection_y = wall_hit_data->world_intersection_y;
+	texture_mapping_info.screen_wall_height = wall_end_y_pixel - wall_start_y_pixel;
+	current_pixel_y = wall_start_y_pixel;
+	while (current_pixel_y < wall_end_y_pixel)
+	{
+		pixel_color = screen_pixel_texture_colour(&texture_mapping_info,
+						current_pixel_y);
+		put_pixel2(screen_column_x, current_pixel_y, pixel_color);
+		current_pixel_y++;
+	}
+}

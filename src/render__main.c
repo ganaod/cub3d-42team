@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   render__pipeline_coordination.c                    :+:      :+:    :+:   */
+/*   render__main.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
+/*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 10:54:39 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/15 18:16:21 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/17 08:24:57 by blohrer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,12 @@
 
 /* rendering module
 
-2D map data → 3D visual representation 	
+2D map data → 3D visual representation
 
 core operations:
 
 	1. Ray Direction:    Screen column → World ray vector
-	2. Ray Intersection: Ray vector → Wall hit point + distance  
+	2. Ray Intersection: Ray vector → Wall hit point + distance
 	3. Projection:       Distance → Screen wall height
 	4. Boundaries:       Wall height → Pixel start/end positions
 	5. Texture Mapping:  Hit point + screen pixel → Texture coordinates
@@ -47,7 +47,7 @@ key decisions:
 		Solution: Bundle into t_texture_context struct
 
 
-		
+
 COLUMN-BASED RENDERING: MATHEMATICAL NECESSITY
 Core Insight: One ray cast = One distance measurement = One entire vertical wall strip
 
@@ -60,21 +60,21 @@ Why Columns, Not Rows:
 
 Visual Reality:
 	Column 0: Ray → Distance 5.2 → Wall height 150px → Draw 150px vertical strip
-	Column 1: Ray → Distance 4.8 → Wall height 162px → Draw 162px vertical strip  
+	Column 1: Ray → Distance 4.8 → Wall height 162px → Draw 162px vertical strip
 	Column 2: Ray → Distance 6.1 → Wall height 127px → Draw 127px vertical strip
-	
+
 Mathematical Truth: Each ray provides sufficient information to render an entire vertical screen column.
 Performance: 320 ray calculations instead of 320×240 = 76,800 pixel calculations.
 
-The column approach exploits the constraint that walls are uniform height - 
+The column approach exploits the constraint that walls are uniform height -
 one distance measurement determines the entire vertical appearance.
 
-		
+
 
 rendering execution pipeline:
 
 	render_complete_frame()           // Frame iteration
-		render_single_column()        // Ray → geometry coordination  
+		render_single_column()        // Ray → geometry coordination
 			calculate_ray_direction() // Screen → ray transform
 			cast_ray_to_wall()        // Ray → intersection
 			calculate_screen_wall_height() // Distance → pixels
@@ -113,15 +113,15 @@ Core raycasting sequence for one vertical screen strip
 
 Mathematical transformations:
 	1. Ray Direction:    Screen column → World ray vector
-	2. Ray Intersection: Ray vector → Wall hit point + distance  
+	2. Ray Intersection: Ray vector → Wall hit point + distance
 	3. Projection:       Distance → Screen wall height
 	4. Rendering:        Wall data → Textured vertical pixels
 
 Input: Screen column index [0 to screen_width-1]
-Output: One complete vertical strip in frame buffer 
+Output: One complete vertical strip in frame buffer
 
 demos - drop-in replacement:
-calculate_ray_direction_tunnel_vision(screen_column_x, &world_ray_dir_x, &world_ray_dir_y); 
+calculate_ray_direction_tunnel_vision(screen_column_x, &world_ray_dir_x, &world_ray_dir_y);
 calculate_ray_direction_narrow_fov(screen_column_x, &world_ray_dir_x, &world_ray_dir_y); */
 void	render_single_column(int screen_column_x)
 {
@@ -132,15 +132,15 @@ void	render_single_column(int screen_column_x)
 
 	// Step 1: Transform screen column to ray direction using FOV constants
 	calculate_ray_direction(screen_column_x, &world_ray_direction_x, &world_ray_direction_y);
-	
+
 	// Step 2: Cast ray using DDA algorithm, get complete intersection data
 	wall_intersection_data = cast_ray_to_wall(world_ray_direction_x, world_ray_direction_y);
-	
+
 	// Step 3: Convert world distance to screen pixels via perspective projection
 	projected_wall_height = calculate_screen_wall_height(wall_intersection_data.world_distance);
-	
+
 	// Step 4: Render complete vertical wall strip with texture
-	render_wall_column(screen_column_x, &wall_intersection_data, projected_wall_height);
+	render_wall_column2(screen_column_x, &wall_intersection_data, projected_wall_height);
 }
 
 /* render wall: 1 complete vertical strip/slice of the 3D perspective view
@@ -153,7 +153,7 @@ Manages complete vertical strip composition of the 3D perspective view:
 
 Visual structure:
 	├── Ceiling section (solid color, top to wall_start)
-	├── Wall section (textured, wall_start to wall_end)  
+	├── Wall section (textured, wall_start to wall_end)
 	└── Floor section (solid color, wall_end to bottom)
 
 bridge between the continuous world distance and the discrete screen pixels
@@ -169,7 +169,7 @@ void	render_wall_column(int screen_column_x, t_ray_result *wall_intersection_dat
 	int	screen_wall_end_y_pixel;
 
 	// Calculate wall boundaries for centered projection
-	screen_wall_start_y_pixel = (g_game.graphics.screen_height 
+	screen_wall_start_y_pixel = (g_game.graphics.screen_height
 		- projected_wall_height) / 2;
 	screen_wall_end_y_pixel = screen_wall_start_y_pixel + projected_wall_height;
 

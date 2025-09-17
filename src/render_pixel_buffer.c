@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   render_pixel_buffer.c                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/17 16:09:19 by go-donne          #+#    #+#             */
+/*   Updated: 2025/09/17 16:09:20 by go-donne         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../inc/cub3d.h"
 
 /* CLEAR SCREEN BUFFER
@@ -26,14 +38,6 @@ void	clear_screen_buffer(void)
 
 . Calculate pixel position in buffer
 . Set pixel color in MLX42 frame buffer */
-// void	put_pixel(int screen_x, int screen_y, int pixel_color)
-// {
-// 	int		screen_pixel_index;
-
-// 	screen_pixel_index = screen_y * g_game.graphics.screen_width + screen_x;
-// 	g_game.graphics.frame->pixels[screen_pixel_index] = pixel_color;
-// }
-
 void	put_pixel(int screen_x, int screen_y, int pixel_color)
 {
 	if (screen_x < 0 || screen_x >= g_game.graphics.screen_width || 

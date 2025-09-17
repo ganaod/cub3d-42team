@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   map_grid_cells.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
+/*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 16:03:35 by blohrer           #+#    #+#             */
-/*   Updated: 2025/09/11 10:34:38 by blohrer          ###   ########.fr       */
+/*   Updated: 2025/09/17 13:55:02 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,8 @@ static void	set_player_from_char(t_player *p, int x, int y, char c)
 	dir_vec_from_char(c, &dx, &dy);
 	p->world_dir_x = dx;
 	p->world_dir_y = dy;
-	p->world_camera_plane_x = -dy * FOV_PLANE;
-	p->world_camera_plane_y = dx * FOV_PLANE;
+	p->world_camera_plane_x = -dy * FOV_CAMERA_PLANE_MAGNITUDE;
+	p->world_camera_plane_y = dx * FOV_CAMERA_PLANE_MAGNITUDE;
 }
 
 int	put_cell_from_char(t_map *m, t_player *pl, int idx, char c)

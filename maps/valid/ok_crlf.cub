@@ -1,9 +1,9 @@
-NO ./north.xpm
-SO ./south.xpm
-WE ./west.xpm
-EA ./east.xpm
-F  220,100,0
-C  0,0,0
+NO ./src/textures/nature-theme/north_wall.png
+SO ./src/textures/nature-theme/south_wall.png
+WE ./src/textures/nature-theme/west_wall.png
+EA ./src/textures/nature-theme/east_wall.png
+F 220,100,0
+C 0,0,0
 11111
-1N  1
+1N 1
 11111

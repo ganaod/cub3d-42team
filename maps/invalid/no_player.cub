@@ -1,9 +1,9 @@
-NO ./n.xpm
-SO ./s.xpm
-WE ./w.xpm
-EA ./e.xpm
-F  100,100,100
-C  0,0,0
+NO ./src/textures/nature-theme/north_wall.png
+SO ./src/textures/nature-theme/south_wall.png
+WE ./src/textures/nature-theme/west_wall.png
+EA ./src/textures/nature-theme/east_wall.png
+F 100,100,100
+C 0,0,0
 111
 101
 111

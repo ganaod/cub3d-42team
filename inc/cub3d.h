@@ -6,10 +6,13 @@
 # include <stdio.h>
 # include <fcntl.h>
 # include <math.h>
+
 # include "../lib/MLX42/include/MLX42/MLX42.h"
 # include "../lib/libft/libft/libft.h"
 # include "../lib/libft/gnl/get_next_line.h"
 # include "../lib/libft/ft_printf/ft_printf.h"
+
+
 
 # define EXIT_SUCCESS 0
 # define EXIT_FAILURE 1
@@ -20,6 +23,8 @@
 # define HDR_EA (1<<3)
 # define HDR_F  (1<<4)
 # define HDR_C  (1<<5)
+
+
 
 // screen space:
 // 2D array of discrete pixels representing the 3D view

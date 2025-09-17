@@ -36,7 +36,7 @@ SRC_FILES   =	main.c \
 				utils.c \
 				map_check.c \
 				parse_paths_check.c \
-				render__main.c \
+				render.c \
 				render_column.c \
 				render_dda.c \
 				render_dda_setup.c \

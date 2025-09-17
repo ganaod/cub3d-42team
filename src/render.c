@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   render__main.c                                     :+:      :+:    :+:   */
+/*   render.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
+/*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 10:54:39 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/17 08:24:57 by blohrer          ###   ########.fr       */
+/*   Updated: 2025/09/17 13:23:17 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,9 +100,17 @@ void	render_complete_frame(void)
 
 	clear_screen_buffer();
 	screen_width = g_game.graphics.screen_width;
+
+    // DEBUG: Verify loop bounds
+    printf("Rendering columns 0 to %d\n", screen_width - 1);
+
 	screen_column_x = 0;
 	while (screen_column_x < screen_width)
 	{
+		// DEBUG: Sample every 256th column
+		if (screen_column_x % 256 == 0)
+		printf("Rendering column %d\n", screen_column_x);
+		
 		render_single_column(screen_column_x);
 		screen_column_x++;
 	}

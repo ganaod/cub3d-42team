@@ -6,7 +6,7 @@
 /*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 08:21:52 by blohrer           #+#    #+#             */
-/*   Updated: 2025/09/04 08:23:28 by blohrer          ###   ########.fr       */
+/*   Updated: 2025/09/18 14:23:57 by blohrer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,17 +81,5 @@ int	set_color_field(uint32_t *dst_rgb, const char *after_key, int *was_set)
 	*dst_rgb = c;
 	*was_set = 1;
 	free(tmp);
-	return (1);
-}
-
-int	set_tex_entry(char **slot, const char *after_key, int bit, int *flags)
-{
-	if (!slot || !after_key || !flags)
-		return (0);
-	if (*flags & bit)
-		return (0);
-	if (!set_texture_field(slot, after_key))
-		return (0);
-	*flags |= bit;
 	return (1);
 }

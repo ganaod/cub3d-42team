@@ -6,7 +6,7 @@
 /*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 14:45:34 by blohrer           #+#    #+#             */
-/*   Updated: 2025/09/03 14:13:21 by blohrer          ###   ########.fr       */
+/*   Updated: 2025/09/18 14:27:41 by blohrer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,12 +41,13 @@ int	parse_u8_component(const char *s, int *i, int *out)
 	return (1);
 }
 
-int expect_comma(const char *s, int *i)
+int	expect_comma(const char *s, int *i)
 {
 	*i = skip_ws(s, *i);
 	if (s[*i] != ',')
 		return (0);
 	(*i)++;
+	*i = skip_ws(s, *i);
 	return (1);
 }
 

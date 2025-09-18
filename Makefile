@@ -54,7 +54,7 @@ OBJS        = $(SRCS:.c=.o)
 	@$(CC) $(CFLAGS) -c $< -o $@ $(INCLUDES) > /dev/null
 	@echo "\033[1;32m✔ Compiled: $<\033[0m"
 
-$(NAME): libft ftprintf gnl mlx $(OBJS)
+$(NAME): libs $(OBJS)
 	@$(CC) -g -fsanitize=address $(OBJS) $(LIBRARIES) -o $(NAME) > /dev/null
 	@echo "\033[1;34m Built $(NAME) successfully!\033[0m"
 
@@ -72,6 +72,18 @@ mlx:
 	@make -C $(MLX_PATH)/build -j4 > /dev/null
 	@echo "\033[1;36m Built MLX42!\033[0m"
 
+libs:
+	@printf "\033[1m\033[38;5;117mLoading libs: "
+	@{ \
+	  set -e; \
+	  trap 'kill $$bar 2>/dev/null; wait $$bar 2>/dev/null || true' EXIT; \
+	  while :; do printf "█"; sleep 0.15; done & bar=$$!; \
+	  cmake -S $(MLX_PATH) -B $(MLX_PATH)/build -Wno-dev > /dev/null; \
+	  $(MAKE) -C $(MLX_PATH)/build -j4 > /dev/null; \
+	  $(MAKE) -C $(LIBFT_PATH)   > /dev/null; \
+	  $(MAKE) -C $(PRINTF_PATH)  > /dev/null; \
+	  $(MAKE) -C $(GNL_PATH)     > /dev/null; \
+	}; printf "\033[0m\n\033[1;36mLibs ready!\033[0m\n"
 
 clean:
 	@rm -f $(OBJS)
@@ -91,4 +103,5 @@ re: fclean all
 
 all: $(NAME)
 
-.PHONY: all clean fclean re libft gnl mlx ftprintf
+.PHONY: all clean fclean re libft gnl mlx ftprintf libs
+.NOTPARALLEL: libs

@@ -325,5 +325,8 @@ void try_move_player(double new_x, double new_y);
 void handle_input(double dt);
 void game_loop_tick(void *param);
 void on_close(void *param);
+void	handle_exit_input(void);
+void	handle_rotation_input(double ang);
+int	map_cell(const t_map *m, int ix, int iy);
 
 #endif

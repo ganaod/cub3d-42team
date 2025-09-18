@@ -44,6 +44,7 @@ SRC_FILES   =	main.c \
 				render_projection.c \
 				render_ray_cast.c \
 				player.c \
+				player_utils.c \
 				render_texture.c
 
 SRCS        = $(addprefix $(SRC_DIR)/, $(SRC_FILES))

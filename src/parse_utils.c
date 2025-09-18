@@ -6,7 +6,7 @@
 /*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 14:45:34 by blohrer           #+#    #+#             */
-/*   Updated: 2025/09/18 14:27:41 by blohrer          ###   ########.fr       */
+/*   Updated: 2025/09/18 15:21:19 by blohrer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,21 +22,24 @@ int	skip_ws(const char *s, int i)
 int	parse_u8_component(const char *s, int *i, int *out)
 {
 	int	val;
-	int	start;
+	int	j;
 
-	start = *i;
-	if (!ft_isdigit((unsigned char)s[*i]))
+	if (!s || !i || !out)
+		return (0);
+	j = *i;
+	if (s[j] == '+')
+		j++;
+	if (!ft_isdigit((unsigned char)s[j]))
 		return (0);
 	val = 0;
-	while (ft_isdigit((unsigned char)s[*i]))
+	while (ft_isdigit((unsigned char)s[j]))
 	{
-		val = val * 10 + (s[*i] - '0');
+		val = val * 10 + (s[j] - '0');
 		if (val > 255)
 			return (0);
-		(*i)++;
+		j++;
 	}
-	if (*i == start)
-		return (0);
+	*i = j;
 	*out = val;
 	return (1);
 }

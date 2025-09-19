@@ -33,6 +33,7 @@ purpose: navigation testing with multiple pathways and dead ends
 
 
 
+
 # crazy.cub
 
 map structure: 31x27 grid, complex nested maze with concentric patterns

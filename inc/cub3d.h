@@ -12,11 +12,70 @@
 # include "../lib/libft/gnl/get_next_line.h"
 # include "../lib/libft/ft_printf/ft_printf.h"
 
+// ⭐ SYSTEM ARCHITECTURE
+// framebuffer display resolution
+# define DEFAULT_WIDTH					1024
+# define DEFAULT_HEIGHT					768
+/* safe default: big enough, but not too big to slow performance 
+XGA standard, 4:3 aspect ratio as in most early games, GUIs */
 
+// exit codes: how OS understands prog completion
+# define EXIT_SUCCESS					0	// program terminated successfully
+# define EXIT_FAILURE					1	// program terminated with error
 
-# define EXIT_SUCCESS 0
-# define EXIT_FAILURE 1
+// ⭐ MATHEMATICAL FOUNDATION
+// field of view (FOV) configuration
+# define FOV_DEGREES					60.0
+// good perspective without excessive distortion
 
+# define FOV_RADIANS					(FOV_DEGREES * (M_PI / 180.0))
+/* convert FOV from degrees > radians for C's math fns
+M_PI is a constant defined in <math.h> for the value of Pi */
+
+# define FOV_HALF_ANGLE_RADIANS			(FOV_RADIANS / 2.0)
+// half-angle needed for tangent calculation
+
+# define FOV_CAMERA_PLANE_MAGNITUDE		tan(FOV_HALF_ANGLE_RADIANS)
+// camera plane vector magnitude for desired FOV
+// this value determines angular spread of vision
+
+// SCREEN > FOV COORDINATE TRANSFORMATION
+# define SCREEN_TO_FOV_SCALE_FACTOR		2.0
+// Scales normalized screen coordinates [0,1] to [0,2]
+
+# define FOV_CENTER_OFFSET				1.0
+// Shifts scaled coordinates [0,2] to FOV space [-1,+1]
+
+// ⭐ WORLD DOMAIN PRIMITIVES
+// map cell types
+# define CELL_VOID						(-1)  /* ' '  -> außerhalb/ungefüllt */
+# define CELL_EMPTY						(0)   /* '0'  -> begehbar */
+# define CELL_WALL						(1)   /* '1'  -> Wand  */
+
+/* wall face directions: absolute world coords, fixed to map
+for texture selection */
+# define WALL_NORTH							0
+# define WALL_SOUTH							1
+# define WALL_WEST							2
+# define WALL_EAST							3
+
+// player direction codes: relative to actor orientation
+# define DIR_N							0
+# define DIR_S							1
+# define DIR_W							2
+# define DIR_E							3
+
+// ⭐ ALGORITHM CONSTANTS
+// wall side types (for DDA)
+# define VERTICAL_WALL					0
+# define HORIZONTAL_WALL				1
+
+/* ⭐ RENDERING CONSTRAINTS
+wall height projection - dist/height limits */
+#define MINIMUM_WALL_DISTANCE_THRESHOLD  0.001
+#define MAXIMUM_WALL_HEIGHT_PIXELS       (g_game.graphics.screen_height * 2)
+
+// ⭐ PARSER STATE FLAGS
 # define HDR_NO (1<<0)
 # define HDR_SO (1<<1)
 # define HDR_WE (1<<2)
@@ -26,72 +85,17 @@
 
 
 
-// screen space:
-// 2D array of discrete pixels representing the 3D view
-# define DEFAULT_WIDTH		1024		// screen sampling resolution
-# define DEFAULT_HEIGHT		768			// vertical pixel count
-/* Coordinate Mapping:
-Screen X: [0 to 1023] - Left to right pixel columns
-Screen Y: [0 to 767]  - Top to bottom pixel rows
-Origin: (0,0) at top-left corner	*/
 
 
 
-/* Zelltypen fürs Grid */
-# define CELL_VOID  (-1)  /* ' '  -> außerhalb/ungefüllt */
-# define CELL_EMPTY (0)   /* '0'  -> begehbar */
-# define CELL_WALL  (1)   /* '1'  -> Wand  */
 
 
 
-// FOV GEOMETRIC CONFIGURATION
-# define FOV_DEGREES					60.0
-// good perspective without excessive distortion
-
-# define FOV_RADIANS					(FOV_DEGREES * (M_PI / 180.0))
-/* convert FOV from degrees > radians for C's math fns
-M_PI is a constant defined in <math.h> for the value of Pi */
-
-# define FOV_HALF_ANGLE_RADIANS			(FOV_RADIANS / 2.0)
-// Half-angle needed for tangent calculation
-
-# define FOV_CAMERA_PLANE_MAGNITUDE		tan(FOV_HALF_ANGLE_RADIANS)
-// Camera plane vector magnitude for desired FOV
-// This value determines angular spread of vision
 
 
-// SCREEN > FOV COORDINATE TRANSFORMATION
-# define SCREEN_TO_FOV_SCALE_FACTOR		2.0
-// Scales normalized screen coordinates [0,1] to [0,2]
-
-# define FOV_CENTER_OFFSET				1.0
-// Shifts scaled coordinates [0,2] to FOV space [-1,+1]
 
 
-/* Richtungscodes */
-# define DIR_N 0
-# define DIR_S 1
-# define DIR_W 2
-# define DIR_E 3
 
-
-/* WALL GEOMETRY
-wall face directions: abs world coords, fixed to map
-not relative to player
-for texture selection */
-# define NORTH	0
-# define SOUTH	1
-# define WEST	2
-# define EAST	3
-
-// WALL SIDE TYPES (for DDA)
-# define VERTICAL_WALL		0
-# define HORIZONTAL_WALL	1
-
-/* RENDERING CONSTRAINTS
-wall height projection - dist/height limits */
-#define MINIMUM_WALL_DISTANCE_THRESHOLD  0.001
-#define MAXIMUM_WALL_HEIGHT_PIXELS       (g_game.graphics.screen_height * 2)
 
 
 

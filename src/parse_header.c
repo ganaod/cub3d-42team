@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 17:31:12 by blohrer           #+#    #+#             */
-/*   Updated: 2025/09/19 10:26:40 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/19 11:40:55 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,16 +49,16 @@ static int	apply_tex(char **slot, const char *after_key, int bit, int *flags)
 int	parse_header_texture(t_map *m, const char *line, int i, int *flags)
 {
 	if (match2(line, i, 'N', 'O'))
-		return (apply_tex(&m->texture_paths[NORTH], line + i + 2, HDR_NO,
+		return (apply_tex(&m->texture_paths[WALL_NORTH], line + i + 2, HDR_NO,
 				flags));
 	if (match2(line, i, 'S', 'O'))
-		return (apply_tex(&m->texture_paths[SOUTH], line + i + 2, HDR_SO,
+		return (apply_tex(&m->texture_paths[WALL_SOUTH], line + i + 2, HDR_SO,
 				flags));
 	if (match2(line, i, 'W', 'E'))
-		return (apply_tex(&m->texture_paths[WEST], line + i + 2, HDR_WE,
+		return (apply_tex(&m->texture_paths[WALL_WEST], line + i + 2, HDR_WE,
 				flags));
 	if (match2(line, i, 'E', 'A'))
-		return (apply_tex(&m->texture_paths[EAST], line + i + 2, HDR_EA,
+		return (apply_tex(&m->texture_paths[WALL_EAST], line + i + 2, HDR_EA,
 				flags));
 	return (0);
 }

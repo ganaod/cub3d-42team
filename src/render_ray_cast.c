@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 13:48:28 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/17 14:01:31 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/19 11:39:54 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,16 +74,16 @@ int	determine_intersected_wall_face(t_ray_result *wall_intersection_data)
 	if (wall_intersection_data->world_wall_side == VERTICAL_WALL)
 	{
 		if (wall_intersection_data->world_intersection_x > g_game.player.world_pos_x)
-			return (WEST);	// Ray traveled East, hit WEST FACE of wall cell
+			return (WALL_WEST);	// Ray traveled East, hit WEST FACE of wall cell
 		else
-			return (EAST);
+			return (WALL_EAST);
 	}
 	else
 	{
 		if (wall_intersection_data->world_intersection_y > g_game.player.world_pos_y)
-			return (NORTH);
+			return (WALL_NORTH);
 		else
-			return (SOUTH);
+			return (WALL_SOUTH);
 	}
 }
 

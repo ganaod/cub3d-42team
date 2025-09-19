@@ -374,10 +374,10 @@ static int load_all_wall_textures(t_map *m)
     }
 
     // Load each face
-    if (!load_one_texture_png(m->texture_paths[NORTH], &m->wall_textures[NORTH])) return 0;
-    if (!load_one_texture_png(m->texture_paths[SOUTH], &m->wall_textures[SOUTH])) return 0;
-    if (!load_one_texture_png(m->texture_paths[WEST],  &m->wall_textures[WEST]))  return 0;
-    if (!load_one_texture_png(m->texture_paths[EAST],  &m->wall_textures[EAST]))  return 0;
+    if (!load_one_texture_png(m->texture_paths[WALL_NORTH], &m->wall_textures[WALL_NORTH])) return 0;
+    if (!load_one_texture_png(m->texture_paths[WALL_SOUTH], &m->wall_textures[WALL_SOUTH])) return 0;
+    if (!load_one_texture_png(m->texture_paths[WALL_WEST],  &m->wall_textures[WALL_WEST]))  return 0;
+    if (!load_one_texture_png(m->texture_paths[WALL_EAST],  &m->wall_textures[WALL_EAST]))  return 0;
 
     return 1;
 }

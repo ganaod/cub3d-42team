@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   render_texture.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
+/*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 14:01:40 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/16 15:40:18 by blohrer          ###   ########.fr       */
+/*   Updated: 2025/09/19 11:41:40 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ int	screen_pixel_texture_colour(t_texture_context *ctx, int current_pixel_y)
 
 	t_texture_image *tex = &g_game.map.wall_textures[ctx->world_wall_face];
 
-	if (ctx->world_wall_face < NORTH || ctx->world_wall_face > EAST) {
+	if (ctx->world_wall_face < WALL_NORTH || ctx->world_wall_face > WALL_EAST) {
 		ft_printf("DEBUG: invalid wall_face=%d\n", ctx->world_wall_face);
 		return 0xFF00FF; // magenta debug
 	}
@@ -101,7 +101,7 @@ static double	world_wall_texture_u(t_texture_context *ctx)
 {
 	double	world_wall_intersection_coordinate;
 
-	if (ctx->world_wall_face == NORTH || ctx->world_wall_face == SOUTH)
+	if (ctx->world_wall_face == WALL_NORTH || ctx->world_wall_face == WALL_SOUTH)
 		world_wall_intersection_coordinate = ctx->world_wall_intersection_x;
 	else
 		world_wall_intersection_coordinate = ctx->world_wall_intersection_y;

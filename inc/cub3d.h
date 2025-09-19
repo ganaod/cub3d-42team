@@ -145,14 +145,6 @@ typedef struct s_dda_state
 	int				wall_intersection_found;				// boolean flag
 }					t_dda_state;
 
-// column rendering state
-typedef struct s_column_render
-{
-	double			world_wall_distance;					// perpendicular distance to wall
-	int				screen_wall_height;						// calculated wall height
-	int				world_wall_face;						// wall face hit (0-3)
-}					t_column_render;
-
 typedef struct	s_ray_result
 {
 	double			world_distance;					// perpendicular wall dist

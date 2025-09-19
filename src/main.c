@@ -470,13 +470,7 @@ int main(int argc, char **argv)
 
     /* 7) Frame-Loop */
     g.running = 1;
-
     g_game = g; // global setzen, alle Render-Files nutzen g_game
-
-	// DEBUG: Verify transfer worked
-	printf("DEBUG: GLOBAL g_game.map.floor_color = 0x%08X\n", g_game.map.floor_color);
-	printf("DEBUG: GLOBAL g_game.map.ceiling_color = 0x%08X\n", g_game.map.ceiling_color);	
-
 
     // Delta-Time initialisieren
     g_game.time_prev = mlx_get_time();

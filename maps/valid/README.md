@@ -18,6 +18,29 @@ grid:
 purpose: minimal test case for basic raycasting functionality
 
 
-# maze
 
-# crazy
+# maze.cub
+
+map structure: 15x11 grid, enclosed maze with multiple corridors
+spawn position: (5,9), facing east
+spawn texture: starry sky (east wall straight ahead)
+
+colours:
+- floor: rgb(85,107,47) - dark olive green
+- ceiling: rgb(135,206,250) - light sky blue
+
+purpose: navigation testing with multiple pathways and dead ends
+
+
+
+# crazy.cub
+
+map structure: 31x27 grid, complex nested maze with concentric patterns
+spawn position: (16,13), facing north  
+spawn texture: clouds (north wall straight ahead)
+
+colours:
+- floor: rgb(255,0,255) - magenta
+- ceiling: rgb(0,255,0) - green
+
+purpose: stress testing raycaster performance and complex geometry rendering

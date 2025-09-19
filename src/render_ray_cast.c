@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 13:48:28 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/19 14:08:11 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/19 14:49:31 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,10 @@ input: ray intersection result (world coordinates + wall orientation)
 output: wall direction constant for texture selection */
 int	determine_intersected_wall_face(t_ray_result *wall_intersection_data)
 {
+	write(STDERR_FILENO, "WALL_FACE_DEBUG\n", 16);
+	
+	int	face;
+
 	if (wall_intersection_data->world_wall_side == VERTICAL_WALL)
 	{
 		if (wall_intersection_data->world_intersection_x > g_game.player.world_pos_x)
@@ -86,56 +90,16 @@ int	determine_intersected_wall_face(t_ray_result *wall_intersection_data)
 		else
 			return (WALL_NORTH);
 	}
+
+	printf("DEBUG: Wall face=%d, intersection=(%.2f,%.2f), player=(%.2f,%.2f), side=%d\n", 
+		face, 
+		wall_intersection_data->world_intersection_x,
+		wall_intersection_data->world_intersection_y,
+		g_game.player.world_pos_x, 
+		g_game.player.world_pos_y,
+		wall_intersection_data->world_wall_side);
+	
+	return (face);
+
+	
 }
-
-// // DEMOS - ALTERNATIVES:
-
-// /* TUNNEL VISION EFFECT
-// Purpose: Show what happens WITHOUT peripheral vision transformation
-// Result: All screen columns display identical straight-ahead view (telescope effect)
-
-// COMPARISON WITH NORMAL VISION:
-// Normal: camera_plane_offset varies from -1 to +1 across screen width
-//         → Left columns see left peripheral, right columns see right peripheral
-// Tunnel: camera_plane_offset = 0 for ALL columns
-//         → All columns see identical straight-ahead direction
-
-// MATHEMATICAL DIFFERENCE:
-// Normal: ray_direction = player_direction + (varying_offset * camera_plane)
-// Tunnel: ray_direction = player_direction + (0 * camera_plane) = player_direction
-
-// VISUAL RESULT: 
-// - Eliminates depth perception from parallax
-// - Creates "looking through telescope" effect
-// - All screen columns show same wall distance/texture
-// - Player can only see directly ahead, no peripheral awareness */
-// void	calculate_ray_direction_tunnel_vision(int screen_column_x, 
-// 			double *world_ray_direction_x, double *world_ray_direction_y)
-// {
-// 	(void)screen_column_x;  // Intentionally ignore column position
-	
-// 	// Force all rays to point straight ahead - no peripheral vision
-// 	*world_ray_direction_x = g_game.player.world_dir_x;
-// 	*world_ray_direction_y = g_game.player.world_dir_y;
-// }
-
-// /* REDUCED PERIPHERAL VISION
-// Demonstrates partial peripheral vision reduction */
-// void	calculate_ray_direction_narrow_fov(int screen_column_x, 
-// 			double *world_ray_direction_x, double *world_ray_direction_y)
-// {
-// 	double	camera_plane_offset;
-// 	double	fov_reduction_factor;
-
-// 	// Reduce field of view by 75% (normal FOV * 0.25)
-// 	fov_reduction_factor = 0.25;
-	
-// 	camera_plane_offset = 2.0 * screen_column_x 
-// 		/ (double)g_game.graphics.screen_width - 1.0;
-	
-// 	// Dramatically reduce peripheral vision spread
-// 	*world_ray_direction_x = g_game.player.world_dir_x 
-// 		+ (camera_plane_offset * fov_reduction_factor) * g_game.player.world_camera_plane_x;
-// 	*world_ray_direction_y = g_game.player.world_dir_y 
-// 		+ (camera_plane_offset * fov_reduction_factor) * g_game.player.world_camera_plane_y;
-// }

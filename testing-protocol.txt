@@ -11,7 +11,7 @@
 
 ### CONFIGURATION FILE PARSING - BASIC FUNCTIONALITY
 [x]Program accepts `.cub` file as single argument
-[]All texture paths (NO, SO, WE, EA) parse correctly
+[x]All texture paths (NO, SO, WE, EA) parse correctly
 []Floor color (F R,G,B) parses correctly with values 0-255
 []Ceiling color (C R,G,B) parses correctly with values 0-255
 []Map parsing works with valid rectangular maps

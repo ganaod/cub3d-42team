@@ -3,11 +3,11 @@
 
 ### COMPILATION & EXECUTABLE
 [x] `make` compiles without errors or warnings
-[ ] `make` does not relink when run twice consecutively  
-[ ] Executable named exactly `cub3D` (case sensitive)
-[ ] `make clean` removes object files
-[ ] `make fclean` removes executable and objects
-[ ] `make re` performs clean rebuild
+[x] `make` does not relink when run twice consecutively  
+[x] Executable named exactly `cub3D` (case sensitive)
+[x] `make clean` removes object files
+[x] `make fclean` removes executable and objects
+[x] `make re` performs clean rebuild
 
 ### CONFIGURATION FILE PARSING - BASIC FUNCTIONALITY
 [ ] Program accepts `.cub` file as single argument

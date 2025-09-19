@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 17:31:12 by blohrer           #+#    #+#             */
-/*   Updated: 2025/09/19 10:19:50 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/19 10:26:40 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,10 +74,6 @@ int	parse_header_color(t_map *m, const char *line, int i, int *flags)
 			return (parse_error("Header error: duplicate F entry"), 0);
 		if (!set_color_field(&m->floor_color, line + i + 1, &f_set))
 			return (parse_error("Color error: F must be R,G,B with 0-255"), 0);
-
-		// DEBUG: Verify parsing happened
-		printf("DEBUG: FLOOR COLOUR PARSED = 0x%08X\n", m->floor_color);
-			
 		*flags |= HDR_F;
 		return (1);
 	}
@@ -87,10 +83,6 @@ int	parse_header_color(t_map *m, const char *line, int i, int *flags)
 			return (parse_error("Header error: duplicate C entry"), 0);
 		if (!set_color_field(&m->ceiling_color, line + i + 1, &f_set))
 			return (parse_error("Color error: C must be R,G,B with 0-255"), 0);
-
-		// DEBUG: Verify parsing happened
-		printf("DEBUG: CEILING COLOUR PARSED = 0x%08X\n", m->ceiling_color);
-			
 		*flags |= HDR_C;
 		return (1);
 	}

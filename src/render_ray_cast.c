@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 13:48:28 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/19 11:39:54 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/19 14:08:11 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,109 +53,40 @@ void calculate_ray_direction(int screen_column_x,
 		+ fov_space_camera_plane_offset * g_game.player.world_camera_plane_y;
 }
 
-/* WALL FACE DETERMINATION FROM RAY-WALL INTERSECTION
+/* determine wall direction from ray-wall intersection
 
-GEOMETRIC ANALYSIS:
-- Ray traveling East (+X) hits West face of wall cell
-- Ray traveling West (-X) hits East face of wall cell  
-- Ray traveling South (+Y) hits North face of wall cell
-- Ray traveling North (-Y) hits South face of wall cell
+coordinate space: world space continuous coordinates
+semantic convention: direction-based wall naming (wolfenstein standard)
 
-WALL FACE NOMENCLATURE:
-- NORTH face: Top edge of wall cell
-- SOUTH face: Bottom edge of wall cell
-- EAST face: Right edge of wall cell  
-- WEST face: Left edge of wall cell
+wall direction nomenclature:
+- WALL_NORTH: wall located north of player (negative y direction)
+- WALL_SOUTH: wall located south of player (positive y direction)  
+- WALL_EAST: wall located east of player (positive x direction)
+- WALL_WEST: wall located west of player (negative x direction)
 
-INPUT: Ray intersection result with world coordinates and wall orientation
-OUTPUT: Wall face constant (NORTH/SOUTH/EAST/WEST) */
+logic: wall direction = direction from player to intersection point
+- intersection_x > player_x → wall is east of player → WALL_EAST
+- intersection_y > player_y → wall is south of player → WALL_SOUTH
+
+input: ray intersection result (world coordinates + wall orientation)
+output: wall direction constant for texture selection */
 int	determine_intersected_wall_face(t_ray_result *wall_intersection_data)
 {
 	if (wall_intersection_data->world_wall_side == VERTICAL_WALL)
 	{
 		if (wall_intersection_data->world_intersection_x > g_game.player.world_pos_x)
-			return (WALL_WEST);	// Ray traveled East, hit WEST FACE of wall cell
+			return (WALL_EAST);	// Ray traveled East, hit WEST FACE of wall cell, but wall is to the east!
 		else
-			return (WALL_EAST);
+			return (WALL_WEST);
 	}
 	else
 	{
 		if (wall_intersection_data->world_intersection_y > g_game.player.world_pos_y)
-			return (WALL_NORTH);
-		else
 			return (WALL_SOUTH);
+		else
+			return (WALL_NORTH);
 	}
 }
-
-/*
-
-The logic in determine_intersected_wall_face() is a form of geometric deduction. 
-It relies on the principle that the orientation of a surface (a wall face) 
-is directly related to the direction of the ray that hits it. 
-The code is effectively a simple rule-based expert system 
-that interprets the geometric state of the ray-wall intersection to make a decision.
-
-
-The core idea is to break down the problem into two orthogonal cases:
-
-Is it a vertical wall? 
-This means the ray hit an east or west face. 
-The deciding factor is whether the ray traveled mostly in the x-direction.
-
-Is it a horizontal wall? 
-This means the ray hit a north or south face. 
-The deciding factor is whether the ray traveled mostly in the y-direction.
-
-
-Within each case, the logic uses a directional comparison:
-
-For vertical walls, it compares the hit point's x-coordinate to the player's x-coordinate. 
-A hit point to the east of the player means the ray traveled east, and thus must have hit a west-facing wall.
-
-For horizontal walls, it compares the hit point's y-coordinate to the player's y-coordinate. 
-A hit point to the south of the player means the ray traveled south, and thus must have hit a north-facing wall.
-
-This method is efficient and simple because it avoids complex calculations 
-by using the results of the raycasting algorithm itself 
-(the hit coordinates and the wall orientation) to infer the wall face.
-
-
-
-Program Architecture: Abstraction and Cohesion
-
-The question of whether determine_intersected_wall_face() belongs in your ray-casting file 
-or a new file is about program cohesion.
-
-
-Ray-casting: The primary purpose of ray-casting is to trace a ray from a viewpoint 
-into a scene and find the first object it hits.
-
-Texturing: The primary purpose of texturing is to determine how to apply an image to a surface.
-
-
-The determine_intersected_wall_face() function is a bridge between these two modules. 
-It takes the output of the ray-casting algorithm (the t_ray_result) 
-and transforms it into the input needed for the texturing logic.
-
-
-Recommendation: The function is very closely tied to the result of a ray cast, 
-so keeping it in the ray-casting file is a cohesive design choice. 
-It completes the ray's journey by fully classifying the intersection event.
-
-
-An alternative is to have a separate "rendering" or "drawing" module 
-that takes the raw ray-casting results and performs all subsequent operations, 
-including wall-face determination and texturing. 
-However, for a project like cub3d, a simpler structure with a ray_casting.c file 
-that handles everything from ray creation to the final intersection result 
-(including wall face) is a clean and common design. 
-
-Separating it might introduce unnecessary complexity and file-hopping. 
-Your current structure is well-justified from an architectural standpoint.
-
-
-
-*/
 
 // // DEMOS - ALTERNATIVES:
 

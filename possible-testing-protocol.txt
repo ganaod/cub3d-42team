@@ -1,0 +1,137 @@
+# CUB3D TESTING PROTOCOL - PRE-EVALUATION
+## Complete validation checklist for evaluation readiness
+
+### COMPILATION & EXECUTABLE
+[x] `make` compiles without errors or warnings
+[ ] `make` does not relink when run twice consecutively  
+[ ] Executable named exactly `cub3D` (case sensitive)
+[ ] `make clean` removes object files
+[ ] `make fclean` removes executable and objects
+[ ] `make re` performs clean rebuild
+
+### CONFIGURATION FILE PARSING - BASIC FUNCTIONALITY
+[ ] Program accepts `.cub` file as single argument
+[ ] All texture paths (NO, SO, WE, EA) parse correctly
+[ ] Floor color (F R,G,B) parses correctly with values 0-255
+[ ] Ceiling color (C R,G,B) parses correctly with values 0-255
+[ ] Map parsing works with valid rectangular maps
+[ ] Player spawn position (N,S,E,W) detected and oriented correctly
+
+### CONFIGURATION FILE PARSING - ERROR HANDLING
+[ ] Non-`.cub` extension rejected with error message
+[ ] Missing texture paths cause proper error exit
+[ ] Invalid texture paths (non-existent files) cause error exit
+[ ] Duplicate entries (e.g., two NO lines) cause error exit
+[ ] Invalid RGB values (>255, negative, non-numeric) cause error exit
+[ ] Missing map section causes error exit
+[ ] Map with no player spawn causes error exit
+[ ] Map with multiple players causes error exit
+[ ] Open/unclosed map causes error exit
+[ ] Invalid map characters cause error exit
+
+### CONFIGURATION FILE PARSING - SMART-ASS TESTS
+[ ] Empty lines between sections handled correctly
+[ ] Extra whitespace in texture paths handled
+[ ] Extra whitespace in color definitions handled  
+[ ] Comments (if supported) or random text cause appropriate response
+[ ] Very large maps (1000x1000) handle gracefully or error appropriately
+[ ] Malformed RGB (missing commas, extra values) properly rejected
+
+### WINDOW & DISPLAY BASICS
+[ ] Window opens immediately on program launch
+[ ] Window displays maze interior view (not black/white screen)
+[ ] Window title shows appropriate name
+[ ] Window can be moved around desktop
+[ ] Window can be minimized and restored without corruption
+[ ] Window can be partially covered and uncovered without corruption
+[ ] Alt-tab switching preserves window content
+
+### INPUT HANDLING - BASIC EVENTS
+[ ] ESC key closes window and exits cleanly
+[ ] Red X button closes window and exits cleanly
+[ ] Program exits with return code 0 on clean shutdown
+[ ] No zombie processes left after program exit
+
+### MOVEMENT SYSTEM - BASIC FUNCTIONALITY
+[ ] W key moves forward (view changes appropriately)
+[ ] S key moves backward (view changes appropriately)  
+[ ] A key strafes left (sideways movement, not rotation)
+[ ] D key strafes right (sideways movement, not rotation)
+[ ] Left arrow rotates view left (no position change)
+[ ] Right arrow rotates view right (no position change)
+[ ] Movement is smooth and responsive (>15 FPS subjective)
+
+### MOVEMENT SYSTEM - SPAWN ORIENTATION
+[ ] Player with 'N' in map faces North (toward top of map)
+[ ] Player with 'S' in map faces South (toward bottom of map)
+[ ] Player with 'E' in map faces East (toward right of map)
+[ ] Player with 'W' in map faces West (toward left of map)
+
+### WALL RENDERING - TEXTURE SYSTEM
+[ ] North-facing walls show NO texture consistently
+[ ] South-facing walls show SO texture consistently
+[ ] East-facing walls show EA texture consistently
+[ ] West-facing walls show WE texture consistently
+[ ] Changing texture path in .cub file changes rendered texture
+[ ] Different wall faces show visually distinct textures
+[ ] Textures appear correctly scaled and positioned
+
+### WALL RENDERING - COLORS
+[ ] Floor displays specified F color correctly
+[ ] Ceiling displays specified C color correctly
+[ ] Changing floor color in .cub file updates display
+[ ] Changing ceiling color in .cub file updates display
+
+### COLLISION DETECTION
+[ ] Player cannot walk through walls (1 characters)
+[ ] Player can walk through empty spaces (0 characters)
+[ ] Player cannot exit map boundaries
+[ ] Collision feels responsive and accurate
+
+### PERFORMANCE & STABILITY
+[ ] Program runs at consistent framerate during movement
+[ ] No visible stuttering or frame drops during normal operation
+[ ] Memory usage remains stable (no obvious leaks during gameplay)
+[ ] Program handles rapid input without crashing
+
+### SMART-ASS STRESS TESTS
+[ ] Keyboard mashing (roll face on keyboard) doesn't crash program
+[ ] Rapid window resizing/minimizing doesn't break display
+[ ] Running with wrong number of arguments fails gracefully
+[ ] Random command line arguments don't cause crashes
+[ ] Extremely rapid movement input handled correctly
+[ ] Standing very close to walls renders without artifacts
+[ ] Looking directly at wall corners renders correctly
+
+### MATHEMATICAL CORRECTNESS
+[ ] Perspective looks realistic (distant objects smaller)
+[ ] Wall heights appear consistent when walking parallel to them
+[ ] No fisheye distortion visible
+[ ] No obvious visual glitches or artifacts
+
+### VISUAL VERIFICATION TESTS
+[ ] Load provided test map and verify maze interior visible
+[ ] Walk through entire playable area without crashes
+[ ] Verify all 4 wall texture types are actually different and visible
+[ ] Check floor and ceiling colors are clearly visible and correct
+[ ] Rotation produces smooth, realistic view changes
+
+### EDGE CASE VERIFICATION
+[ ] Program handles maps with irregular shapes (not just rectangles)
+[ ] Maps with single-cell-wide passages work correctly
+[ ] Player spawning near walls works without issues
+[ ] Very small maps (3x3) work correctly
+[ ] Maps with maximum complexity work without performance issues
+
+### FINAL VERIFICATION
+[ ] No compilation warnings with -Wall -Wextra -Werror
+[ ] No memory leaks detected with valgrind or similar
+[ ] Program executable is reasonably sized (not bloated)
+[ ] All required files present and correctly named
+[ ] Makefile follows 42 standards (correct rules, no relinking)
+
+### EVALUATION SIMULATION
+[ ] Run through complete evaluation protocol with test partner
+[ ] Verify all tests pass consistently (not just once)
+[ ] Document any edge cases or unusual behavior
+[ ] Confirm program meets all mandatory requirements exactly

@@ -2,8 +2,10 @@ NO ./textures/north_wall.png
 SO ./textures/south_wall.png
 WE ./textures/west_wall.png
 EA ./textures/east_wall.png
-F 100,100,100
+F 220,100,0
 C 0,0,0
-111
-101
-111
+11111
+1N001
+10001
+10001
+11111

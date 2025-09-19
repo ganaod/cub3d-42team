@@ -12,6 +12,7 @@
 # include "../lib/libft/gnl/get_next_line.h"
 # include "../lib/libft/ft_printf/ft_printf.h"
 
+// ⭐⭐ DEFINES 
 // ⭐ SYSTEM ARCHITECTURE
 // framebuffer display resolution
 # define DEFAULT_WIDTH					1024
@@ -54,10 +55,10 @@ M_PI is a constant defined in <math.h> for the value of Pi */
 
 /* wall face directions: absolute world coords, fixed to map
 for texture selection */
-# define WALL_NORTH							0
-# define WALL_SOUTH							1
-# define WALL_WEST							2
-# define WALL_EAST							3
+# define WALL_NORTH						0
+# define WALL_SOUTH						1
+# define WALL_WEST						2
+# define WALL_EAST						3
 
 // player direction codes: relative to actor orientation
 # define DIR_N							0
@@ -76,29 +77,15 @@ wall height projection - dist/height limits */
 #define MAXIMUM_WALL_HEIGHT_PIXELS       (g_game.graphics.screen_height * 2)
 
 // ⭐ PARSER STATE FLAGS
-# define HDR_NO (1<<0)
-# define HDR_SO (1<<1)
-# define HDR_WE (1<<2)
-# define HDR_EA (1<<3)
-# define HDR_F  (1<<4)
-# define HDR_C  (1<<5)
+# define HDR_NO							(1<<0)
+# define HDR_SO							(1<<1)
+# define HDR_WE							(1<<2)
+# define HDR_EA							(1<<3)
+# define HDR_F							(1<<4)
+# define HDR_C							(1<<5)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// ⭐⭐ STRUCTS
+// PRIMITIVE DATA CONTAINERS
 typedef struct s_texture_image
 {
 	mlx_image_t		*mlx_image;				// mlx42 image pointer
@@ -107,6 +94,7 @@ typedef struct s_texture_image
 	int				image_height;			// image height
 }					t_texture_image;
 
+// ⭐ WORLD ENTITY REPRESENTATION
 // player state
 typedef struct s_player
 {
@@ -121,17 +109,17 @@ typedef struct s_player
 // map configuration
 typedef struct s_map
 {
-	int             *grid;               // 1D grid, size = width*height
-	int             width;
-	int             height;
-	char            *texture_paths[4];
-	uint32_t        floor_color;
-	uint32_t        ceiling_color;
-	char            *first_map_line;
-	t_texture_image wall_textures[4];    // <— KEINE Pointer: struct-Array erwartet
-} t_map;
+	int				*grid;					// 1D grid, size = width*height
+	int				width;
+	int				height;
+	char			*texture_paths[4];
+	uint32_t		floor_color;
+	uint32_t		ceiling_color;
+	char			*first_map_line;
+	t_texture_image	wall_textures[4];		// <— KEINE Pointer: struct-Array erwartet
+}					t_map;
 
-
+// ⭐ SYSTEM INTERFACES
 // graphics system
 typedef struct s_graphics
 {
@@ -141,7 +129,7 @@ typedef struct s_graphics
     int				screen_height;    // window height
 }					t_graphics;
 
-
+// ⭐ ALGORITHM STATE
 typedef struct s_dda_state
 {
 	int				map_x;
@@ -182,15 +170,29 @@ typedef struct	s_texture_context
 	int				screen_wall_height;
 }					t_texture_context;
 
+// ⭐ UTILITIES
+typedef struct s_ffctx
+{
+	const t_map		*m;		// map + grid
+	char			*vis;	// visited flags, size w*h
+	int				*q;		// queue array, size w*h
+	int				w;		// width
+	int				h;		// height
+	int				head;	// queue head
+	int				tail;	// queue tail
+}					t_ffctx;
+
+// parser contexts
 typedef struct s_texinfo
 {
-	char			**slot;			// texture slot
-	const char		*line;			// config line
-	int				j;				// index
-	int				bit;			// bit flag
-	int				*flags;			// pointer to flags
+	char			**slot;		// texture slot
+	const char		*line;		// config line
+	int				j;			// index
+	int				bit;		// bit flag
+	int				*flags;		// pointer to flags
 }					t_texinfo;
 
+// ⭐ ORCHESTRATION
 // game state
 typedef struct s_game
 {
@@ -207,17 +209,7 @@ typedef struct s_game
 // global game state
 extern t_game		g_game;
 
-typedef struct s_ffctx
-{
-	const t_map *m;   /* map + grid */
-	char       *vis;  /* visited flags, size w*h */
-	int        *q;    /* queue array, size w*h */
-	int         w;    /* width  */
-	int         h;    /* height */
-	int         head; /* queue head */
-	int         tail; /* queue tail */
-}	t_ffctx;
-
+// ⭐⭐ FUNCTION PROTOTYPES
 //  ================== PARSE_UTILS ==================
 
 int	skip_ws(const char *s, int i);

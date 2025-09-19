@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 14:45:34 by blohrer           #+#    #+#             */
-/*   Updated: 2025/09/19 15:28:48 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/19 15:36:23 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ int	expect_comma(const char *s, int *i)
 	return (1);
 }
 
-int	parse_rgb_triplet(const char *s, uint32_t *out_rgb)
+int parse_rgb_triplet(const char *s, uint32_t *out_rgb)
 {
 	int	i;
 	int	r;
@@ -78,6 +78,7 @@ int	parse_rgb_triplet(const char *s, uint32_t *out_rgb)
 	i = skip_ws(s, i);
 	if (s[i] != '\0')
 		return (0);
-	*out_rgb = (0xFF << 24) | (r << 16) | (g << 8) | b;
+	*out_rgb = (0xFF << 24) | (b << 16) | (g << 8) | r;
 	return (1);
 }
+

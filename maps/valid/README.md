@@ -19,6 +19,21 @@ purpose: minimal test case for basic raycasting functionality
 
 
 
+# island.cub
+
+map structure: 11x11 grid
+spawn position: (5,5), facing south
+spawn texture: forest mural (south wall straight ahead)
+
+colours:
+floor: rgb(245,222,179) – wheat / soft warm beige
+ceiling: rgb(135,206,235) – sky blue, soft and calming
+
+purpose: medium-sized test for natural-feeling colors, open spaces
+
+
+
+
 # maze.cub
 
 map structure: 15x11 grid, enclosed maze with multiple corridors

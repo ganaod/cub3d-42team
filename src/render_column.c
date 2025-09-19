@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 10:54:44 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/17 15:02:52 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/19 10:07:26 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,6 @@ void	render_ceiling_section(int screen_column_x, int wall_start_y_pixel)
 	}
 }
 
-// DEMO: replace get_wall_texture_colour() call with:
-// texture_colour = get_wall_hardcoded_color(wall_direction)
 void	render_wall_section(int screen_column_x, int wall_start_y_pixel,
 						int wall_end_y_pixel, t_ray_result *wall_hit_data)
 {

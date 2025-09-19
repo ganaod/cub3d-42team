@@ -234,6 +234,11 @@
 // 	return 0;
 // }
 
+
+
+
+
+
 // Returns 1 on success, 0 on error
 static int load_one_texture_png(const char *path, t_texture_image *out)
 {
@@ -271,18 +276,15 @@ static int load_one_texture_png(const char *path, t_texture_image *out)
 }
 
 
+
+
+
+
 static void free_lines_array(char **lines, int h) {
     int i = 0;
     while (i < h) { free(lines[i]); i++; }
     free(lines);
 }
-
-// static char cell_ch(int v) {
-//     if (v == CELL_WALL)  return '#';
-//     if (v == CELL_EMPTY) return '.';
-//     if (v == CELL_VOID)  return ' ';
-//     return '?';
-// }
 
 
 
@@ -311,9 +313,6 @@ static int init_window_and_frame(t_game *g, int w, int h, const char *title)
 
 
 
-
-
-
 /* Player-Felder (parser -> world_*) synchronisieren */
 static void sync_player_world_fields_from_parser(t_game *g)
 {
@@ -326,6 +325,11 @@ static void sync_player_world_fields_from_parser(t_game *g)
     g->player.world_camera_plane_x = 0.0;
     g->player.world_camera_plane_y = FOV_CAMERA_PLANE_MAGNITUDE;
 }
+
+
+
+
+
 
 static void free_map(t_map *m)
 {
@@ -354,6 +358,11 @@ static void free_map(t_map *m)
         m->wall_textures[i].image_height = 0;
     }
 }
+
+
+
+
+
 static int load_all_wall_textures(t_map *m)
 {
     // Validate paths parsed from header
@@ -372,6 +381,11 @@ static int load_all_wall_textures(t_map *m)
 
     return 1;
 }
+
+
+
+
+
 
 int main(int argc, char **argv)
 {

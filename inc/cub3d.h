@@ -121,7 +121,7 @@ typedef struct s_map
 	int             width;
 	int             height;
 	char            *texture_paths[4];
-	uint32_t        floor_color;         // <— war floor_; jetzt floor_color
+	uint32_t        floor_color;
 	uint32_t        ceiling_color;
 	char            *first_map_line;
 	t_texture_image wall_textures[4];    // <— KEINE Pointer: struct-Array erwartet
@@ -133,8 +133,8 @@ typedef struct s_graphics
 {
 	mlx_t			*mlx;			// mlx42 context
 	mlx_image_t		*frame;			// framebuffer (win_w x win_h, rgba8888)
-	int                screen_width;    // window width
-    int                screen_height;    // window height
+	int				screen_width;    // window width
+    int				screen_height;    // window height
 }					t_graphics;
 
 

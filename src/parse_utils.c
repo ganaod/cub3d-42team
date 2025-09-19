@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
+/*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 14:45:34 by blohrer           #+#    #+#             */
-/*   Updated: 2025/09/18 15:21:19 by blohrer          ###   ########.fr       */
+/*   Updated: 2025/09/19 10:48:23 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,6 @@ int	parse_rgb_triplet(const char *s, uint32_t *out_rgb)
 	i = skip_ws(s, i);
 	if (s[i] != '\0')
 		return (0);
-	*out_rgb = (r << 16) | (g << 8) | b;
+	*out_rgb = (r << 16) | (g << 8) | b | (0xFF << 24);		// G: I added here an "alpha channel" so that all this logic matches the data format that we cast to later :)
 	return (1);
 }

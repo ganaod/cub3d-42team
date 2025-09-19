@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 13:48:28 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/19 14:49:31 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/19 15:02:19 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,34 +72,43 @@ input: ray intersection result (world coordinates + wall orientation)
 output: wall direction constant for texture selection */
 int	determine_intersected_wall_face(t_ray_result *wall_intersection_data)
 {
-	write(STDERR_FILENO, "WALL_FACE_DEBUG\n", 16);
+	int face;
 	
-	int	face;
-
 	if (wall_intersection_data->world_wall_side == VERTICAL_WALL)
 	{
 		if (wall_intersection_data->world_intersection_x > g_game.player.world_pos_x)
-			return (WALL_EAST);	// Ray traveled East, hit WEST FACE of wall cell, but wall is to the east!
+			face = WALL_EAST;
 		else
-			return (WALL_WEST);
+			face = WALL_WEST;
 	}
 	else
 	{
 		if (wall_intersection_data->world_intersection_y > g_game.player.world_pos_y)
-			return (WALL_SOUTH);
+			face = WALL_SOUTH;
 		else
-			return (WALL_NORTH);
+			face = WALL_NORTH;
+	}
+	
+	// Only debug center column to avoid spam
+	static int debug_count = 0;
+
+	if (debug_count < 1) 
+	{  // Only first hit
+		printf("CENTER COLUMN EXPECTED: %d\n", g_game.graphics.screen_width/2);
+		debug_count++;
 	}
 
-	printf("DEBUG: Wall face=%d, intersection=(%.2f,%.2f), player=(%.2f,%.2f), side=%d\n", 
-		face, 
-		wall_intersection_data->world_intersection_x,
-		wall_intersection_data->world_intersection_y,
-		g_game.player.world_pos_x, 
-		g_game.player.world_pos_y,
-		wall_intersection_data->world_wall_side);
+	if (debug_count < 5) 
+	{
+		printf("Wall face=%d, intersection=(%.2f,%.2f), player=(%.2f,%.2f), side=%d\n", 
+			face, 
+			wall_intersection_data->world_intersection_x,
+			wall_intersection_data->world_intersection_y,
+			g_game.player.world_pos_x, 
+			g_game.player.world_pos_y,
+			wall_intersection_data->world_wall_side);
+		debug_count++;
+	}
 	
 	return (face);
-
-	
 }

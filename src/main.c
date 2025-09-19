@@ -313,17 +313,14 @@ static int init_window_and_frame(t_game *g, int w, int h, const char *title)
 
 
 
-/* Player-Felder (parser -> world_*) synchronisieren */
 static void sync_player_world_fields_from_parser(t_game *g)
 {
-    // TODO: Setze Blickrichtung und Kameraebene passend zu Startorientierung
-    // Beispiel: Start nach Osten
-    g->player.world_dir_x = 1.0;
-    g->player.world_dir_y = 0.0;
-
-    // FOV über Kamera-Ebene: Länge = tan(FOV/2); orthogonal zur Dir
-    g->player.world_camera_plane_x = 0.0;
-    g->player.world_camera_plane_y = FOV_CAMERA_PLANE_MAGNITUDE;
+    // Player position and direction already set by parser - don't overwrite!
+    // Just ensure camera plane is perpendicular to direction with correct FOV
+    
+    // Camera plane = perpendicular to direction, scaled by FOV
+    g->player.world_camera_plane_x = -g->player.world_dir_y * FOV_CAMERA_PLANE_MAGNITUDE;
+    g->player.world_camera_plane_y = g->player.world_dir_x * FOV_CAMERA_PLANE_MAGNITUDE;
 }
 
 
@@ -467,12 +464,6 @@ int main(int argc, char **argv)
     g.movement_speed = 3.0;   // Einheiten pro Sekunde
     g.rotation_speed = 2.0;   // Radiant pro Sekunde
     sync_player_world_fields_from_parser(&g);
-
-	printf("Player spawn debug:\n");
-	printf("  Position: (%.2f, %.2f)\n", g_game.player.world_pos_x, g_game.player.world_pos_y);
-	printf("  Direction: (%.2f, %.2f)\n", g_game.player.world_dir_x, g_game.player.world_dir_y);
-	printf("  Camera plane: (%.2f, %.2f)\n", g_game.player.world_camera_plane_x, g_game.player.world_camera_plane_y);
-
 
     /* 7) Frame-Loop */
     g.running = 1;

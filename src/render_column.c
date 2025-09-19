@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 10:54:44 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/19 10:35:49 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/19 10:40:01 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,15 +37,11 @@ void	render_ceiling_section(int screen_column_x, int wall_start_y_pixel)
 {
 	int	current_pixel_y;
 
-	// DEBUG: What color are we actually using?
-	if (screen_column_x == 0) { // Only first column to avoid spam
-		printf("DEBUG: render_ceiling_section using color = 0x%08X\n", g_game.map.ceiling_color);
-	}
-
 	current_pixel_y = 0;
 	while (current_pixel_y < wall_start_y_pixel)
 	{
-		put_pixel(screen_column_x, current_pixel_y, g_game.map.ceiling_color);
+		// put_pixel(screen_column_x, current_pixel_y, g_game.map.ceiling_color);
+		put_pixel(screen_column_x, current_pixel_y, 0xFF0000FF);
 		current_pixel_y++;
 	}
 }
@@ -74,11 +70,6 @@ void	render_wall_section(int screen_column_x, int wall_start_y_pixel,
 void	render_floor_section(int screen_column_x, int wall_end_y_pixel)
 {
 	int	current_pixel_y;
-
-	// DEBUG: What color are we actually using?
-	if (screen_column_x == 0) {
-		printf("DEBUG: render_floor_section using color = 0x%08X\n", g_game.map.floor_color);
-	}
 
 	current_pixel_y = wall_end_y_pixel;
 	while (current_pixel_y < g_game.graphics.screen_height)

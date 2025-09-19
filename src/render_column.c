@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 10:54:44 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/19 10:48:30 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/19 15:13:02 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,7 @@ void	render_ceiling_section(int screen_column_x, int wall_start_y_pixel)
 	current_pixel_y = 0;
 	while (current_pixel_y < wall_start_y_pixel)
 	{
-		// put_pixel(screen_column_x, current_pixel_y, g_game.map.ceiling_color);
-		put_pixel(screen_column_x, current_pixel_y, 0xFF0000FF);
+		put_pixel(screen_column_x, current_pixel_y, g_game.map.ceiling_color);
 		current_pixel_y++;
 	}
 }

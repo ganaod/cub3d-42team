@@ -14,8 +14,8 @@
 [x]All texture paths (NO, SO, WE, EA) parse correctly
 []Floor color (F R,G,B) parses correctly with values 0-255
 []Ceiling color (C R,G,B) parses correctly with values 0-255
-[]Map parsing works with valid rectangular maps
-[]Player spawn position (N,S,E,W) detected and oriented correctly
+[x]Map parsing works with valid rectangular maps
+[x]Player spawn position (N,S,E,W) detected and oriented correctly
 
 ### CONFIGURATION FILE PARSING - ERROR HANDLING
 []Non-`.cub` extension rejected with error message

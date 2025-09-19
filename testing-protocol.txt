@@ -12,8 +12,8 @@
 ### CONFIGURATION FILE PARSING - BASIC FUNCTIONALITY
 [x]Program accepts `.cub` file as single argument
 [x]All texture paths (NO, SO, WE, EA) parse correctly
-[]Floor color (F R,G,B) parses correctly with values 0-255
-[]Ceiling color (C R,G,B) parses correctly with values 0-255
+[x]Floor color (F R,G,B) parses correctly with values 0-255
+[x]Ceiling color (C R,G,B) parses correctly with values 0-255
 [x]Map parsing works with valid rectangular maps
 [x]Player spawn position (N,S,E,W) detected and oriented correctly
 
@@ -29,8 +29,8 @@
 []Open/unclosed map causes error exit
 []Invalid map characters cause error exit
 
-### CONFIGURATION FILE PARSING - SMART-ASS TESTS
-[]Empty lines between sections handled correctly
+### CONFIGURATION FILE PARSING
+[x]Empty lines between sections handled correctly
 []Extra whitespace in texture paths handled
 []Extra whitespace in color definitions handled  
 []Comments (if supported) or random text cause appropriate response

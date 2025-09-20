@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 15:48:27 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/20 15:31:13 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/20 15:38:20 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,7 +113,11 @@ double	calculate_wall_distance(t_dda_state *dda_state, int world_wall_side)
 }
 
 /* setup calculation context with all required values
-   extracts coordinate components, step direction, and wall face offset */
+   extracts coordinate components, step direction, and wall face offset 
+   
+Direction of movement determines which face of the cell you hit first:
+Moving positive (+1): Hit the near edge (0 offset from cell origin)
+Moving negative (-1): Hit the far edge (1 offset from cell origin)   */
 static void	setup_distance_context(t_dda_state *dda_state, int world_wall_side,
 				t_distance_calc_context *ctx)
 {

@@ -5,22 +5,17 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/17 16:09:19 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/17 16:09:20 by go-donne         ###   ########.fr       */
+/*   Created: 2025/09/20 15:51:35 by go-donne          #+#    #+#             */
+/*   Updated: 2025/09/20 15:55:53 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/cub3d.h"
 
-/* CLEAR SCREEN BUFFER
-Initialize frame buffer to known state for additive composition
-Performance: Fast memset operation, executes once per frame
-
-Mathematical decomposition:
-1. Calculate total pixel count (2D screen area, RGBA32 format)
-2. Calculate mem bytes per pixel (data type size)
-3. Calculate total buffer mem size (pixel count × bytes per pixel)
-4. Initialize all bytes to 0 (black pixels in RGBA format) */
+/* clear screen buffer to known state for frame composition
+1. calculate total pixel count (2d screen area)
+2. calculate memory size (pixel count * bytes per pixel)
+3. initialize all bytes to 0 (black rgba pixels) */
 void	clear_screen_buffer(void)
 {
 	size_t	screen_pixel_count;
@@ -34,16 +29,57 @@ void	clear_screen_buffer(void)
 	ft_memset(g_game.graphics.frame->pixels, 0, total_buffer_size_bytes);
 }
 
-/* direct pixel access to image buffer
+/* direct pixel write to mlx42 frame buffer
 
-. Calculate pixel position in buffer
-. Set pixel color in MLX42 frame buffer */
+endianness context:
+mlx42 abstracts platform byte order through void* pixel buffer
+prog parser creates argb: 0xaarrggbb (alpha, red, green, blue)
+uint32_t casting ensures 32-bit atomic writes regardless of endianness
+intel x86: little-endian (least significant byte first in memory)
+arm: configurable endianness, usually little-endian
+mlx42 handles endian conversion internally for opengl/graphics drivers
+
+pixel format expectations:
+prog parser: (0xff << 24) | (r << 16) | (g << 8) | b = 0xaarrggbb
+mlx42 buffer: expects 32-bit rgba values, handles platform specifics
+graphics driver: converts to gpu-native format before rendering
+
+casting rationale:
+void* buffer -> uint32_t* for atomic 32-bit pixel writes
+prevents partial writes that could create visual artifacts
+maintains colour channel alignment across byte boundaries 
+
+mem layout:
+Single pixel = 32 bits = 4 bytes in memory
+	Byte 0: Alpha   (bits 24-31)
+	Byte 1: Red     (bits 16-23) 
+	Byte 2: Green   (bits 8-15)
+	Byte 3: Blue    (bits 0-7)
+
+Without uint32_t casting (dangerous):
+	char *buffer = pixels;
+	buffer[index*4 + 0] = alpha;   // Write 1: partial pixel state
+	buffer[index*4 + 1] = red;     // Write 2: still partial  
+	buffer[index*4 + 2] = green;   // Write 3: still partial
+	buffer[index*4 + 3] = blue;    // Write 4: finally complete
+
+Problem: Between writes 1-3, pixel contains mixed old/new data. 
+Another process reading during this sequence gets corrupted colour.
+
+With uint32_t casting (safe):
+uint32_t *buffer = (uint32_t*)pixels;
+buffer[index] = 0xAARRGGBB;
+// Single atomic write: all 4 channels updated simultaneously */
 void	put_pixel(int screen_x, int screen_y, int pixel_color)
 {
-	if (screen_x < 0 || screen_x >= g_game.graphics.screen_width || 
-		screen_y < 0 || screen_y >= g_game.graphics.screen_height)
-		return;
+	uint32_t	*pixel_buffer;
+	int			pixel_index;
 
-	// CRITICAL: uint32_t casting for RGBA8 format
-	((uint32_t *)g_game.graphics.frame->pixels)[screen_y * g_game.graphics.screen_width + screen_x] = (uint32_t)pixel_color;
+	if (screen_x < 0 || screen_x >= g_game.graphics.screen_width)
+		return ;
+	if (screen_y < 0 || screen_y >= g_game.graphics.screen_height)
+		return ;
+	pixel_buffer = (uint32_t *)g_game.graphics.frame->pixels;
+	pixel_index = screen_y * g_game.graphics.screen_width + screen_x;
+	pixel_buffer[pixel_index] = (uint32_t)pixel_color;
 }

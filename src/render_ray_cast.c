@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 13:48:28 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/19 15:11:47 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/20 13:26:00 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,15 +15,16 @@ Core responsibility: screen coordinate → world ray vector transformations */
 
 #include "../inc/cub3d.h"
 
-/* SCREEN-TO-RAY TRANSFORMATION
-Creates peripheral vision by transforming raycaster from 1D scanner → 3D vision simulator
+/* screen > ray:
+creates peripheral vision by transforming raycaster 
+from 1D scanner → 3D vision simulator
 
 process:
-	1. Screen column index → Field-of-view position [-1, +1]
-	2. FOV position → Ray direction vector in world space
-	3. Result: Natural peripheral vision instead of "tunnel vision"
+	1. screen column index → FoV position [-1, +1]
+	2. FoV position → ray direction vector in world space
+	3. result: natural peripheral vision instead of "tunnel vision"
 
-Visual effect:
+visual effect:
 	Without: All columns show same straight-ahead view (telescope effect)
 	With: Left/right columns show angled views (human-like peripheral vision)
 

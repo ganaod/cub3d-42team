@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 10:54:39 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/20 11:16:02 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/20 11:27:19 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,25 +26,11 @@ core operations:
 	6. Texture Sampling: Texture coordinates → Colour value
 	7. Pixel Drawing:    Colour → Screen buffer
 
-key decisions:
 
-	column-based rendering
-		Why: Ray casting gives distance per column, not per pixel
-		Mathematical necessity: One ray → one distance → entire vertical strip
 
-	Decision 2: Data flow preservation
-		Why: Texture sampling needs ray intersection data
-		Method: Pass t_ray_result through call chain instead of decomposing early
+	
 
-	Decision 3: Texture context construction at render_wall_section level
-		Why: This level has both ray data AND precise wall boundaries
-		Upstream levels: Missing wall boundaries
-		Downstream levels: Don't exist (next is texture functions)
 
-	Decision 4: 42 Norm parameter bundling
-		Constraint: Max 4 parameters per function
-		Reality: Texture calculation needs 5+ pieces of data
-		Solution: Bundle into t_texture_context struct
 
 
 
@@ -109,6 +95,11 @@ void	render_complete_frame(void)
 }
 
 /* SINGLE COLUMN RENDERING PIPELINE
+
+column-based rendering
+		Why: Ray casting gives distance per column, not per pixel
+		Mathematical necessity: One ray → one distance → entire vertical strip
+
 Core raycasting sequence for one vertical screen strip
 
 Mathematical transformations:

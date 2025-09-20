@@ -246,6 +246,7 @@ void			render_floor_section(int screen_column_x, int wall_end_y_pixel);
 
 // ray_cast.c
 void			calculate_ray_direction(int screen_column_x, double *world_ray_direction_x, double *world_ray_direction_y);
+void			calculate_ray_direction_tunnel_vision(int screen_column_x, double *world_ray_direction_x, double *world_ray_direction_y);
 t_ray_result	cast_ray_to_wall(double world_ray_dir_x, double world_ray_dir_y);
 int				determine_intersected_wall_face(t_ray_result *wall_intersection_data);
 

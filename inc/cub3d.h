@@ -17,21 +17,18 @@
 // framebuffer display resolution
 # define DEFAULT_WIDTH					1024
 # define DEFAULT_HEIGHT					768
-/* safe default: big enough, but not too big to slow performance 
-XGA standard, 4:3 aspect ratio as in most early games, GUIs */
 
-// exit codes: how OS understands prog completion
-# define EXIT_SUCCESS					0	// program terminated successfully
-# define EXIT_FAILURE					1	// program terminated with error
+// exit codes
+# define EXIT_SUCCESS					0
+# define EXIT_FAILURE					1
 
 // ⭐ MATHEMATICAL FOUNDATION
-// field of view (FOV) configuration
+// (fixed) field of view (FoV) configuration
 # define FOV_DEGREES					60.0
 // good perspective without excessive distortion
 
 # define FOV_RADIANS					(FOV_DEGREES * (M_PI / 180.0))
-/* convert FOV from degrees > radians for C's math fns
-M_PI is a constant defined in <math.h> for the value of Pi */
+// convert FOV from degrees > radians for C's math fns
 
 # define FOV_HALF_ANGLE_RADIANS			(FOV_RADIANS / 2.0)
 // half-angle needed for tangent calculation
@@ -45,7 +42,7 @@ M_PI is a constant defined in <math.h> for the value of Pi */
 // Scales normalized screen coordinates [0,1] to [0,2]
 
 # define FOV_CENTER_OFFSET				1.0
-// Shifts scaled coordinates [0,2] to FOV space [-1,+1]
+// shifts scaled coordinates [0,2] to FOV space [-1,+1]
 
 // ⭐ WORLD DOMAIN PRIMITIVES
 // map cell types
@@ -53,8 +50,7 @@ M_PI is a constant defined in <math.h> for the value of Pi */
 # define CELL_EMPTY						(0)   /* '0'  -> begehbar */
 # define CELL_WALL						(1)   /* '1'  -> Wand  */
 
-/* wall face directions: absolute world coords, fixed to map
-for texture selection */
+// wall face directions: absolute world coords
 # define WALL_NORTH						0
 # define WALL_SOUTH						1
 # define WALL_WEST						2
@@ -71,12 +67,13 @@ for texture selection */
 # define VERTICAL_WALL					0
 # define HORIZONTAL_WALL				1
 
-/* ⭐ RENDERING CONSTRAINTS
-wall height projection - dist/height limits */
+// ⭐ RENDERING CONSTRAINTS
+// wall height projection - dist/height limits
 #define MINIMUM_WALL_DISTANCE_THRESHOLD  0.001
 #define MAXIMUM_WALL_HEIGHT_PIXELS       (g_game.graphics.screen_height * 2)
 
 // ⭐ PARSER STATE FLAGS
+// HDR == header?
 # define HDR_NO							(1<<0)
 # define HDR_SO							(1<<1)
 # define HDR_WE							(1<<2)
@@ -145,12 +142,13 @@ typedef struct s_dda_state
 	int				wall_intersection_found;				// boolean flag
 }					t_dda_state;
 
+// dda traversal output (ray space > world space)
 typedef struct	s_ray_result
 {
-	double			world_distance;					// perpendicular wall dist
-	int				world_wall_side;				// VERT / HORIZ
 	double			world_intersection_x;
 	double			world_intersection_y;
+	int				world_wall_side;
+	double			world_perpendicular_distance;
 	int				world_wall_face;
 }					t_ray_result;
 
@@ -302,9 +300,6 @@ int	map_is_closed(const t_map *m);
 //  ================== UTILS ==================
 
 void	parse_error(const char *msg);
-// void	render_wall_column2(int screen_column_x, t_ray_result *wall_intersection_data,
-// 		int projected_wall_height);
-// void	put_pixel2(int screen_x, int screen_y, int pixel_color);
 
 
 double get_delta_time(void);
@@ -318,3 +313,9 @@ void	handle_rotation_input(double ang);
 int	map_cell(const t_map *m, int ix, int iy);
 
 #endif
+
+/* key:
+world_* → global world-space geometry (continuous, float)
+map_* → discrete map grid indices (int)
+screen_* → pixel/screen-space coordinates
+tex_* → texture-space coordinates */

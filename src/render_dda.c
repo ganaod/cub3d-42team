@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 15:48:27 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/20 15:25:41 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/20 15:31:13 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,12 +131,10 @@ static void	setup_distance_context(t_dda_state *dda_state, int world_wall_side,
 		ctx->ray_direction_component = dda_state->world_ray_dir_y;
 		ctx->step_direction = dda_state->step_y;
 	}
-
-	// determine wall face offset: 0.0 for near face, 0.5 for far face
 	if (ctx->step_direction == 1)
-		ctx->wall_face_offset = 0.0;  // moving positive: hit near face
+		ctx->wall_face_offset = 0.0;  // near face (left/top edge)
 	else
-		ctx->wall_face_offset = 0.5;  // moving negative: hit far face
+		ctx->wall_face_offset = 1.0;  // far face (right/bottom edge)
 }
 
 /* compute final perpendicular distance using prepared context */

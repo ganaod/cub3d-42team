@@ -6,48 +6,52 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 17:01:49 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/15 17:52:00 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/20 14:48:17 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+/* dda setup: transform ray dir > grid traversal params 
+
+purpose:
+. convert continous ray dir to discrete stepping params
+. pre-calculate distances to avoid runtime computation
+. determine initial boundary distances for efficient traversal
+
+insight:
+grid spacing is uniform: calculate step distances once,
+reuse throughout traversal.
+this is the optimisation that makes dda superior
+to naive ray stepping approaches */
 
 #include "../inc/cub3d.h"
 
 static void	setup_x_axis_stepping(double world_ray_dir_x, t_dda_state *dda_state);
 static void	setup_y_axis_stepping(double world_ray_dir_y, t_dda_state *dda_state);
 
-/* DDA MATHEMATICAL SETUP INITIALIZATION
-Transform ray direction → DDA stepping parameters
+/* DDA SETUP INITIALIZATION
+transform ray direction → DDA stepping params
 
-Mathematical purpose:
-- Convert continuous ray direction to discrete grid traversal
-- Calculate delta distances (distance per grid step)
-- Initialize stepping directions and boundary distances
-- Prepare state for efficient grid traversal */
+purpose:
+. convert continuous ray direction to discrete grid traversal
+. calculate delta distances (distance per grid step)
+. initialise stepping directions and boundary distances
+. prepare state for efficient grid traversal */
 void	setup_dda_vars(double world_ray_dir_x, double world_ray_dir_y, 
 			t_dda_state *dda_state)
 {
-	// Initialize current grid position (integer parts of player position)
 	dda_state->map_x = (int)g_game.player.world_pos_x;
 	dda_state->map_y = (int)g_game.player.world_pos_y;
-
-	// Calculate delta distances (distance to travel per grid cell)
 	dda_state->delta_dist_x = fabs(1.0 / world_ray_dir_x);
 	dda_state->delta_dist_y = fabs(1.0 / world_ray_dir_y);
-
-	// Store ray direction for distance calculations
 	dda_state->world_ray_dir_x = world_ray_dir_x;
 	dda_state->world_ray_dir_y = world_ray_dir_y;
-
-	// Initialize axis-specific stepping parameters
 	setup_x_axis_stepping(world_ray_dir_x, dda_state);
 	setup_y_axis_stepping(world_ray_dir_y, dda_state);
-
-	// Initialize traversal state
 	dda_state->wall_intersection_found = 0;
 }
 
 /* X-AXIS STEPPING CONFIGURATION
-Calculate step direction and distance to first X boundary
+calculate step direction and distance to first X boundary
 
 Mathematical setup:
 - Determine stepping direction: +1 (East) or -1 (West)
@@ -72,12 +76,12 @@ static void	setup_x_axis_stepping(double world_ray_dir_x, t_dda_state *dda_state
 }
 
 /* Y-AXIS STEPPING CONFIGURATION
-Calculate step direction and distance to first Y boundary
+calculate step direction and distance to first Y boundary
 
-Mathematical setup:
-- Determine stepping direction: +1 (South) or -1 (North)
-- Calculate distance from player to next Y grid line
-- Handles both positive and negative ray directions */
+setup:
+. determine stepping direction: +1 (South) or -1 (North)
+. calculate distance from player to next Y grid line
+. handles both positive and negative ray directions */
 static void	setup_y_axis_stepping(double world_ray_dir_y, t_dda_state *dda_state)
 {
 	if (world_ray_dir_y < 0)

@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 10:54:39 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/20 13:42:10 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/20 14:31:09 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,7 +121,6 @@ void	render_single_column(int screen_column_x)
 	t_ray_result	wall_intersection_data;
 	int				projected_wall_height;
 
-	// calculate_ray_direction(screen_column_x, &world_ray_direction_x, &world_ray_direction_y);
 	calculate_ray_direction_tunnel_vision(screen_column_x, &world_ray_direction_x, &world_ray_direction_y);
 	wall_intersection_data = cast_ray_to_wall(world_ray_direction_x, world_ray_direction_y);
 	projected_wall_height = 

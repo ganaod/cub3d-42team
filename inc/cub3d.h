@@ -37,11 +37,10 @@ screen space (pixels, top-left origin)
 +---------------------------+
           x → screen_x
 
-notes:
-- world space: floating-point coordinates, continuous
-- map grid: integer indices, (map_x, map_y)
-- screen space: pixels, (screen_x, screen_y), origin top-left
-- y increases downward in all spaces	*/
+. world space: floating-point coordinates, continuous
+. map grid: integer indices, (map_x, map_y)
+. screen space: pixels, (screen_x, screen_y), origin top-left
+. y increases downward in all spaces	*/
 
 // ⭐⭐ DEFINES 
 // ⭐ SYSTEM ARCHITECTURE
@@ -173,6 +172,16 @@ typedef struct s_dda_state
 	int				wall_intersection_found;				// boolean flag
 }					t_dda_state;
 
+// wall distance calculation context
+typedef struct s_distance_calc_context
+{
+	double			wall_grid_position;			// wall cell coordinate
+	double			player_position;			// player coordinate (same axis)
+	double			ray_direction_component;	// ray direction (same axis)
+	double			wall_face_offset;			// 0.0 or 0.5 for correct face
+	int				step_direction;				// +1 or -1 movement direction
+}					t_distance_calc_context;
+
 // dda traversal output (ray space > world space)
 typedef struct	s_ray_result
 {
@@ -277,7 +286,7 @@ void			render_floor_section(int screen_column_x, int wall_end_y_pixel);
 
 // ray_cast.c
 void			calculate_ray_direction(int screen_column_x, double *world_ray_direction_x, double *world_ray_direction_y);
-void			calculate_ray_direction_tunnel_vision(int screen_column_x, double *world_ray_direction_x, double *world_ray_direction_y);
+// void			calculate_ray_direction_tunnel_vision(int screen_column_x, double *world_ray_direction_x, double *world_ray_direction_y);
 t_ray_result	cast_ray_to_wall(double world_ray_dir_x, double world_ray_dir_y);
 int				determine_intersected_wall_face(t_ray_result *wall_intersection_data);
 

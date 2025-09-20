@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 13:48:28 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/20 14:04:17 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/20 15:13:02 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,6 @@ void calculate_ray_direction(int screen_column_x,
 	
 	fov_space_camera_plane_offset = SCREEN_TO_FOV_SCALE_FACTOR * screen_column_x 
 		/ (double)g_game.graphics.screen_width - FOV_CENTER_OFFSET;
-		
 	*world_ray_direction_x = g_game.player.world_dir_x 
 		+ fov_space_camera_plane_offset * g_game.player.world_camera_plane_x;
 	*world_ray_direction_y = g_game.player.world_dir_y 

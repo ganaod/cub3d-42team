@@ -6,19 +6,44 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 15:48:27 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/20 11:15:39 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/20 15:21:28 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/cub3d.h"
 
-void		execute_dda_traversal(t_dda_state *state, int *wall_side);
-double		calculate_wall_distance(t_dda_state *state, int wall_side);
+void			execute_dda_traversal(t_dda_state *state, int *wall_side);
+double			calculate_wall_distance(t_dda_state *dda_state, int world_wall_side);
+static void		setup_distance_context(t_dda_state *dda_state, int world_wall_side,
+	t_distance_calc_context *ctx);
+static double	compute_perpendicular_distance(t_distance_calc_context *ctx);
 
-/* visual reality: How far can I see before hitting a wall?
-. player stands at position, looks toward screen column X
-. vision travels in straight line until blocked by wall
-. fn returns: how far that vision traveled
+/* Digital Differential Analyzer (DDA) traversal algorithm: 
+optimal discrete grid intersection algo
+
+problem: find wall intersection efficiently in discrete grid
+solution: step only to grid boundaries, not arbitrary pts
+
+algo:
+1. setup: compare distances to next X & Y grid boundaries
+2. traverse: step to whichever boundary is closer
+3. check cell for wall, repeat until wall found
+
+4. calculate exact perpendicular dist to prevent fisheye
+
+without perpendicular distance:        with perpendicular distance:
+player view with direct distances     player view with perpendicular to screen plane
+
+     \     |     /                        |     |     |
+      \    |    /                         |     |     |
+       \   |   /                          |     |     |
+        \  |  /                           |     |     |
+         \ | /                            |     |     |
+          \|/                             |     |     |
+         player                          player
+
+curved walls (fisheye effect)          straight walls (realistic)
+
 
 without: no depth perception - every wall would appear
 same size regardless of distance
@@ -27,59 +52,15 @@ core transaction:
 	. in: ray direction (where to look)
 	. out: distance to nearest wall in that direction
 
-problem: find intersection of continuous line with discrete grid
-constraint: must be exact (no approximatn errs)
 performance: must execute 1000+ time/frame (real-time requirement)
-
-
-
-
-Digital Differential Analyzer (DDA) algorithm: 
-	instead of checking arbitrary pts, only check grid
-	boundary crossings (efficient)
-
-think of DDA as:
-	Standing at player position
-	Looking along ray direction
-	"Which grid line will I cross first - vertical or horizontal?"
-	Step to that grid line, check for wall
-	Repeat until wall found
-
-ret: perpendicular dist (prevent fisheye distortion) 
-
-
-
 bridges discrete map space & continuous world space
 
-steps thru integer grid cells while maintaining continuous dist precision for accurate intersection calculations
 
-
-
-
-dda traversal state held in:
-
-typedef struct s_dda_state {
-    int    map_x, map_y;        // Current grid position
-    int    step_x, step_y;      // Step direction (-1 or +1)
-    double side_dist_x, side_dist_y;  // Distance to next boundary
-    double delta_dist_x, delta_dist_y; // Distance per grid step
-} t_dda_state;
-
-
-wall side types
-# define VERTICAL_WALL	0
-# define HORIZONTAL_WALL 1
-
-*/
-
-
-
-/*
-	Calculate perpendicular distance (prevents fisheye distortion)
-	wall_intersection_result.world_distance = 
-		calculate_wall_distance(&dda_state, wall_intersection_result.world_wall_side);
-
-*/
+dda traversal state held in t_dda_state	{
+int		map_x & y			curr grid pos
+int		step_x &y			step dir (-1 / +1)
+double	side_dist_x & y		dist to next boundary
+double	delta_dist_x & y	dist per grid step	}	*/
 t_ray_result	cast_ray_to_wall(double world_ray_dir_x, double world_ray_dir_y)
 {
 	t_dda_state		dda_state;
@@ -98,54 +79,67 @@ t_ray_result	cast_ray_to_wall(double world_ray_dir_x, double world_ray_dir_y)
 	return (wall_intersection_result);
 }
 
-/* core dda algo
-
-dda stepping loop:
-. compare distances to next x & y grid boundaries
-. step to whichever boundary is closer
-. update dist for axis stepped along
-. check if new grid cell contains wall
-. repeat until wall found */
+/* booelan flag to terminate loop
+. separate traversal logic vs dist calc
+. clear state machine: searching > found */
 void	execute_dda_traversal(t_dda_state *dda_state, int *world_wall_side)
 {
 	while (!dda_state->wall_intersection_found)
 	{
-		// Determine which boundary is closer
 		if (dda_state->world_dist_to_next_boundary_x < dda_state->world_dist_to_next_boundary_y)
 		{
-			// Step to next vertical boundary
 			dda_state->world_dist_to_next_boundary_x += dda_state->delta_dist_x;
 			dda_state->map_x += dda_state->step_x;
 			*world_wall_side = VERTICAL_WALL;
 		}
 		else
 		{
-			// Step to next horizontal boundary
 			dda_state->world_dist_to_next_boundary_y += dda_state->delta_dist_y;
 			dda_state->map_y += dda_state->step_y;
 			*world_wall_side = HORIZONTAL_WALL;
 		}
-
-		// Check if current grid cell contains wall
 		if (g_game.map.grid[dda_state->map_y * g_game.map.width + dda_state->map_x] == CELL_WALL)
 			dda_state->wall_intersection_found = 1;
 	}
 }
 
-/* dist calc:
-. calc perpendicular dist to prevent fisheye distortion
-. use exact intersection pt on wall face
-. ret dist from player > wall intersection */
+/* calculate perpendicular distance from player to wall intersection */
 double	calculate_wall_distance(t_dda_state *dda_state, int world_wall_side)
+{
+	t_distance_calc_context	calc_context;
+
+	setup_distance_context(dda_state, world_wall_side, &calc_context);
+	return (compute_perpendicular_distance(&calc_context));
+}
+
+/* setup calculation context with all required values
+extracts coordinate components and step direction based on wall orientation */
+static void	setup_distance_context(t_dda_state *dda_state, int world_wall_side,
+				t_distance_calc_context *ctx)
 {
 	if (world_wall_side == VERTICAL_WALL)
 	{
-		return ((dda_state->map_x - g_game.player.world_pos_x 
-			+ (1 - dda_state->step_x) / 2) / dda_state->world_ray_dir_x);
+		ctx->wall_grid_position = (double)dda_state->map_x;
+		ctx->player_position = g_game.player.world_pos_x;
+		ctx->ray_direction_component = dda_state->world_ray_dir_x;
+		ctx->step_direction = dda_state->step_x;
 	}
 	else
 	{
-		return ((dda_state->map_y - g_game.player.world_pos_y 
-			+ (1 - dda_state->step_y) / 2) / dda_state->world_ray_dir_y);
+		ctx->wall_grid_position = (double)dda_state->map_y;
+		ctx->player_position = g_game.player.world_pos_y;
+		ctx->ray_direction_component = dda_state->world_ray_dir_y;
+		ctx->step_direction = dda_state->step_y;
 	}
+
+	ctx->wall_face_offset = get_wall_face_offset(ctx->step_direction);
+}
+
+/* compute final perpendicular distance using prepared context */
+static double	compute_perpendicular_distance(t_distance_calc_context *ctx)
+{
+	double	distance_in_grid_units;
+
+	distance_in_grid_units = ctx->wall_grid_position - ctx->player_position + ctx->wall_face_offset;
+	return (distance_in_grid_units / ctx->ray_direction_component);
 }

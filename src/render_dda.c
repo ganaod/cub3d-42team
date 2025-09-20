@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 15:48:27 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/20 15:21:28 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/20 15:24:26 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,6 +133,18 @@ static void	setup_distance_context(t_dda_state *dda_state, int world_wall_side,
 	}
 
 	ctx->wall_face_offset = get_wall_face_offset(ctx->step_direction);
+}
+
+/* determine which face of wall cell was hit
+returns offset to correct wall boundary:
+- 0.0 for near face (when entering cell)  
+- 0.5 for far face (when exiting cell) */
+static double	get_wall_face_offset(int step_direction)
+{
+	if (step_direction == 1)
+		return (0.0);  // moving positive: hit near face (left/top edge)
+	else
+		return (0.5);  // moving negative: hit far face (right/bottom edge)
 }
 
 /* compute final perpendicular distance using prepared context */

@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 15:48:27 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/20 15:24:26 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/20 15:25:41 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 void			execute_dda_traversal(t_dda_state *state, int *wall_side);
 double			calculate_wall_distance(t_dda_state *dda_state, int world_wall_side);
 static void		setup_distance_context(t_dda_state *dda_state, int world_wall_side,
-	t_distance_calc_context *ctx);
+						t_distance_calc_context *ctx);
 static double	compute_perpendicular_distance(t_distance_calc_context *ctx);
 
 /* Digital Differential Analyzer (DDA) traversal algorithm: 
@@ -113,7 +113,7 @@ double	calculate_wall_distance(t_dda_state *dda_state, int world_wall_side)
 }
 
 /* setup calculation context with all required values
-extracts coordinate components and step direction based on wall orientation */
+   extracts coordinate components, step direction, and wall face offset */
 static void	setup_distance_context(t_dda_state *dda_state, int world_wall_side,
 				t_distance_calc_context *ctx)
 {
@@ -132,19 +132,11 @@ static void	setup_distance_context(t_dda_state *dda_state, int world_wall_side,
 		ctx->step_direction = dda_state->step_y;
 	}
 
-	ctx->wall_face_offset = get_wall_face_offset(ctx->step_direction);
-}
-
-/* determine which face of wall cell was hit
-returns offset to correct wall boundary:
-- 0.0 for near face (when entering cell)  
-- 0.5 for far face (when exiting cell) */
-static double	get_wall_face_offset(int step_direction)
-{
-	if (step_direction == 1)
-		return (0.0);  // moving positive: hit near face (left/top edge)
+	// determine wall face offset: 0.0 for near face, 0.5 for far face
+	if (ctx->step_direction == 1)
+		ctx->wall_face_offset = 0.0;  // moving positive: hit near face
 	else
-		return (0.5);  // moving negative: hit far face (right/bottom edge)
+		ctx->wall_face_offset = 0.5;  // moving negative: hit far face
 }
 
 /* compute final perpendicular distance using prepared context */
@@ -152,6 +144,7 @@ static double	compute_perpendicular_distance(t_distance_calc_context *ctx)
 {
 	double	distance_in_grid_units;
 
-	distance_in_grid_units = ctx->wall_grid_position - ctx->player_position + ctx->wall_face_offset;
+	distance_in_grid_units = ctx->wall_grid_position - ctx->player_position 
+		+ ctx->wall_face_offset;
 	return (distance_in_grid_units / ctx->ray_direction_component);
 }

@@ -6,11 +6,11 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 15:51:35 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/20 15:55:53 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/21 14:08:06 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/cub3d.h"
+#include "../inc/render.h"
 
 /* clear screen buffer to known state for frame composition
 1. calculate total pixel count (2d screen area)

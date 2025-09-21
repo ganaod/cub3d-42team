@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 17:01:49 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/20 14:48:17 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/21 14:08:14 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ reuse throughout traversal.
 this is the optimisation that makes dda superior
 to naive ray stepping approaches */
 
-#include "../inc/cub3d.h"
+#include "../inc/render.h"
 
 static void	setup_x_axis_stepping(double world_ray_dir_x, t_dda_state *dda_state);
 static void	setup_y_axis_stepping(double world_ray_dir_y, t_dda_state *dda_state);

@@ -6,14 +6,14 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 13:48:28 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/20 15:13:02 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/21 14:07:59 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 /* ray geometric operations: mathematical transformations for 3D vision simulation
 core responsibility: screen coordinate → world ray vector transformations */
 
-#include "../inc/cub3d.h"
+#include "../inc/render.h"
 
 /* what: create natural peripheral vision in 3D game
 how: transform ray caster from 1D scanner > 3D vision simulator

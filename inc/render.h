@@ -2,6 +2,15 @@
 # define RENDER_H
 
 # include "cub3d.h"
+/* hierarchy:
+cub3d.h (core types)
+    ↑
+render.h (depends on core, adds rendering)
+    ↑  
+render_*.c files (include render.h) 
+
+render.h NOT included in cub3d.h: would create
+circular dependency */
 
 // ⭐ RENDERING CONSTRAINTS
 /* boundary protection:

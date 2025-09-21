@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 14:01:40 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/21 13:56:33 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/21 14:18:17 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ map space wall orientations:
 
 2. extract fractional part  */
 
-#include "../inc/cub3d.h"
+#include "../inc/render.h"
 
 static double	world_wall_texture_u(t_texture_context *ctx);
 static double	screen_wall_texture_v(t_texture_context *ctx,
@@ -105,13 +105,12 @@ static double	world_wall_texture_u(t_texture_context *ctx)
 {
 	double	world_wall_intersection_coordinate;
 
-	if (ctx->world_wall_face == WALL_NORTH
-		|| ctx->world_wall_face == WALL_SOUTH)
+	if (ctx->world_wall_face == WALL_NORTH || ctx->world_wall_face == WALL_SOUTH)
 		world_wall_intersection_coordinate = ctx->world_wall_intersection_x;
 	else
 		world_wall_intersection_coordinate = ctx->world_wall_intersection_y;
-	return (world_wall_intersection_coordinate
-		- floor(world_wall_intersection_coordinate));
+	
+	return (safe_fractional_part(world_wall_intersection_coordinate));
 }
 
 /* Screen pixel → texture vertical position
@@ -120,39 +119,35 @@ Output Space: TEXTURE SPACE (vertical position 0.0-1.0)
 Mathematical Process: (current_pixel_y - wall_start_y)
 	/ (wall_end_y - wall_start_y)
 . Display location becomes surface coordinate */
-static double	screen_wall_texture_v(t_texture_context *ctx,
-			int current_pixel_y)
+static double	screen_wall_texture_v(t_texture_context *ctx, int current_pixel_y)
 {
-	int	screen_wall_start_y;
-	int	screen_wall_end_y;
+	int		screen_wall_start_y;
+	int		screen_wall_end_y;
+	double	wall_span;
 
 	simulate_eye_level_perspective(ctx->screen_wall_height,
 		&screen_wall_start_y, &screen_wall_end_y);
-	if (screen_wall_end_y <= screen_wall_start_y)
+	wall_span = screen_wall_end_y - screen_wall_start_y;
+	if (wall_span <= 0)
 		return (0.0);
-	return ((double)(current_pixel_y - screen_wall_start_y)
-			/ (screen_wall_end_y - screen_wall_start_y));
+	return ((double)(current_pixel_y - screen_wall_start_y) / wall_span);
 }
 
 /* Texture coordinates → memory colour
 Input Space: TEXTURE SPACE (normalized UV coordinates converted to pixel indices)
 Output Space: COLOUR VALUE (RGB data from texture memory)
 Mathematical Process: Bounds protection + 2D→1D array indexing
-. Surface position becomes pixel reality 
-
-clamping to edge pixels
-(instead of wrapping for tiling) */
-static int	texture_pixel_colour(t_texture_image *texture_image,
-			int texture_pixel_x, int texture_pixel_y)
+. Surface position becomes pixel reality */
+static int	texture_pixel_colour(t_texture_image *texture_image, int texture_pixel_x, int texture_pixel_y)
 {
-	if (texture_pixel_x >= texture_image->image_width)
-		texture_pixel_x = texture_image->image_width - 1;
-	if (texture_pixel_y >= texture_image->image_height)
-		texture_pixel_y = texture_image->image_height - 1;
-	if (texture_pixel_x < 0)
-		texture_pixel_x = 0;
-	if (texture_pixel_y < 0)
-		texture_pixel_y = 0;
-	return (texture_image->pixels[texture_pixel_y
-			* texture_image->image_width + texture_pixel_x]);
+	int	clamped_x;
+	int	clamped_y;
+
+	if (!texture_image || !texture_image->pixels)
+		return (0xFF00FF);
+	if (texture_image->image_width <= 0 || texture_image->image_height <= 0)
+		return (0xFF00FF);
+	clamped_x = clamp_texture_pixel(texture_pixel_x, texture_image->image_width);
+	clamped_y = clamp_texture_pixel(texture_pixel_y, texture_image->image_height);
+	return (texture_image->pixels[clamped_y * texture_image->image_width + clamped_x]);
 }

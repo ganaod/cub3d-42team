@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 10:54:44 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/19 15:13:02 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/21 14:08:17 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ hence
 1 helper per section, texturing
 only in render_wall_section() */
 
-#include "../inc/cub3d.h"
+#include "../inc/render.h"
 
 void	render_ceiling_section(int screen_column_x, int wall_start_y_pixel)
 {

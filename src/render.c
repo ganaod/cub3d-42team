@@ -6,11 +6,11 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 10:54:39 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/20 16:01:51 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/21 14:07:53 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/cub3d.h"
+#include "../inc/render.h"
 
 /* rendering module
 

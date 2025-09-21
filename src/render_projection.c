@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 11:18:50 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/21 12:07:46 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/21 14:08:04 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ behaviour:
 static void	centre_wall_at_eye_level(int wall_height, int *wall_start, int *wall_end);
 static void	enforce_screen_pixel_boundaries(int *wall_start, int *wall_end);
 	
-#include "../inc/cub3d.h"
+#include "../inc/render.h"
 
 /* CALCULATE SCREEN WALL HEIGHT
 Perspective projection: Convert world distance to screen pixels

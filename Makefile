@@ -55,9 +55,9 @@ SRC_FILES   =	main.c \
 				render_pixel_buffer.c \
 				render_projection.c \
 				render_ray_cast.c \
+				render_texture.c render_texture_utils.c \
 				player.c \
-				player_utils.c \
-				render_texture.c
+				player_utils.c
 
 SRCS        = $(addprefix $(SRC_DIR)/, $(SRC_FILES))
 OBJS        = $(addprefix $(OBJ_DIR)/, $(SRC_FILES:.c=.o))

@@ -6,11 +6,11 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 15:48:27 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/20 15:38:20 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/21 14:08:10 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/cub3d.h"
+#include "../inc/render.h"
 
 void			execute_dda_traversal(t_dda_state *state, int *wall_side);
 double			calculate_wall_distance(t_dda_state *dda_state, int world_wall_side);

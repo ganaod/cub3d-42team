@@ -6,12 +6,12 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 11:18:50 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/21 11:39:41 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/21 12:07:46 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 /* convert 1D dist measurements > 2D screen pixel heights 
-(creating 3D depth illusion)
+(creating 3D/2.5D depth illusion)
 
 core transformation:
 . in: wall dist (/ world units. 1D ray-cast measurement)
@@ -26,10 +26,12 @@ human vision perceives depth through perspective -
 objects shrink with distance. 
 to simulate 3D on 2D screen, we must mathematically replicate this visual scaling 
 	
-mathematics:
-Similar Triangles Perspective Projection
-	Eye-to-screen triangle ~ Eye-to-wall triangle
-	Ratio preservation: screen_height/focal_length = wall_height_world/wall_distance
+mathematics: similar triangles perspective projection:
+. triangle 1: △(Eye, Screen_Centre, Screen_Edge)
+. triangle 2: △(Eye, Wall_Centre, Wall_Edge)
+	△₁ ~ △₂
+	. same reference pts (centre) for similar ratios
+ratio preservation: screen_height/focal_length = wall_height_world/wall_distance
 
 	Wolfenstein constraint: All walls same world height (1.0 unit)
 	Normalized case: focal_length = screen_height

@@ -6,27 +6,28 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 11:18:50 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/16 12:38:36 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/21 11:39:41 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-/* convert 3D world distances to 2D screen pixel heights
+/* convert 1D dist measurements > 2D screen pixel heights 
+(creating 3D depth illusion)
 
-Core Transaction:
-	Input: Wall distance (world units)
-	Output: Wall height (screen pixels)
+core transformation:
+. in: wall dist (/ world units. 1D ray-cast measurement)
+. out: wall height (screen pixels for 2D display)
 
-Visual Reality: 
-The mathematical mechanism that makes distant walls 
-appear smaller and near walls appear larger - 
-creating the illusion of depth on a flat screen 
+visual exp:
+make distant walls appear smaller and near walls appear larger - 
+creating the illusion of 3D depth on a flat screen 
 
-Why this exists? fundamental problem: 
+why? fundamental problem: 
 human vision perceives depth through perspective - 
 objects shrink with distance. 
-To simulate 3D on 2D screen, we must mathematically replicate this visual scaling 
+to simulate 3D on 2D screen, we must mathematically replicate this visual scaling 
 	
-MATHEMATICAL FOUNDATION: Similar Triangles Perspective Projection
+mathematics:
+Similar Triangles Perspective Projection
 	Eye-to-screen triangle ~ Eye-to-wall triangle
 	Ratio preservation: screen_height/focal_length = wall_height_world/wall_distance
 
@@ -34,11 +35,14 @@ MATHEMATICAL FOUNDATION: Similar Triangles Perspective Projection
 	Normalized case: focal_length = screen_height
 	Result: wall_height_pixels = screen_height / wall_distance
 
-Mathematical behavior:
+behaviour:
 	. Distance 1.0 → Wall fills screen (height = screen_height)
 	. Distance 2.0 → Wall half screen (height = screen_height/2)
 	. Distance → ∞ → Wall approaches 0 pixels	*/
 
+static void	centre_wall_at_eye_level(int wall_height, int *wall_start, int *wall_end);
+static void	enforce_screen_pixel_boundaries(int *wall_start, int *wall_end);
+	
 #include "../inc/cub3d.h"
 
 /* CALCULATE SCREEN WALL HEIGHT
@@ -48,7 +52,7 @@ Mathematical constraint analysis:
 DDA returns distance to wall face, minimum theoretically > 0
 However: floating point precision near grid boundaries could 
 produce values approaching 0, causing overflow in division
-Protection threshold: 0.001 units (1/1000 of grid cell)
+Protection threshold - clamping (see .h)
 Smaller distances treated as "player touching wall"
 
 Core perspective projection: Similar triangles ratio
@@ -62,44 +66,51 @@ int	calculate_screen_wall_height(double world_wall_distance)
 	int		screen_wall_height_pixels;
 	double	world_wall_distance_protected;
 	
-	// Mathematical constraint: Prevent division by near-zero values
-	// Floating-point precision near grid boundaries could produce values → 0
 	world_wall_distance_protected = world_wall_distance;
 	if (world_wall_distance_protected < MINIMUM_WALL_DISTANCE_THRESHOLD)
 		world_wall_distance_protected = MINIMUM_WALL_DISTANCE_THRESHOLD;
-	
-	// Core perspective projection: Similar triangles ratio
 	screen_wall_height_pixels = (int)(g_game.graphics.screen_height 
 		/ world_wall_distance_protected);
-	
-	// Rendering constraint: Prevent excessive wall heights
 	if (screen_wall_height_pixels > MAXIMUM_WALL_HEIGHT_PIXELS)
 		screen_wall_height_pixels = MAXIMUM_WALL_HEIGHT_PIXELS;
-		
 	return (screen_wall_height_pixels);
 }
 
-/* WALL VERTICAL POSITIONING: Eye-level perspective simulation
-   
-Human vision: Horizon line at eye level (screen center)
-Wall positioning: Center wall around screen midpoint
-Ceiling above, floor below - simulates looking straight ahead
-
-Mathematical centering: 
-wall_start = screen_center - wall_height/2
-wall_end = wall_start + wall_height */
-void	calculate_wall_boundaries(int wall_height, int *wall_start, int *wall_end)
+/* HIGH-LEVEL PERSPECTIVE SIMULATION */
+void	simulate_eye_level_perspective(int wall_height, int *wall_start, int *wall_end)
 {
-	int	screen_center;
+	centre_wall_at_eye_level(wall_height, wall_start, wall_end);
+	enforce_screen_pixel_boundaries(wall_start, wall_end);
+}
 
-	screen_center = g_game.graphics.screen_height / 2;
+/* eye-level wall positioning 
+why? human vision places horizon line at eye level
+how? centre wall vertically on screen around midpoint to simulate natural perspective
 
-	/* Center wall around screen midpoint for eye-level perspective */
-	*wall_start = screen_center - (wall_height / 2);
+visual exp:
+. looking straight ahead: C above, F below
+. wall appears centred in FoV
+. screen centre represents eye-level horizon line
+
+math implementation:
+wall_start = screen_centre_horizon_line - wall_height/2
+wall_end = wall_start + wall_height
+. screen midpt = natural horizon position
+. wall spans equally above/below this line
+. preserved perspective geometry from similar triangles */
+static void	centre_wall_at_eye_level(int wall_height, int *wall_start, int *wall_end)
+{
+	int	screen_centre_horizon_line;
+
+	screen_centre_horizon_line = g_game.graphics.screen_height / 2;
+	*wall_start = screen_centre_horizon_line - (wall_height / 2);
 	*wall_end = *wall_start + wall_height;
+}
 
-	/* Boundary enforcement: Prevent column renderer from drawing outside screen buffer
-		Mathematical constraint: pixel coordinates must satisfy 0 ≤ y < screen_height */
+/* screen buffer has fixed dimensions [0, screen_height - 1]
+implementation requirement: protect array bounds */
+static void	enforce_screen_pixel_boundaries(int *wall_start, int *wall_end)
+{
 	if (*wall_start < 0)
 		*wall_start = 0;
 	if (*wall_end > g_game.graphics.screen_height)

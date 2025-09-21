@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 10:54:39 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/20 15:22:36 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/20 16:01:51 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,8 +157,6 @@ void	render_wall_column(int screen_column_x, t_ray_result *wall_intersection_dat
 	screen_wall_start_y_pixel = (g_game.graphics.screen_height
 		- projected_wall_height) / 2;
 	screen_wall_end_y_pixel = screen_wall_start_y_pixel + projected_wall_height;
-
-	// Render three vertical sections
 	render_ceiling_section(screen_column_x, screen_wall_start_y_pixel);
 	render_wall_section(screen_column_x, screen_wall_start_y_pixel,
 		screen_wall_end_y_pixel, wall_intersection_data);

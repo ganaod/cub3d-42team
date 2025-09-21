@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 15:51:35 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/21 14:57:41 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/21 15:00:10 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,30 +16,18 @@
 1. calculate total pixel count (2d screen area)
 2. calculate memory size (pixel count * bytes per pixel)
 3. initialize all bytes to 0 (black rgba pixels) */
-// void	clear_screen_buffer(void)
-// {
-// 	size_t	screen_pixel_count;
-// 	size_t	bytes_per_pixel;
-// 	size_t	total_buffer_size_bytes;
-
-// 	screen_pixel_count = g_game.graphics.screen_width
-// 		* g_game.graphics.screen_height;
-// 	bytes_per_pixel = sizeof(uint32_t);
-// 	total_buffer_size_bytes = screen_pixel_count * bytes_per_pixel;
-// 	ft_memset(g_game.graphics.frame->pixels, 0xFF, total_buffer_size_bytes);
-// }
-
-void	clear_screen_buffer_white(void)
+void	clear_screen_buffer(void)
 {
-	size_t i;
-	size_t pixel_count = g_game.graphics.screen_width
+	size_t	screen_pixel_count;
+	size_t	bytes_per_pixel;
+	size_t	total_buffer_size_bytes;
+
+	screen_pixel_count = g_game.graphics.screen_width
 		* g_game.graphics.screen_height;
-
-	uint32_t *pixels = (uint32_t *)g_game.graphics.frame->pixels;
-	for (i = 0; i < pixel_count; i++)
-		pixels[i] = 0xFFFFFFFF; // full white
+	bytes_per_pixel = sizeof(uint32_t);
+	total_buffer_size_bytes = screen_pixel_count * bytes_per_pixel;
+	ft_memset(g_game.graphics.frame->pixels, 0xFF, total_buffer_size_bytes);
 }
-
 
 /* direct pixel write to mlx42 frame buffer
 

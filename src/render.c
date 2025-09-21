@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 10:54:39 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/21 14:55:42 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/21 15:00:16 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ void	render_complete_frame(void)
 	int	screen_column_x;
 	int	screen_width;
 
-	clear_screen_buffer_white();
+	clear_screen_buffer();
 	screen_width = g_game.graphics.screen_width;
 	screen_column_x = 0;
 	while (screen_column_x < screen_width)
@@ -93,7 +93,6 @@ void	render_complete_frame(void)
 		screen_column_x++;
 	}
 }
-// clear_screen_buffer_white();
 
 /* SINGLE COLUMN RENDERING PIPELINE
 

@@ -105,8 +105,7 @@ double			safe_fractional_part(double coordinate);
 int				clamp_texture_pixel(int pixel_coord, int max_dimension);
 
 // pixel_buffer.c
-// void			clear_screen_buffer(void);
-void			clear_screen_buffer_white(void);
+void			clear_screen_buffer(void);
 void			put_pixel(int x, int y, int color);
 
 #endif

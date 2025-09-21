@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 14:01:40 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/19 11:41:40 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/21 13:38:26 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,7 +118,7 @@ static double	screen_wall_texture_v(t_texture_context *ctx, int current_pixel_y)
 	int	screen_wall_start_y;
 	int	screen_wall_end_y;
 
-	calculate_wall_boundaries(ctx->screen_wall_height, &screen_wall_start_y, &screen_wall_end_y);
+	simulate_eye_level_perspective(ctx->screen_wall_height, &screen_wall_start_y, &screen_wall_end_y);
 	if (screen_wall_end_y <= screen_wall_start_y)
 		return (0.0);
 	return ((double)(current_pixel_y - screen_wall_start_y) / (screen_wall_end_y - screen_wall_start_y));

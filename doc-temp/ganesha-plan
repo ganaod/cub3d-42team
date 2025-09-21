@@ -2,11 +2,11 @@ for 2025-09-21
 
 projection
 
-	visual game experience, esp. coming close to walls
-	change wall dist threshold?
+	[x] visual game experience, esp. coming close to walls
+		change wall dist threshold?
 
-	play around with other projects - see how they do it
+	[] play around with other projects - see how they do it
 
+	[] dda algo breakdown
 
-	dda algo breakdown
-	esp. wall offset
+	[] process threads

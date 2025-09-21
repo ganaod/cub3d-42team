@@ -17,17 +17,17 @@
 top-left origin (0,0), x → right, y → down
 top-down view (world / map)
 
-  world space (continuous floats)       map grid (discrete ints)
-  ----------------------------          -----------------------
-  +--------------------+                +--------------------+
-  |                    |                | 0,0   1,0   2,0    |
-  |   p (player)       |                | 0,1   1,1   2,1    |
-  |    (3.5,2.2)       |                | 0,2   1,2   2,2    |
-  |                    |                |                    |
-  +--------------------+                +--------------------+
+
+world space (continuous floats)       map grid (discrete ints)
++--------------------+                +--------------------+
+|                    |                | 0,0   1,0   2,0    |
+|   p (player)       |                | 0,1   1,1   2,1    |
+|    (3.5,2.2)       |                | 0,2   1,2   2,2    |
+|                    |                |                    |
++--------------------+                +--------------------+
+
 
 screen space (pixels, top-left origin)
--------------------------------------
 +---------------------------+
 | screen_y=0                |
 |                           |
@@ -35,7 +35,8 @@ screen space (pixels, top-left origin)
 | ...                       |
 | screen_y=height-1         |
 +---------------------------+
-          x → screen_x
+x → screen_x
+
 
 . world space: floating-point coordinates, continuous
 . map grid: integer indices, (map_x, map_y)
@@ -98,9 +99,11 @@ screen space (pixels, top-left origin)
 # define HORIZONTAL_WALL				1
 
 // ⭐ RENDERING CONSTRAINTS
-// wall height projection - dist/height limits
-#define MINIMUM_WALL_DISTANCE_THRESHOLD  0.001
-#define MAXIMUM_WALL_HEIGHT_PIXELS       (g_game.graphics.screen_height * 2)
+/* boundary protection:
+. / by 0: clamp min distance
+. screen overflow: limit max wall height */
+#define MINIMUM_WALL_DISTANCE_THRESHOLD	1.0
+#define MAXIMUM_WALL_HEIGHT_PIXELS		(g_game.graphics.screen_height * 2)
 
 // ⭐ PARSER STATE FLAGS
 // HDR == header?
@@ -299,7 +302,7 @@ void			setup_dda_vars(double world_ray_dir_x, double world_ray_dir_y, t_dda_stat
 
 // projection.c
 int				calculate_screen_wall_height(double world_wall_distance);
-void			calculate_wall_boundaries(int wall_height, int *wall_start, int *wall_end);
+void			simulate_eye_level_perspective(int wall_height, int *wall_start, int *wall_end);
 
 // texture.c
 int				screen_pixel_texture_colour(t_texture_context *ctx, int current_pixel_y);

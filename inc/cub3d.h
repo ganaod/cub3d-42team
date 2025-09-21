@@ -1,12 +1,21 @@
+/* information flow matches dependency hierarchy:
+mathematical foundation → domain concepts 
+→ system interfaces → computational processes 
+→ orchestration	*/
 #ifndef CUB3D_H
 # define CUB3D_H
 
+// ⭐⭐ INCLUDES
+// system
 # include <unistd.h>
 # include <stdlib.h>
 # include <stdio.h>
 # include <fcntl.h>
+
+// math
 # include <math.h>
 
+// external
 # include "../lib/MLX42/include/MLX42/MLX42.h"
 # include "../lib/libft/libft/libft.h"
 # include "../lib/libft/gnl/get_next_line.h"
@@ -44,6 +53,7 @@ x → screen_x
 . y increases downward in all spaces	*/
 
 // ⭐⭐ DEFINES 
+// math constants, form geometric framework
 // ⭐ SYSTEM ARCHITECTURE
 // framebuffer display resolution
 # define DEFAULT_WIDTH					1024

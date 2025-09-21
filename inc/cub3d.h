@@ -102,7 +102,7 @@ x → screen_x
 /* boundary protection:
 . / by 0: clamp min distance
 . screen overflow: limit max wall height */
-#define MINIMUM_WALL_DISTANCE_THRESHOLD	1.0
+#define MINIMUM_WALL_DISTANCE_THRESHOLD	0.5
 #define MAXIMUM_WALL_HEIGHT_PIXELS		(g_game.graphics.screen_height * 2)
 
 // ⭐ PARSER STATE FLAGS

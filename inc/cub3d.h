@@ -93,18 +93,6 @@ x → screen_x
 # define DIR_W							2
 # define DIR_E							3
 
-// ⭐ ALGORITHM CONSTANTS
-// wall side types (for DDA)
-# define VERTICAL_WALL					0
-# define HORIZONTAL_WALL				1
-
-// ⭐ RENDERING CONSTRAINTS
-/* boundary protection:
-. / by 0: clamp min distance
-. screen overflow: limit max wall height */
-#define MINIMUM_WALL_DISTANCE_THRESHOLD	1.0
-#define MAXIMUM_WALL_HEIGHT_PIXELS		(g_game.graphics.screen_height * 2)
-
 // ⭐ PARSER STATE FLAGS
 // HDR == header?
 # define HDR_NO							(1<<0)
@@ -159,50 +147,6 @@ typedef struct s_graphics
     int				screen_height;    // window height
 }					t_graphics;
 
-// ⭐ ALGORITHM STATE
-typedef struct s_dda_state
-{
-	int				map_x;
-	int				map_y;
-	int				step_x;
-	int				step_y;
-	double			delta_dist_x;							// distance per grid step
-	double			delta_dist_y;
-	double			world_dist_to_next_boundary_x;			// dist from origin to next boundary
-	double			world_dist_to_next_boundary_y;
-	double			world_ray_dir_x;						// normalised ray dir vector
-	double			world_ray_dir_y;
-	int				wall_intersection_found;				// boolean flag
-}					t_dda_state;
-
-// wall distance calculation context
-typedef struct s_distance_calc_context
-{
-	double			wall_grid_position;			// wall cell coordinate
-	double			player_position;			// player coordinate (same axis)
-	double			ray_direction_component;	// ray direction (same axis)
-	double			wall_face_offset;			// 0.0 or 0.5 for correct face
-	int				step_direction;				// +1 or -1 movement direction
-}					t_distance_calc_context;
-
-// dda traversal output (ray space > world space)
-typedef struct	s_ray_result
-{
-	double			world_intersection_x;
-	double			world_intersection_y;
-	int				world_wall_side;
-	double			world_perpendicular_distance;
-	int				world_wall_face;
-}					t_ray_result;
-
-typedef struct	s_texture_context
-{
-	int				world_wall_face;
-	double			world_wall_intersection_x;
-	double			world_wall_intersection_y;
-	int				screen_wall_height;
-}					t_texture_context;
-
 // ⭐ UTILITIES
 typedef struct s_ffctx
 {
@@ -245,115 +189,82 @@ extern t_game		g_game;
 // ⭐⭐ FUNCTION PROTOTYPES
 //  ================== PARSE_UTILS ==================
 
-int	skip_ws(const char *s, int i);
-int	parse_u8_component(const char *s, int *i, int *out);
-int expect_comma(const char *s, int *i);
-int	parse_rgb_triplet(const char *s, uint32_t *out_rgb);
+int		skip_ws(const char *s, int i);
+int		parse_u8_component(const char *s, int *i, int *out);
+int		expect_comma(const char *s, int *i);
+int		parse_rgb_triplet(const char *s, uint32_t *out_rgb);
 
 //  ================== PARSE_HEADER ==================
 
-int	set_texture_field(char **dst_path, const char *after_key);
-int	set_color_field(uint32_t *dst_rgb, const char *after_key, int *was_set);
-int	parse_header_line(t_map *m, const char *line, int *flags);
-int	match2(const char *s, int i, char a, char b);
-int	set_tex_entry(char **slot, const char *after_key, int bit, int *flags);
-int	parse_header_texture(t_map *m, const char *line, int i, int *flags);
-int	parse_header_color(t_map *m, const char *line, int i, int *flags);
+int		set_texture_field(char **dst_path, const char *after_key);
+int		set_color_field(uint32_t *dst_rgb, const char *after_key, int *was_set);
+int		parse_header_line(t_map *m, const char *line, int *flags);
+int		match2(const char *s, int i, char a, char b);
+int		set_tex_entry(char **slot, const char *after_key, int bit, int *flags);
+int		parse_header_texture(t_map *m, const char *line, int i, int *flags);
+int		parse_header_color(t_map *m, const char *line, int i, int *flags);
 
-//  ================== PARSE_HEADER ==================
+//  ================== PARSE_HEADER LINES ==================
 
-int	parse_header_lines(t_map *m, int fd);
-int	check_texture_paths_exist(const t_map *m);
+int		parse_header_lines(t_map *m, int fd);
+int		check_texture_paths_exist(const t_map *m);
 
 //  ================== COLLECT_MAP_LINES ==================
 
-int	collect_map_lines(t_map *m, int fd, char ***out_lines, int *out_h);
-int	append_line(char ***lines_ptr, int *cap_ptr, int *h_ptr, char *take);
-int	validate_map_line(const char *s);
+int		collect_map_lines(t_map *m, int fd, char ***out_lines, int *out_h);
+int		append_line(char ***lines_ptr, int *cap_ptr, int *h_ptr, char *take);
+int		validate_map_line(const char *s);
 void	rstrip_eol(char *s);
 
 //  ================== NORMALIZE_MAP ==================
 
-int	normalize_map(char ***lines_io, int h, int *out_w);
-
-//  ================== RENDER ==================
-// main.c
-void			render_complete_frame(void);
-void			render_single_column(int screen_column_x);
-
-// column.c
-void			render_wall_column(int screen_column_x, t_ray_result *wall_intersection_data, int projected_wall_height);
-void			render_ceiling_section(int screen_column_x, int wall_start_y_pixel);
-void			render_wall_section(int screen_column_x, int wall_start_y_pixel, int wall_end_y_pixel, t_ray_result *wall_hit_data);
-void			render_floor_section(int screen_column_x, int wall_end_y_pixel);
-
-// ray_cast.c
-void			calculate_ray_direction(int screen_column_x, double *world_ray_direction_x, double *world_ray_direction_y);
-// void			calculate_ray_direction_tunnel_vision(int screen_column_x, double *world_ray_direction_x, double *world_ray_direction_y);
-t_ray_result	cast_ray_to_wall(double world_ray_dir_x, double world_ray_dir_y);
-int				determine_intersected_wall_face(t_ray_result *wall_intersection_data);
-
-// dda.c
-void			execute_dda_traversal(t_dda_state *dda_state, int *world_wall_side);
-double			calculate_wall_distance(t_dda_state *dda_state, int world_wall_side);
-
-// dda_setup.c
-void			setup_dda_vars(double world_ray_dir_x, double world_ray_dir_y, t_dda_state *dda_state);
-
-// projection.c
-int				calculate_screen_wall_height(double world_wall_distance);
-void			simulate_eye_level_perspective(int wall_height, int *wall_start, int *wall_end);
-
-// texture.c
-int				screen_pixel_texture_colour(t_texture_context *ctx, int current_pixel_y);
-
-// pixel_buffer.c
-void			clear_screen_buffer(void);
-void			put_pixel(int x, int y, int color);
+int		normalize_map(char ***lines_io, int h, int *out_w);
 
 //  ================== MAP_GRID_CELL ==================
 
-int	put_cell_from_char(t_map *m, t_player *pl, int idx, char c);
+int		put_cell_from_char(t_map *m, t_player *pl, int idx, char c);
 
 //  ================== MAP_GRID_FILL ==================
 
-int	fill_grid(t_map *m, t_player *pl, char **lines, int *count);
+int		fill_grid(t_map *m, t_player *pl, char **lines, int *count);
 
 //  ================== MAP_GRID_BUILD ==================
 
-int	build_grid_from_lines(t_map *m, t_player *pl, char **lines,
-		int *player_found);
+int		build_grid_from_lines(t_map *m, t_player *pl, char **lines,
+				int *player_found);
 
 //  ================== MAP_CHECK_FLOOD ==================
 
 void	ffctx_init(t_ffctx *c, const t_map *m, char *vis, int *q);
-int	flood_from_start(t_ffctx *c, int start_idx);
+int		flood_from_start(t_ffctx *c, int start_idx);
 
 //  ================== MAP_CHECK_UTILS ==================
 
-int	idx_2d_to_1d(int x, int y, int w);
-int	in_bounds(int x, int y, int w, int h);
+int		idx_2d_to_1d(int x, int y, int w);
+int		in_bounds(int x, int y, int w, int h);
 void	queue_push(int *q, int *tail, int v);
-int	queue_pop(int *q, int *head, int tail, int *out);
+int		queue_pop(int *q, int *head, int tail, int *out);
 
 //  ================== MAP_CHECK_FLOOD ==================
 
-int	flood_from_border(t_ffctx *c);
-int	map_is_closed(const t_map *m);
+int		flood_from_border(t_ffctx *c);
+int		map_is_closed(const t_map *m);
+
+//  ================== GAME_LOOP ==================
+
+double	get_delta_time(void);
+void	rotate_player(double angle);
+void	try_move_player(double new_x, double new_y);
+void	handle_input(double dt);
+void	game_loop_tick(void *param);
+void	on_close(void *param);
+void	handle_exit_input(void);
+void	handle_rotation_input(double ang);
+int		map_cell(const t_map *m, int ix, int iy);
 
 //  ================== UTILS ==================
 
 void	parse_error(const char *msg);
 
-
-double get_delta_time(void);
-void rotate_player(double angle);
-void try_move_player(double new_x, double new_y);
-void handle_input(double dt);
-void game_loop_tick(void *param);
-void on_close(void *param);
-void	handle_exit_input(void);
-void	handle_rotation_input(double ang);
-int	map_cell(const t_map *m, int ix, int iy);
 
 #endif

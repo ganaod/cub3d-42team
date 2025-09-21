@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 14:01:40 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/21 13:54:24 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/21 13:56:33 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,7 +138,10 @@ static double	screen_wall_texture_v(t_texture_context *ctx,
 Input Space: TEXTURE SPACE (normalized UV coordinates converted to pixel indices)
 Output Space: COLOUR VALUE (RGB data from texture memory)
 Mathematical Process: Bounds protection + 2D→1D array indexing
-. Surface position becomes pixel reality */
+. Surface position becomes pixel reality 
+
+clamping to edge pixels
+(instead of wrapping for tiling) */
 static int	texture_pixel_colour(t_texture_image *texture_image,
 			int texture_pixel_x, int texture_pixel_y)
 {

@@ -104,15 +104,15 @@
 []Looking directly at wall corners renders correctly
 
 ### MATHEMATICAL CORRECTNESS
-[]Perspective looks realistic (distant objects smaller)
+[x]Perspective looks realistic (distant objects smaller)
 []Wall heights appear consistent when walking parallel to them
-[]No fisheye distortion visible
-[]No obvious visual glitches or artifacts
+[x]No fisheye distortion visible
+[x]No obvious visual glitches or artifacts
 
 ### VISUAL VERIFICATION TESTS
 []Load provided test map and verify maze interior visible
-[]Walk through entire playable area without crashes
-[]Verify all 4 wall texture types are actually different and visible
+[x]Walk through entire playable area without crashes
+[x]Verify all 4 wall texture types are actually different and visible
 []Check floor and ceiling colors are clearly visible and correct
 []Rotation produces smooth, realistic view changes
 
@@ -124,7 +124,7 @@
 []Maps with maximum complexity work without performance issues
 
 ### FINAL VERIFICATION
-[]No compilation warnings with -Wall -Wextra -Werror
+[x]No compilation warnings with -Wall -Wextra -Werror
 []No memory leaks detected with valgrind or similar
 []Program executable is reasonably sized (not bloated)
 []All required files present and correctly named

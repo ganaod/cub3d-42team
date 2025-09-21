@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 14:45:34 by blohrer           #+#    #+#             */
-/*   Updated: 2025/09/19 15:36:23 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/21 14:51:18 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,11 @@ int parse_rgb_triplet(const char *s, uint32_t *out_rgb)
 	i = skip_ws(s, i);
 	if (s[i] != '\0')
 		return (0);
-	*out_rgb = (0xFF << 24) | (b << 16) | (g << 8) | r;
+	*out_rgb = (0x40 << 24) | (b << 16) | (g << 8) | r;
 	return (1);
 }
 
+/* opacity (%) | hex (alpha) 
+100 | 0xFF
+50 | 0x80
+25 | 0x40 */

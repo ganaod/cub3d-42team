@@ -6,13 +6,13 @@
 /*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/21 11:02:31 by blohrer           #+#    #+#             */
-/*   Updated: 2024/11/25 14:26:26 by blohrer          ###   ########.fr       */
+/*   Updated: 2025/09/22 10:28:43 by blohrer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-size_t	ft_strlen(const char *str)
+size_t	gnl_strlen(const char *str)
 {
 	size_t	len;
 
@@ -22,7 +22,7 @@ size_t	ft_strlen(const char *str)
 	return (len);
 }
 
-char	*ft_strchr(const char *str, int c)
+char	*gnl_strchr(const char *str, int c)
 {
 	if (!str)
 		return (NULL);
@@ -37,13 +37,13 @@ char	*ft_strchr(const char *str, int c)
 	return (NULL);
 }
 
-char	*ft_strdup(const char *s1)
+char	*gnl_strdup(const char *s1)
 {
 	size_t	len;
 	char	*copy;
 	size_t	i;
 
-	len = ft_strlen(s1);
+	len = gnl_strlen(s1);
 	copy = (char *)malloc(sizeof(char) * (len + 1));
 	if (!copy)
 		return (NULL);
@@ -69,7 +69,7 @@ static void	copy_to_result(char *dest, const char *src, size_t start)
 	}
 }
 
-char	*ft_strjoin(char const *s1, char const *s2)
+char	*gnl_strjoin(char const *s1, char const *s2)
 {
 	size_t	len1;
 	size_t	len2;
@@ -78,9 +78,9 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	len1 = 0;
 	len2 = 0;
 	if (s1)
-		len1 = ft_strlen(s1);
+		len1 = gnl_strlen(s1);
 	if (s2)
-		len2 = ft_strlen(s2);
+		len2 = gnl_strlen(s2);
 	result = (char *)malloc(sizeof(char) * (len1 + len2 + 1));
 	if (!result)
 	{

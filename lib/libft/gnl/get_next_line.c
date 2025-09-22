@@ -6,7 +6,7 @@
 /*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/21 10:50:03 by blohrer           #+#    #+#             */
-/*   Updated: 2024/12/03 09:17:34 by blohrer          ###   ########.fr       */
+/*   Updated: 2025/09/22 10:27:11 by blohrer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ char	*allocate_and_copy(const char *str, size_t start)
 	size_t	i;
 	char	*rest;
 
-	rest = (char *)malloc(sizeof(char) * (ft_strlen(str) - start + 1));
+	rest = (char *)malloc(sizeof(char) * (gnl_strlen(str) - start + 1));
 	if (!rest)
 		return (NULL);
 	i = 0;
@@ -98,8 +98,8 @@ char	*get_next_line(int fd)
 	while (bytes_read > 0)
 	{
 		buffer[bytes_read] = '\0';
-		rest = ft_strjoin(rest, buffer);
-		if (!rest || ft_strchr(rest, '\n'))
+		rest = gnl_strjoin(rest, buffer);
+		if (!rest || gnl_strchr(rest, '\n'))
 			bytes_read = 0;
 		else
 			bytes_read = read(fd, buffer, BUFFER_SIZE);

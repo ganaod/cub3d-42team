@@ -6,7 +6,7 @@
 /*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 10:03:55 by blohrer           #+#    #+#             */
-/*   Updated: 2025/09/05 08:45:59 by blohrer          ###   ########.fr       */
+/*   Updated: 2025/09/22 09:36:59 by blohrer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,5 +66,5 @@ int	append_line(char ***lines_ptr, int *cap_ptr, int *h_ptr, char *take)
 	(*lines_ptr)[*h_ptr] = take;
 	*h_ptr = *h_ptr + 1;
 	(*lines_ptr)[*h_ptr] = NULL;
-	return (1); 
+	return (1);
 }

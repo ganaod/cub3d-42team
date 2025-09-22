@@ -6,7 +6,7 @@
 /*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 10:36:53 by blohrer           #+#    #+#             */
-/*   Updated: 2025/09/15 10:45:13 by blohrer          ###   ########.fr       */
+/*   Updated: 2025/09/22 09:43:23 by blohrer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 static int	check_one_texture(const t_map *m, int i)
 {
-	int fd;
+	int	fd;
 
 	if (!m->texture_paths[i] || m->texture_paths[i][0] == '\0')
 	{
@@ -40,7 +40,7 @@ static int	check_one_texture(const t_map *m, int i)
 
 int	check_texture_paths_exist(const t_map *m)
 {
-	int i;
+	int	i;
 
 	if (!m)
 		return (0);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   player.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
+/*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 13:08:21 by blohrer           #+#    #+#             */
-/*   Updated: 2025/09/21 14:14:35 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/22 09:42:44 by blohrer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int	map_cell(const t_map *m, int ix, int iy)
 	if (!m || !m->grid)
 		return (CELL_WALL);
 	if (ix < 0 || iy < 0 || ix >= m->width || iy >= m->height)
-		return (CELL_WALL); // außerhalb behandeln wir als Wand
+		return (CELL_WALL);
 	return (m->grid[iy * m->width + ix]);
 }
 
@@ -84,10 +84,7 @@ void	game_loop_tick(void *param)
 	(void)param;
 	if (!g_game.running)
 		return ;
-	// 1) Delta-Time
 	dt = get_delta_time();
-	// 2) Input + Movement
 	handle_input(dt);
-	// 3) Render (zeichnet in g_game.graphics.frame)
 	render_complete_frame();
 }

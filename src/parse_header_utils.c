@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_header_utils.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
+/*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 08:21:52 by blohrer           #+#    #+#             */
-/*   Updated: 2025/09/19 15:28:47 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/22 09:40:55 by blohrer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,8 +53,8 @@ static int	dup_trimmed_color_token(const char *after_key, char **out)
 	end = -1;
 	while (after_key[j])
 	{
-		if (after_key[j] != ' ' && after_key[j] != '\t'
-			&& after_key[j] != '\r' && after_key[j] != '\n')
+		if (after_key[j] != ' ' && after_key[j] != '\t' && after_key[j] != '\r'
+			&& after_key[j] != '\n')
 			end = j;
 		j++;
 	}

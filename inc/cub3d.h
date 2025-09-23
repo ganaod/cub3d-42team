@@ -291,6 +291,18 @@ void  handle_resize(int32_t w, int32_t h, void *param);
 int   gfx_rebuild_framebuffer(t_graphics *g, int w, int h);
 void  handle_resize(int32_t w, int32_t h, void *param);
 
+//  ================== LOAD_TEXTURE ==================
+
+int load_one_texture_png(const char *path, t_texture_image *out);
+int	load_all_wall_textures(t_map *m);
+
+
+//  ================== LOAD_TEXTURE ==================
+
+void	free_lines_array(char **lines, int h);
+void	free_map(t_map *m);
+int		cleanup_and_exit(t_game *g, int code);
+
 
 
 #endif

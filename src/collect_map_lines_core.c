@@ -6,26 +6,11 @@
 /*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 13:29:28 by blohrer           #+#    #+#             */
-/*   Updated: 2025/09/11 11:09:40 by blohrer          ###   ########.fr       */
+/*   Updated: 2025/09/23 13:47:41 by blohrer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/cub3d.h"
-
-static void	free_lines_array(char **lines, int h)
-{
-	int	i;
-
-	if (!lines)
-		return ;
-	i = 0;
-	while (i < h)
-	{
-		free(lines[i]);
-		i++;
-	}
-	free(lines);
-}
 
 static int	adopt_first_map_line(t_map *m, char ***lines, int *cap, int *h)
 {

@@ -44,7 +44,9 @@ src_files =	main.c \
 			render_texture.c \
 			render_texture_utils.c \
 			load_texture.c \
-			cleanup.c
+			cleanup.c \
+			map_loader.c \
+			runtime_init.c
 
 srcs		= $(addprefix $(src_dir)/,$(src_files))
 objs		= $(addprefix $(obj_dir)/,$(src_files:.c=.o))

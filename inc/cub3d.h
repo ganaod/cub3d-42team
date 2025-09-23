@@ -204,6 +204,7 @@ int		skip_ws(const char *s, int i);
 int		parse_u8_component(const char *s, int *i, int *out);
 int		expect_comma(const char *s, int *i);
 int		parse_rgb_triplet(const char *s, uint32_t *out_rgb);
+int		open_rdonly(const char *path);
 
 //  ================== PARSE_HEADER ==================
 
@@ -260,6 +261,7 @@ int		idx_2d_to_1d(int x, int y, int w);
 int		in_bounds(int x, int y, int w, int h);
 void	queue_push(int *q, int *tail, int v);
 int		queue_pop(int *q, int *head, int tail, int *out);
+int		load_textures_or_fail(t_game *g);
 
 //  ================== MAP_CHECK_FLOOD ==================
 
@@ -302,6 +304,13 @@ int	load_all_wall_textures(t_map *m);
 void	free_lines_array(char **lines, int h);
 void	free_map(t_map *m);
 int		cleanup_and_exit(t_game *g, int code);
+
+//  ================== LOAD_TEXTURE ==================
+
+void	init_runtime_defaults(t_game *g);
+int	start_window(t_game *g, const char *title, int w, int h);
+void	sync_player_world_fields_from_parser(t_game *g);
+int	map_load_and_validate(t_game *g, const char *path);
 
 
 

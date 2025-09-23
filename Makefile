@@ -27,6 +27,7 @@ src_files	=	main.c \
 				map_grid_build.c \
 				map_check_flood.c \
 				map_check_utils.c \
+				map_check_border.c \
 				utils.c \
 				map_check.c \
 				parse_paths_check.c \

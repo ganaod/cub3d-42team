@@ -247,6 +247,11 @@ int		build_grid_from_lines(t_map *m, t_player *pl, char **lines,
 
 void	ffctx_init(t_ffctx *c, const t_map *m, char *vis, int *q);
 int		flood_from_start(t_ffctx *c, int start_idx);
+int		map_has_open_border(const t_map *m);
+int		border_rows_have_empty(const t_map *m, int w, int h);
+int		border_cols_have_empty(const t_map *m, int w, int h);
+int		cell_adjacent_to_void(const t_map *m, int x, int y);
+int		has_empty_adjacent_to_void(const t_map *m);
 
 //  ================== MAP_CHECK_UTILS ==================
 

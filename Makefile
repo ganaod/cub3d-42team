@@ -12,37 +12,37 @@ mlx_path	= lib/MLX42
 mlx_build	= $(mlx_path)/build
 
 # file lists
-src_files	=	main.c \
-				global_state.c \
-				parse_utils.c \
-				parse_header.c \
-				parse_header_lines.c \
-				parse_header_utils.c \
-				collect_map_lines.c \
-				collect_map_lines_utils.c \
-				collect_map_lines_core.c \
-				normalize_map.c \
-				map_grid_cells.c \
-				map_grid_fill.c \
-				map_grid_build.c \
-				map_check_flood.c \
-				map_check_utils.c \
-				map_check_border.c \
-				utils.c \
-				map_check.c \
-				parse_paths_check.c \
-				graphics_window.c \
-				render.c \
-				render_column.c \
-				render_dda.c \
-				render_dda_setup.c \
-				render_pixel_buffer.c \
-				render_projection.c \
-				render_ray_cast.c \
-				render_texture.c \
-				render_texture_utils.c \
-				player.c \
-				player_utils.c
+src_files =	main.c \
+			global_state.c \
+			parse_utils.c \
+			parse_header.c \
+			parse_header_lines.c \
+			parse_header_utils.c \
+			parse_paths_check.c \
+			collect_map_lines.c \
+			collect_map_lines_utils.c \
+			collect_map_lines_core.c \
+			normalize_map.c \
+			map_grid_cells.c \
+			map_grid_fill.c \
+			map_grid_build.c \
+			map_check.c \
+			map_check_flood.c \
+			map_check_utils.c \
+			map_check_border.c \
+			graphics_window.c \
+			utils.c \
+			player.c \
+			player_utils.c \
+			render.c \
+			render_column.c \
+			render_dda.c \
+			render_dda_setup.c \
+			render_pixel_buffer.c \
+			render_projection.c \
+			render_ray_cast.c \
+			render_texture.c \
+			render_texture_utils.c
 
 srcs		= $(addprefix $(src_dir)/,$(src_files))
 objs		= $(addprefix $(obj_dir)/,$(src_files:.c=.o))

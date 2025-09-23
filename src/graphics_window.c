@@ -67,7 +67,11 @@ void	handle_resize(int32_t w, int32_t h, void *param)
 
 /* RESOLUTION POLICY - PERFORMANCE DECISION
 Choose optimal render resolution based on window dimensions
-Large windows use internal scaling to maintain performance */
+Large windows ( > w & h threshholds)
+use internal scaling to maintain performance 
+e.g. behaviour: 
+	Window 2560x1440 → Render 1280x800  (internal scaling) 
+constant workload */
 static void	choose_render_resolution(int window_w, int window_h,
 				int *render_w, int *render_h)
 {

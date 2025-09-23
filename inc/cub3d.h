@@ -56,12 +56,6 @@ x → screen_x
 # define DEFAULT_WIDTH					1024
 # define DEFAULT_HEIGHT					768
 
-// internal resolution scaling thresholds
-# define RENDER_WIDTH_THRESHOLD			2000
-# define RENDER_HEIGHT_THRESHOLD		1200
-# define INTERNAL_RENDER_WIDTH			1280
-# define INTERNAL_RENDER_HEIGHT			800
-
 // absolute maximum limits (memory protection)
 # define MAX_RENDER_WIDTH				1600
 # define MAX_RENDER_HEIGHT				900

@@ -65,36 +65,13 @@ void	handle_resize(int32_t w, int32_t h, void *param)
 	}
 }
 
-/* RESOLUTION POLICY - PERFORMANCE DECISION
-Choose optimal render resolution based on window dimensions
-Large windows ( > w & h threshholds)
-use internal scaling to maintain performance 
-e.g. behaviour: 
-	Window 2560x1440 → Render 1280x800  (internal scaling) 
-constant workload */
-static void	choose_render_resolution(int window_w, int window_h,
-				int *render_w, int *render_h)
-{
-	if (window_w > RENDER_WIDTH_THRESHOLD || window_h > RENDER_HEIGHT_THRESHOLD)
-	{
-		*render_w = INTERNAL_RENDER_WIDTH;
-		*render_h = INTERNAL_RENDER_HEIGHT;
-	}
-	else
-	{
-		*render_w = window_w;
-		*render_h = window_h;
-	}
-}
-
 /* FRAMEBUFFER IMPLEMENTATION - DECISION EXECUTION
 Destroy existing framebuffer and create new one at chosen resolution
-Updates screen dimensions that drive rendering pipeline column count */
+Updates screen dimensions that drive rendering pipeline column count 
+direct 1:1 mapping - no internal resolution */
 int	gfx_rebuild_framebuffer(t_graphics *g, int window_w, int window_h)
 {
 	mlx_image_t	*new_frame;
-	int			render_w;
-	int			render_h;
 
 	if (!g || !g->mlx || window_w <= 0 || window_h <= 0)
 		return (0);
@@ -103,12 +80,11 @@ int	gfx_rebuild_framebuffer(t_graphics *g, int window_w, int window_h)
 		mlx_delete_image(g->mlx, g->frame);
 		g->frame = NULL;
 	}
-	choose_render_resolution(window_w, window_h, &render_w, &render_h);
-	new_frame = mlx_new_image(g->mlx, (uint32_t)render_w, (uint32_t)render_h);
+	new_frame = mlx_new_image(g->mlx, (uint32_t)window_w, (uint32_t)window_h);
 	if (!new_frame)
 		return (0);
 	g->frame = new_frame;
-	g->screen_width = render_w;
-	g->screen_height = render_h;
+	g->screen_width = window_w;
+	g->screen_height = window_h;
 	return (1);
 }

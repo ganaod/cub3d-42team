@@ -124,7 +124,7 @@ $(obj_dir):
 -include $(deps)
 
 # ------------------------------------------------------------------------------
-# Dependency Build Handling - CORRECTED
+# Dependency Build Handling
 # ------------------------------------------------------------------------------
 $(libft_a):
 ifeq ($(BUILD_TYPE), release)
@@ -152,9 +152,16 @@ clean:
 	@rm -rf $(obj_dir)
 	@echo "Cleaned object files."
 
-fclean: clean
+fclean: clean full-clean
 	@rm -f $(name)
 	@echo "Cleaned executable."
+
+full-clean:
+	@rm -rf $(mlx_build)
+	@$(MAKE) -s -C $(libft_path) fclean >/dev/null 2>&1 || true
+	@$(MAKE) -s -C $(printf_path) fclean >/dev/null 2>&1 || true
+	@$(MAKE) -s -C $(gnl_path) fclean >/dev/null 2>&1 || true
+	@echo "Fully cleaned dependencies."
 
 re: fclean all
 

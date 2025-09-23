@@ -1,9 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*   utils.c - Helper Functions & Utility Operations                        */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../inc/cub3d.h"
 
 void	parse_error(const char *msg)
@@ -104,31 +98,6 @@ int gfx_maximize_now(t_graphics *g)
     // g->screen_width = (int)mw;
     // g->screen_height = (int)mh;
 
-    return (1);
-}
-
-int gfx_rebuild_framebuffer(t_graphics *g, int w, int h)
-{
-    mlx_image_t *new_frame;
-
-    if (!g || !g->mlx || w <= 0 || h <= 0)
-        return (0);
-
-    // Altes Image entfernen falls vorhanden
-    if (g->frame)
-    {
-        mlx_delete_image(g->mlx, g->frame);
-        g->frame = NULL;
-    }
-
-    // Neues Image erstellen
-    new_frame = mlx_new_image(g->mlx, (uint32_t)w, (uint32_t)h);
-    if (!new_frame)
-        return (0);
-
-    g->frame = new_frame;
-    g->screen_width = w;
-    g->screen_height = h;
     return (1);
 }
 

@@ -1,7 +1,3 @@
-/* information flow matches dependency hierarchy:
-mathematical foundation → domain concepts
-→ system interfaces → computational processes
-→ orchestration	*/
 #ifndef CUB3D_H
 # define CUB3D_H
 
@@ -54,10 +50,17 @@ x → screen_x
 
 // ⭐⭐ DEFINES
 // math constants, form geometric framework
+
 // ⭐ SYSTEM ARCHITECTURE
 // framebuffer display resolution
 # define DEFAULT_WIDTH					1024
 # define DEFAULT_HEIGHT					768
+
+// internal resolution scaling thresholds
+# define RENDER_WIDTH_THRESHOLD			2000
+# define RENDER_HEIGHT_THRESHOLD		1200
+# define INTERNAL_RENDER_WIDTH			1280
+# define INTERNAL_RENDER_HEIGHT			800
 
 // exit codes
 # define EXIT_SUCCESS					0

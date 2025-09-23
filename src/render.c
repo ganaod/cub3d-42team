@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 10:54:39 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/21 15:00:16 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/23 11:28:35 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,7 @@ rendering execution pipeline:
 . prepare canvas for additive composition
 
 2. raycasting core loop
+. read screen_width from graphics sys, process that many cols
 . for each screen col: cast ray, find wall, draw vert strip
 . screen width determines ray count (1 ray / col)
 . rays spread across player's FOV */

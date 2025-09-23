@@ -1,8 +1,5 @@
 # ==============================================================================
-# Cub3D Makefile
-# Author: Your Name
-# Description: This Makefile provides clean, modular build configurations
-#              for production, debugging, and sanitizer-based testing.
+# Cub3D Makefile - Corrected Version
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
@@ -13,10 +10,12 @@ src_dir = src
 obj_dir = obj
 lib_dir = lib
 
-# Sub-library paths
-libft_path = $(lib_dir)/libft
-mlx_path = $(lib_dir)/MLX42
-mlx_build = $(mlx_path)/build
+# Sub-library paths - CORRECTED
+libft_path  = $(lib_dir)/libft/libft
+printf_path = $(lib_dir)/libft/ft_printf
+gnl_path    = $(lib_dir)/libft/gnl
+mlx_path    = $(lib_dir)/MLX42
+mlx_build   = $(mlx_path)/build
 
 # ------------------------------------------------------------------------------
 # File Lists
@@ -59,28 +58,30 @@ srcs = $(addprefix $(src_dir)/,$(src_files))
 objs = $(addprefix $(obj_dir)/,$(src_files:.c=.o))
 deps = $(objs:.o=.d)
 
-# Sub-library targets
-libft_a = $(libft_path)/libft.a
-printf_a = $(libft_path)/ft_printf/libftprintf.a
-gnl_a = $(libft_path)/gnl/libgnl.a
-mlx_a = $(mlx_build)/libmlx42.a
+# Sub-library targets - CORRECTED
+libft_a  = $(libft_path)/libft.a
+printf_a = $(printf_path)/libftprintf.a
+gnl_a    = $(gnl_path)/libgnl.a
+mlx_a    = $(mlx_build)/libmlx42.a
 
 # ------------------------------------------------------------------------------
 # Configuration (Build Type & Toolchain)
 # ------------------------------------------------------------------------------
-# Default build type is `release` if not specified.
-# Can be overridden with `make BUILD_TYPE=debug` or `make BUILD_TYPE=asan`.
 BUILD_TYPE ?= release
 
 cc = cc
 cflags = -Wall -Wextra -Werror -MMD -MP
-includes = -I include -I $(mlx_path)/include -I $(libft_path)/include
+
+# Includes - CORRECTED paths
+includes = -I inc -I $(mlx_path)/include -I $(libft_path)
+
+# Library linking - CORRECTED paths
 ldflags = -L$(mlx_build) -lmlx42 -lglfw -ldl -pthread -lm \
 		  -L$(libft_path) -lft \
-		  -L$(libft_path)/ft_printf -lftprintf \
-		  -L$(libft_path)/gnl -lgnl
+		  -L$(printf_path) -lftprintf \
+		  -L$(gnl_path) -lgnl
 
-# Initialize mlx_cmake_flags here to ensure a clean slate
+# Initialize mlx_cmake_flags
 mlx_cmake_flags =
 
 # Conditional flags based on BUILD_TYPE
@@ -96,7 +97,6 @@ else ifeq ($(BUILD_TYPE), combined)
 	cflags += -fsanitize=address,undefined -fno-omit-frame-pointer -fno-sanitize-recover=all -g3
 	mlx_cmake_flags = -DCMAKE_C_FLAGS="-fsanitize=address,undefined -fno-omit-frame-pointer -fno-sanitize-recover=all -g3"
 else
-	# Production build
 	cflags += -O2
 endif
 
@@ -122,7 +122,7 @@ $(obj_dir):
 -include $(deps)
 
 # ------------------------------------------------------------------------------
-# Dependency Build Handling
+# Dependency Build Handling - CORRECTED
 # ------------------------------------------------------------------------------
 $(libft_a):
 ifeq ($(BUILD_TYPE), release)
@@ -132,15 +132,15 @@ else
 endif
 
 $(printf_a):
-	@$(MAKE) -s -C $(libft_path)/ft_printf CFLAGS="$(cflags)"
+	@$(MAKE) -s -C $(printf_path)
 
 $(gnl_a):
-	@$(MAKE) -s -C $(libft_path)/gnl CFLAGS="$(cflags)"
+	@$(MAKE) -s -C $(gnl_path)
 
 $(mlx_a):
 	@echo "Building MLX42 ($(BUILD_TYPE) build)..."
 	@mkdir -p $(mlx_build)
-	@cmake -S $(mlx_path) -B $(mlx_build) $(mlx_cmake_flags) -Wno-dev
+	@cmake -S $(mlx_path) -B $(mlx_build) $(mlx_cmake_flags) -Wno-dev >/dev/null 2>&1
 	@$(MAKE) -s -C $(mlx_build) >/dev/null 2>&1
 
 # ------------------------------------------------------------------------------
@@ -159,8 +159,8 @@ re: fclean all
 full-clean: fclean
 	@rm -rf $(mlx_build)
 	@$(MAKE) -s -C $(libft_path) fclean >/dev/null 2>&1 || true
-	@$(MAKE) -s -C $(libft_path)/ft_printf fclean >/dev/null 2>&1 || true
-	@$(MAKE) -s -C $(libft_path)/gnl fclean >/dev/null 2>&1 || true
+	@$(MAKE) -s -C $(printf_path) fclean >/dev/null 2>&1 || true
+	@$(MAKE) -s -C $(gnl_path) fclean >/dev/null 2>&1 || true
 	@echo "Fully cleaned dependencies."
 
 # ------------------------------------------------------------------------------
@@ -180,4 +180,4 @@ asan-test:
 	@$(MAKE) BUILD_TYPE=asan
 	@ASAN_OPTIONS=verbosity=1:abort_on_error=1 ./$(name) maps/valid/simple.cub
 
-.PHONY: all clean fclean re full-clean test vtest asan-test $(obj_dir)
+.PHONY: all clean fclean re full-clean test vtest asan-test

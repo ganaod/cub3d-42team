@@ -62,6 +62,10 @@ x → screen_x
 # define INTERNAL_RENDER_WIDTH			1280
 # define INTERNAL_RENDER_HEIGHT			800
 
+// absolute maximum limits (memory protection)
+# define MAX_RENDER_WIDTH				1600
+# define MAX_RENDER_HEIGHT				900
+
 // exit codes
 # define EXIT_SUCCESS					0
 # define EXIT_FAILURE					1

@@ -31,6 +31,7 @@ src_files	=	main.c \
 				utils.c \
 				map_check.c \
 				parse_paths_check.c \
+				graphics_window.c \
 				render.c \
 				render_column.c \
 				render_dda.c \

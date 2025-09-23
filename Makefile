@@ -125,7 +125,11 @@ $(obj_dir):
 # Dependency Build Handling
 # ------------------------------------------------------------------------------
 $(libft_a):
-	@$(MAKE) -s -C $(libft_path) CFLAGS="$(cflags)" >/dev/null 2>&1
+ifeq ($(BUILD_TYPE), release)
+	@$(MAKE) -s -C $(libft_path) >/dev/null 2>&1
+else
+	@$(MAKE) -s -C $(libft_path) CC="$(cc) $(cflags)" >/dev/null 2>&1
+endif
 
 $(printf_a):
 	@$(MAKE) -s -C $(libft_path)/ft_printf CFLAGS="$(cflags)" >/dev/null 2>&1

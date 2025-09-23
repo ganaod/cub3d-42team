@@ -60,8 +60,11 @@ void	handle_resize(int32_t w, int32_t h, void *param)
 		return ;
 	if (game->graphics.frame)
 	{
-		if (mlx_image_to_window(game->graphics.mlx, game->graphics.frame, 0, 0) < 0)
-			return ;
+		int32_t center_x = (w - game->graphics.screen_width) / 2;
+		int32_t center_y = (h - game->graphics.screen_height) / 2;
+		if (mlx_image_to_window(game->graphics.mlx, game->graphics.frame, 
+			center_x, center_y) < 0)
+				return;
 	}
 }
 

@@ -290,34 +290,11 @@ static void free_lines_array(char **lines, int h) {
 
 
 
-
-
-
-static int init_window_and_frame(t_game *g, int w, int h, const char *title)
-{
-    g->graphics.screen_width = w;
-    g->graphics.screen_height = h;
-    
-    g->graphics.mlx = mlx_init(w, h, title, false);
-    if (!g->graphics.mlx)
-        return (0);
-    
-    g->graphics.frame = mlx_new_image(g->graphics.mlx, w, h);
-    if (!g->graphics.frame)
-        return (0);
-    
-    return (1);
-}
-
-
-
-
-
 static void sync_player_world_fields_from_parser(t_game *g)
 {
     // Player position and direction already set by parser - don't overwrite!
     // Just ensure camera plane is perpendicular to direction with correct FOV
-    
+
     // Camera plane = perpendicular to direction, scaled by FOV
     g->player.world_camera_plane_x = -g->player.world_dir_y * FOV_CAMERA_PLANE_MAGNITUDE;
     g->player.world_camera_plane_y = g->player.world_dir_x * FOV_CAMERA_PLANE_MAGNITUDE;
@@ -380,7 +357,15 @@ static int load_all_wall_textures(t_map *m)
 }
 
 
+// static void on_key_maximize(mlx_key_data_t keydata, void *param)
+// {
+//     t_game *game;
 
+//     (void)param;
+//     game = &g_game; // du setzt g_game später in main
+//     if (keydata.key == MLX_KEY_F11 && keydata.action == MLX_PRESS)
+//         gfx_maximize_now(&game->graphics);
+// }
 
 
 
@@ -392,8 +377,8 @@ int main(int argc, char **argv)
     int     fd;
     int     player_found = 0;
 
-    if (argc != 2) 
-	{
+    if (argc != 2)
+    {
         parse_error("usage: ./cub3d file.cub");
         return (2);
     }
@@ -445,44 +430,50 @@ int main(int argc, char **argv)
     }
     free_lines_array(lines, h);
 
-    /* 4) Grafik initialisieren (Fenster + Framebuffer) */
-    if (!init_window_and_frame(&g, DEFAULT_WIDTH, DEFAULT_HEIGHT, "cub3d")) {
-        parse_error("mlx init failed");
-        free_map(&g.map);
-        return (8);
-    }
-
-    /* 5) Texturen laden */
-    if (!load_all_wall_textures(&g.map)) {
-        parse_error("failed to load wall textures");
-        mlx_terminate(g.graphics.mlx);
-        free_map(&g.map);
-        return (9);
-    }
-
-    /* 6) Player-Werte -> world_* Felder spiegeln (für Raycaster) */
+    /* 4) Player-Werte -> world_* Felder spiegeln (für Raycaster) */
     g.movement_speed = 3.0;   // Einheiten pro Sekunde
     g.rotation_speed = 2.0;   // Radiant pro Sekunde
     sync_player_world_fields_from_parser(&g);
 
-    /* 7) Frame-Loop */
-    g.running = 1;
-    g_game = g; // global setzen, alle Render-Files nutzen g_game
+    /* 5) Global Game State setzen VOR Grafikinitialisierung */
+    g_game = g; // WICHTIG: Vor gfx_open_window_resizable setzen!
+
+    /* 6) Grafik initialisieren (resizable Fenster + Framebuffer) */
+    // Der resize hook wird bereits in gfx_open_window_resizable registriert
+    if (!gfx_open_window_resizable(&g_game, "cub3d", DEFAULT_WIDTH, DEFAULT_HEIGHT)) {
+        parse_error("mlx init failed");
+        free_map(&g_game.map);
+        return (8);
+    }
+
+    /* 7) Texturen laden */
+    if (!load_all_wall_textures(&g_game.map)) {
+        parse_error("failed to load wall textures");
+        mlx_terminate(g_game.graphics.mlx);
+        free_map(&g_game.map);
+        return (9);
+    }
+
+    /* 8) Frame-Loop Setup */
+    g_game.running = 1;
+
+    // ENTFERNT: Doppelte Resize-Hook Registrierung
+    // mlx_resize_hook(g_game.graphics.mlx, handle_resize, &g_game);
 
     // Delta-Time initialisieren
     g_game.time_prev = mlx_get_time();
 
-    // Bild ins Fenster setzen
-    mlx_image_to_window(g_game.graphics.mlx, g_game.graphics.frame, 0, 0);
+    // ENTFERNT: Doppeltes mlx_image_to_window (wird bereits in gfx_open_window_resizable gemacht)
+    // mlx_image_to_window(g_game.graphics.mlx, g_game.graphics.frame, 0, 0);
 
-    // Hooks registrieren
+    // weitere Hooks
     mlx_close_hook(g_game.graphics.mlx, on_close, NULL);
     mlx_loop_hook(g_game.graphics.mlx, game_loop_tick, NULL);
 
-    // Hauptloop starten
+    // Hauptloop
     mlx_loop(g_game.graphics.mlx);
 
-    /* 8) Cleanup */
+    /* 9) Cleanup */
     mlx_terminate(g_game.graphics.mlx);
     free_map(&g_game.map);
     return (0);

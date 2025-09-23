@@ -1,6 +1,6 @@
 /* information flow matches dependency hierarchy:
-mathematical foundation → domain concepts 
-→ system interfaces → computational processes 
+mathematical foundation → domain concepts
+→ system interfaces → computational processes
 → orchestration	*/
 #ifndef CUB3D_H
 # define CUB3D_H
@@ -52,7 +52,7 @@ x → screen_x
 . screen space: pixels, (screen_x, screen_y), origin top-left
 . y increases downward in all spaces	*/
 
-// ⭐⭐ DEFINES 
+// ⭐⭐ DEFINES
 // math constants, form geometric framework
 // ⭐ SYSTEM ARCHITECTURE
 // framebuffer display resolution
@@ -275,6 +275,16 @@ int		map_cell(const t_map *m, int ix, int iy);
 //  ================== UTILS ==================
 
 void	parse_error(const char *msg);
+
+//  ================== GRAPHICS / WINDOW ==================
+
+int   gfx_open_window_resizable(t_game *game, const char *title, int w, int h);
+int   gfx_maximize_now(t_graphics *g);
+int   gfx_rebuild_framebuffer(t_graphics *g, int w, int h);
+void  handle_resize(int32_t w, int32_t h, void *param);
+int   gfx_rebuild_framebuffer(t_graphics *g, int w, int h);
+void  handle_resize(int32_t w, int32_t h, void *param);
+
 
 
 #endif

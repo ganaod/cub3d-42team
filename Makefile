@@ -126,21 +126,21 @@ $(obj_dir):
 # ------------------------------------------------------------------------------
 $(libft_a):
 ifeq ($(BUILD_TYPE), release)
-	@$(MAKE) -s -C $(libft_path) >/dev/null 2>&1
+	@$(MAKE) -s -C $(libft_path)
 else
-	@$(MAKE) -s -C $(libft_path) CC="$(cc) $(cflags)" >/dev/null 2>&1
+	@$(MAKE) -s -C $(libft_path) CC="$(cc) $(cflags)"
 endif
 
 $(printf_a):
-	@$(MAKE) -s -C $(libft_path)/ft_printf CFLAGS="$(cflags)" >/dev/null 2>&1
+	@$(MAKE) -s -C $(libft_path)/ft_printf CFLAGS="$(cflags)"
 
 $(gnl_a):
-	@$(MAKE) -s -C $(libft_path)/gnl CFLAGS="$(cflags)" >/dev/null 2>&1
+	@$(MAKE) -s -C $(libft_path)/gnl CFLAGS="$(cflags)"
 
 $(mlx_a):
 	@echo "Building MLX42 ($(BUILD_TYPE) build)..."
 	@mkdir -p $(mlx_build)
-	@cmake -S $(mlx_path) -B $(mlx_build) $(mlx_cmake_flags) -Wno-dev >/dev/null 2>&1
+	@cmake -S $(mlx_path) -B $(mlx_build) $(mlx_cmake_flags) -Wno-dev
 	@$(MAKE) -s -C $(mlx_build) >/dev/null 2>&1
 
 # ------------------------------------------------------------------------------

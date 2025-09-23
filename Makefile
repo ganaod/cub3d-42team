@@ -1,18 +1,27 @@
-# metadata
-name		= cub3d
-test_name	= test
+# ==============================================================================
+# Cub3D Makefile
+# Author: Your Name
+# Description: This Makefile provides clean, modular build configurations
+#              for production, debugging, and sanitizer-based testing.
+# ==============================================================================
 
-# paths
-src_dir		= src
-obj_dir		= obj
-libft_path	= lib/libft/libft
-printf_path	= lib/libft/ft_printf
-gnl_path	= lib/libft/gnl
-mlx_path	= lib/MLX42
-mlx_build	= $(mlx_path)/build
+# ------------------------------------------------------------------------------
+# Metadata & Paths
+# ------------------------------------------------------------------------------
+name = cub3d
+src_dir = src
+obj_dir = obj
+lib_dir = lib
 
-# file lists
-src_files =	main.c \
+# Sub-library paths
+libft_path = $(lib_dir)/libft
+mlx_path = $(lib_dir)/MLX42
+mlx_build = $(mlx_path)/build
+
+# ------------------------------------------------------------------------------
+# File Lists
+# ------------------------------------------------------------------------------
+src_files = main.c \
 			global_state.c \
 			parse_utils.c \
 			parse_header.c \
@@ -46,52 +55,65 @@ src_files =	main.c \
 			load_texture.c \
 			cleanup.c
 
-srcs		= $(addprefix $(src_dir)/,$(src_files))
-objs		= $(addprefix $(obj_dir)/,$(src_files:.c=.o))
-deps		= $(objs:.o=.d)
+srcs = $(addprefix $(src_dir)/,$(src_files))
+objs = $(addprefix $(obj_dir)/,$(src_files:.c=.o))
+deps = $(objs:.o=.d)
 
-libft_a		= $(libft_path)/libft.a
-printf_a	= $(printf_path)/libftprintf.a
-gnl_a		= $(gnl_path)/libgnl.a
-mlx_a		= $(mlx_build)/libmlx42.a
+# Sub-library targets
+libft_a = $(libft_path)/libft.a
+printf_a = $(libft_path)/ft_printf/libftprintf.a
+gnl_a = $(libft_path)/gnl/libgnl.a
+mlx_a = $(mlx_build)/libmlx42.a
 
-# toolchain
-cc			= cc
-# base flags - production build
-cflags		= -Wall -Wextra -Werror -MMD -MP
-includes	= -I include -I $(mlx_path)/include -I $(libft_path)/include
-ldflags		= -L$(libft_path) -lft \
-			  -L$(printf_path) -lftprintf \
-			  -L$(gnl_path) -lgnl \
-			  -L$(mlx_build) -lmlx42 -lglfw -ldl -pthread -lm
+# ------------------------------------------------------------------------------
+# Configuration (Build Type & Toolchain)
+# ------------------------------------------------------------------------------
+# Default build type is `release` if not specified.
+# Can be overridden with `make BUILD_TYPE=debug` or `make BUILD_TYPE=asan`.
+BUILD_TYPE ?= release
 
-# ==== MAIN TARGETS ====
+cc = cc
+cflags = -Wall -Wextra -Werror -MMD -MP
+includes = -I include -I $(mlx_path)/include -I $(libft_path)/include
+ldflags = -L$(mlx_build) -lmlx42 -lglfw -ldl -pthread -lm \
+		  -L$(libft_path) -lft \
+		  -L$(libft_path)/ft_printf -lftprintf \
+		  -L$(libft_path)/gnl -lgnl
 
-# production build
+# Initialize mlx_cmake_flags here to ensure a clean slate
+mlx_cmake_flags =
+
+# Conditional flags based on BUILD_TYPE
+ifeq ($(BUILD_TYPE), debug)
+	cflags += -g3 -O0
+else ifeq ($(BUILD_TYPE), asan)
+	cflags += -fsanitize=address -fno-omit-frame-pointer -g3
+	mlx_cmake_flags = -DCMAKE_C_FLAGS="-fsanitize=address -fno-omit-frame-pointer -g3"
+else ifeq ($(BUILD_TYPE), ubsan)
+	cflags += -fsanitize=undefined -fno-sanitize-recover=all -g3
+	mlx_cmake_flags = -DCMAKE_C_FLAGS="-fsanitize=undefined -fno-sanitize-recover=all -g3"
+else ifeq ($(BUILD_TYPE), combined)
+	cflags += -fsanitize=address,undefined -fno-omit-frame-pointer -fno-sanitize-recover=all -g3
+	mlx_cmake_flags = -DCMAKE_C_FLAGS="-fsanitize=address,undefined -fno-omit-frame-pointer -fno-sanitize-recover=all -g3"
+else
+	# Production build
+	cflags += -O2
+endif
+
+# ------------------------------------------------------------------------------
+# Main Targets
+# ------------------------------------------------------------------------------
 all: $(name)
 
-# valgrind-compatible build - no sanitizers, max debug info
-debug: cflags += -g3 -O0
-debug: $(name)
-
-# addresssanitizer - detects memory errors, requires compatible dependencies
-asan: cflags += -fsanitize=address -fno-omit-frame-pointer -g3
-asan: rebuild-deps-asan $(name)
-
-# undefined behavior sanitizer - detects undefined operations
-ubsan: cflags += -fsanitize=undefined -fno-sanitize-recover=all -g3
-ubsan: rebuild-deps-ubsan $(name)
-
-# combined sanitizers - maximum error detection
-combined: cflags += -fsanitize=address,undefined -fno-omit-frame-pointer -fno-sanitize-recover=all -g3
-combined: rebuild-deps-combined $(name)
-
-# ==== BUILD RULES ====
-
 $(name): $(objs) $(libft_a) $(printf_a) $(gnl_a) $(mlx_a)
+	@echo "Linking $(name) ($(BUILD_TYPE) build)..."
 	@$(cc) $(objs) $(ldflags) -o $(name)
 
+# ------------------------------------------------------------------------------
+# Build Rules
+# ------------------------------------------------------------------------------
 $(obj_dir)/%.o: $(src_dir)/%.c | $(obj_dir)
+	@echo "Compiling $< ($(BUILD_TYPE) build)..."
 	@$(cc) $(cflags) -c $< -o $@ $(includes)
 
 $(obj_dir):
@@ -99,75 +121,59 @@ $(obj_dir):
 
 -include $(deps)
 
-# ==== DEPENDENCY HANDLING ====
-
-# normal dependency builds - no special flags
+# ------------------------------------------------------------------------------
+# Dependency Build Handling
+# ------------------------------------------------------------------------------
 $(libft_a):
-	@$(MAKE) -s -C $(libft_path) >/dev/null 2>&1
+	@$(MAKE) -s -C $(libft_path) CFLAGS="$(cflags)" >/dev/null 2>&1
 
 $(printf_a):
-	@$(MAKE) -s -C $(printf_path) >/dev/null 2>&1
+	@$(MAKE) -s -C $(libft_path)/ft_printf CFLAGS="$(cflags)" >/dev/null 2>&1
 
 $(gnl_a):
-	@$(MAKE) -s -C $(gnl_path) >/dev/null 2>&1
+	@$(MAKE) -s -C $(libft_path)/gnl CFLAGS="$(cflags)" >/dev/null 2>&1
 
 $(mlx_a):
+	@echo "Building MLX42 ($(BUILD_TYPE) build)..."
 	@mkdir -p $(mlx_build)
-	@cmake -S $(mlx_path) -B $(mlx_build) -Wno-dev >/dev/null 2>&1
+	@cmake -S $(mlx_path) -B $(mlx_build) $(mlx_cmake_flags) -Wno-dev >/dev/null 2>&1
 	@$(MAKE) -s -C $(mlx_build) >/dev/null 2>&1
 
-# ==== ANALYSIS BUILD DEPENDENCY MANAGEMENT ====
-
-# force rebuild all dependencies with sanitizer flags
-rebuild-deps-asan: clean-all-deps
-	@$(MAKE) -s $(libft_a) CFLAGS="-fsanitize=address -fno-omit-frame-pointer -g3"
-	@$(MAKE) -s $(printf_a) CFLAGS="-fsanitize=address -fno-omit-frame-pointer -g3"
-	@$(MAKE) -s $(gnl_a) CFLAGS="-fsanitize=address -fno-omit-frame-pointer -g3"
-	@$(MAKE) -s $(mlx_a)  # warning: mlx42 uses cmake, may not inherit sanitizer flags
-
-rebuild-deps-ubsan: clean-all-deps
-	@$(MAKE) -s $(libft_a) CFLAGS="-fsanitize=undefined -fno-sanitize-recover=all -g3"
-	@$(MAKE) -s $(printf_a) CFLAGS="-fsanitize=undefined -fno-sanitize-recover=all -g3"
-	@$(MAKE) -s $(gnl_a) CFLAGS="-fsanitize=undefined -fno-sanitize-recover=all -g3"
-	@$(MAKE) -s $(mlx_a)
-
-rebuild-deps-combined: clean-all-deps
-	@$(MAKE) -s $(libft_a) CFLAGS="-fsanitize=address,undefined -fno-omit-frame-pointer -fno-sanitize-recover=all -g3"
-	@$(MAKE) -s $(printf_a) CFLAGS="-fsanitize=address,undefined -fno-omit-frame-pointer -fno-sanitize-recover=all -g3"
-	@$(MAKE) -s $(gnl_a) CFLAGS="-fsanitize=address,undefined -fno-omit-frame-pointer -fno-sanitize-recover=all -g3"
-	@$(MAKE) -s $(mlx_a)
-
-# ==== CLEANUP ====
-
+# ------------------------------------------------------------------------------
+# Cleanup & Other Utility Targets
+# ------------------------------------------------------------------------------
 clean:
 	@rm -rf $(obj_dir)
+	@echo "Cleaned object files."
 
-# clean only dependencies - keeps your object files
-clean-deps:
-	@rm -rf $(mlx_build)
-	@$(MAKE) -s -C $(libft_path) clean >/dev/null 2>&1 || true
-	@$(MAKE) -s -C $(printf_path) clean >/dev/null 2>&1 || true
-	@$(MAKE) -s -C $(gnl_path) clean >/dev/null 2>&1 || true
-
-# clean everything including dependencies
-clean-all-deps: clean-deps
-	@$(MAKE) -s -C $(libft_path) fclean >/dev/null 2>&1 || true
-	@$(MAKE) -s -C $(printf_path) fclean >/dev/null 2>&1 || true
-	@$(MAKE) -s -C $(gnl_path) fclean >/dev/null 2>&1 || true
-
-fclean: clean clean-all-deps
-	@rm -f $(name) $(test_name)
+fclean: clean
+	@rm -f $(name)
+	@echo "Cleaned executable."
 
 re: fclean all
 
-# ==== ANALYSIS HELPERS ====
+full-clean: fclean
+	@rm -rf $(mlx_build)
+	@$(MAKE) -s -C $(libft_path) fclean >/dev/null 2>&1 || true
+	@$(MAKE) -s -C $(libft_path)/ft_printf fclean >/dev/null 2>&1 || true
+	@$(MAKE) -s -C $(libft_path)/gnl fclean >/dev/null 2>&1 || true
+	@echo "Fully cleaned dependencies."
 
-# quick valgrind test with debug build
-vtest: debug
+# ------------------------------------------------------------------------------
+# Testing Helpers
+# ------------------------------------------------------------------------------
+test: all
+	@echo "Running tests..."
+	@./$(name) maps/valid/simple.cub
+
+vtest:
+	@echo "Running Valgrind test (debug build)..."
+	@$(MAKE) BUILD_TYPE=debug
 	@valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./$(name) maps/valid/simple.cub
 
-# quick asan test (if build succeeds)
-atest: asan
+asan-test:
+	@echo "Running ASan test..."
+	@$(MAKE) BUILD_TYPE=asan
 	@ASAN_OPTIONS=verbosity=1:abort_on_error=1 ./$(name) maps/valid/simple.cub
 
-.PHONY: all debug asan ubsan combined clean clean-deps clean-all-deps fclean re rebuild-deps-asan rebuild-deps-ubsan rebuild-deps-combined vtest atest
+.PHONY: all clean fclean re full-clean test vtest asan-test $(obj_dir)

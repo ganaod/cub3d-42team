@@ -13,7 +13,7 @@ GNL_DIR = lib/gnl
 MLX_DIR = lib/MLX42
 MLX_BUILD = $(MLX_DIR)/build
 
-# explicit source file list (42 norm requirement)
+# explicit source file list
 SRC_FILES = main.c \
 			global_state.c \
 			parse_utils.c \

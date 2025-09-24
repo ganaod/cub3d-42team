@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   player_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
+/*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 10:17:40 by blohrer           #+#    #+#             */
-/*   Updated: 2025/09/22 09:42:22 by blohrer          ###   ########.fr       */
+/*   Updated: 2025/09/24 13:27:56 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,21 +14,33 @@
 
 static int	is_walkable(const t_map *m, double x, double y)
 {
-	int	ix;
-	int	iy;
-	int	c;
-
-	ix = (int)x;
-	iy = (int)y;
-	c = map_cell(m, ix, iy);
-	return (c == CELL_EMPTY);
+	int	ix = (int)x;
+	int	iy = (int)y;
+	
+	// Basic collision - must be in empty cell
+	if (map_cell(m, ix, iy) != CELL_EMPTY)
+		return (0);
+		
+	// Check distance to nearest walls (prevent extreme proximity)
+	const double MIN_WALL_DIST = 0.1;
+	
+	// Check 4 neighboring cells for walls
+	if (map_cell(m, ix + 1, iy) == CELL_WALL && (x - ix) > (1.0 - MIN_WALL_DIST))
+		return (0);  // Too close to east wall
+	if (map_cell(m, ix - 1, iy) == CELL_WALL && (x - ix) < MIN_WALL_DIST)
+		return (0);  // Too close to west wall  
+	if (map_cell(m, ix, iy + 1) == CELL_WALL && (y - iy) > (1.0 - MIN_WALL_DIST))
+		return (0);  // Too close to south wall
+	if (map_cell(m, ix, iy - 1) == CELL_WALL && (y - iy) < MIN_WALL_DIST)
+		return (0);  // Too close to north wall
+		
+	return (1);
 }
 
 void	try_move_player(double new_x, double new_y)
 {
-	double	cur_y;
-
-	cur_y = g_game.player.world_pos_y;
+	double	cur_y = g_game.player.world_pos_y;
+	
 	if (is_walkable(&g_game.map, new_x, cur_y))
 		g_game.player.world_pos_x = new_x;
 	if (is_walkable(&g_game.map, g_game.player.world_pos_x, new_y))

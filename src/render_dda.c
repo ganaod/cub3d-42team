@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/24 12:09:39 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/24 13:16:33 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/24 13:22:06 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,26 +60,46 @@ int		step_x &y			step dir (-1 / +1)
 double	side_dist_x & y		dist to next boundary
 double	delta_dist_x & y	dist per grid step	}	*/
 
-t_ray_result	cast_ray_to_wall(double world_ray_dir_x, double world_ray_dir_y)
+t_ray_result cast_ray_to_wall(double world_ray_dir_x, double world_ray_dir_y)
 {
-	t_dda_state		dda_state;
-	t_ray_result	wall_intersection_result;
+    t_dda_state dda_state;
+    t_ray_result wall_intersection_result;
 
-	setup_dda_vars(world_ray_dir_x, world_ray_dir_y, &dda_state);
-	execute_dda_traversal(&dda_state,
-		&wall_intersection_result.world_wall_side);
-	wall_intersection_result.world_perpendicular_distance
-		= calculate_wall_distance(&dda_state,
-			wall_intersection_result.world_wall_side);
-	wall_intersection_result.world_intersection_x = g_game.player.world_pos_x
-		+ (wall_intersection_result.world_perpendicular_distance
-			* world_ray_dir_x);
-	wall_intersection_result.world_intersection_y = g_game.player.world_pos_y
-		+ (wall_intersection_result.world_perpendicular_distance
-			* world_ray_dir_y);
-	wall_intersection_result.world_wall_face
-		= determine_intersected_wall_face(&wall_intersection_result);
-	return (wall_intersection_result);
+    setup_dda_vars(world_ray_dir_x, world_ray_dir_y, &dda_state);
+    execute_dda_traversal(&dda_state, &wall_intersection_result.world_wall_side);
+    
+    wall_intersection_result.world_perpendicular_distance
+        = calculate_wall_distance(&dda_state, wall_intersection_result.world_wall_side);
+    
+    // CORRECT: Use exact grid intersection coordinates
+    if (wall_intersection_result.world_wall_side == VERTICAL_WALL)
+    {
+        // Hit vertical wall (X boundary)
+        if (dda_state.step_x == 1)
+            wall_intersection_result.world_intersection_x = (double)dda_state.map_x;
+        else
+            wall_intersection_result.world_intersection_x = (double)dda_state.map_x + 1.0;
+            
+        wall_intersection_result.world_intersection_y = g_game.player.world_pos_y
+            + (wall_intersection_result.world_intersection_x - g_game.player.world_pos_x)
+            * (world_ray_dir_y / world_ray_dir_x);
+    }
+    else
+    {
+        // Hit horizontal wall (Y boundary)  
+        if (dda_state.step_y == 1)
+            wall_intersection_result.world_intersection_y = (double)dda_state.map_y;
+        else
+            wall_intersection_result.world_intersection_y = (double)dda_state.map_y + 1.0;
+            
+        wall_intersection_result.world_intersection_x = g_game.player.world_pos_x
+            + (wall_intersection_result.world_intersection_y - g_game.player.world_pos_y)
+            * (world_ray_dir_x / world_ray_dir_y);
+    }
+
+    wall_intersection_result.world_wall_face
+        = determine_intersected_wall_face(&wall_intersection_result);
+    return (wall_intersection_result);
 }
 
 /* boolean flag to terminate loop

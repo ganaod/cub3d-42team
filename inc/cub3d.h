@@ -283,6 +283,7 @@ int		map_cell(const t_map *m, int ix, int iy);
 //  ================== UTILS ==================
 
 void	parse_error(const char *msg);
+int	check_cub_extension(const char *filename);
 
 //  ================== GRAPHICS / WINDOW ==================
 

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/24 09:55:16 by blohrer           #+#    #+#             */
+/*   Updated: 2025/09/24 10:19:34 by blohrer          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../inc/cub3d.h"
 
 void	parse_error(const char *msg)
@@ -21,4 +33,21 @@ void	on_close(void *param)
 	(void)param;
 	g_game.running = 0;
 	mlx_close_window(g_game.graphics.mlx);
+}
+
+int	check_cub_extension(const char *filename)
+{
+	int	len;
+
+	if (!filename)
+		return (0);
+	len = 0;
+	while (filename[len] != '\0')
+		len++;
+	if (len < 4)
+		return (0);
+	if (filename[len - 1] != 'b' || filename[len - 2] != 'u' || filename[len
+			- 3] != 'c' || filename[len - 4] != '.')
+		return (0);
+	return (1);
 }

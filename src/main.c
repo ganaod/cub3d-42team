@@ -6,7 +6,7 @@
 /*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 14:17:12 by blohrer           #+#    #+#             */
-/*   Updated: 2025/09/23 14:49:20 by blohrer          ###   ########.fr       */
+/*   Updated: 2025/09/24 10:04:23 by blohrer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,9 @@ int	main(int argc, char **argv)
 
 	g = (t_game){0};
 	if (argc != 2)
-	{
-		parse_error("usage: ./cub3d file.cub");
-		return (2);
-	}
+		return (parse_error("usage: ./cub3d file.cub"), 2);
+	if (!check_cub_extension(argv[1]))
+		return (parse_error("map file must end with .cub"), 2);
 	if (!map_load_and_validate(&g, argv[1]))
 		return (cleanup_and_exit(&g, 3));
 	init_runtime_defaults(&g);

@@ -1,7 +1,3 @@
-# ==============================================================================
-# cub3d production makefile
-# ==============================================================================
-
 # project metadata
 NAME = cub3d
 
@@ -11,9 +7,9 @@ OBJ_DIR = obj
 INC_DIR = inc
 
 # library paths
-LIBFT_DIR = lib/libft/libft
-PRINTF_DIR = lib/libft/ft_printf  
-GNL_DIR = lib/libft/gnl
+LIBFT_DIR = lib/libft
+PRINTF_DIR = lib/ft_printf  
+GNL_DIR = lib/gnl
 MLX_DIR = lib/MLX42
 MLX_BUILD = $(MLX_DIR)/build
 

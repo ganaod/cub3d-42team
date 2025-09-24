@@ -13,9 +13,9 @@
 
 // external
 # include "../lib/MLX42/include/MLX42/MLX42.h"
-# include "../lib/libft/libft/libft.h"
-# include "../lib/libft/gnl/get_next_line.h"
-# include "../lib/libft/ft_printf/ft_printf.h"
+# include "../lib/libft/libft.h"
+# include "../lib/gnl/get_next_line.h"
+# include "../lib/ft_printf/ft_printf.h"
 
 /* spaces & their coordinate conventions, relationships
 

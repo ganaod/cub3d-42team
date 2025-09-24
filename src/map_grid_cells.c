@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 16:03:35 by blohrer           #+#    #+#             */
-/*   Updated: 2025/09/17 13:55:02 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/24 12:20:00 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,9 @@ static void	set_player_from_char(t_player *p, int x, int y, char c)
 {
 	double	dx;
 	double	dy;
+	const double	fov_radians = FOV_DEGREES * (M_PI / 180.0);
+	const double	fov_half_angle = fov_radians / 2.0;
+	const double	camera_plane_magnitude = tan(fov_half_angle);
 
 	if (!p)
 		return ;
@@ -45,8 +48,8 @@ static void	set_player_from_char(t_player *p, int x, int y, char c)
 	dir_vec_from_char(c, &dx, &dy);
 	p->world_dir_x = dx;
 	p->world_dir_y = dy;
-	p->world_camera_plane_x = -dy * FOV_CAMERA_PLANE_MAGNITUDE;
-	p->world_camera_plane_y = dx * FOV_CAMERA_PLANE_MAGNITUDE;
+	p->world_camera_plane_x = -dy * camera_plane_magnitude;
+	p->world_camera_plane_y = dx * camera_plane_magnitude;
 }
 
 int	put_cell_from_char(t_map *m, t_player *pl, int idx, char c)

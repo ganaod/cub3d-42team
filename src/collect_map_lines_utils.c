@@ -6,7 +6,7 @@
 /*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 13:43:47 by blohrer           #+#    #+#             */
-/*   Updated: 2025/09/05 08:45:34 by blohrer          ###   ########.fr       */
+/*   Updated: 2025/09/24 12:19:16 by blohrer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,10 +43,6 @@ int	validate_map_line(const char *s)
 	return (0);
 }
 
-/*
-** Entfernt am Zeilenende '\n' und optionales '\r' davor (CRLF).
-** Modifiziert den String in-place.
-*/
 void	rstrip_eol(char *s)
 {
 	int	i;

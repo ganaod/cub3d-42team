@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   graphics_window.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/24 12:15:52 by blohrer           #+#    #+#             */
+/*   Updated: 2025/09/24 12:16:01 by blohrer          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../inc/cub3d.h"
 
 /* WINDOW LIFECYCLE - SYSTEM ESTABLISHMENT
@@ -60,14 +72,15 @@ void	handle_resize(int32_t w, int32_t h, void *param)
 		return ;
 	if (game->graphics.frame)
 	{
-		if (mlx_image_to_window(game->graphics.mlx, game->graphics.frame, 0, 0) < 0)
+		if (mlx_image_to_window(game->graphics.mlx, game->graphics.frame, 0,
+				0) < 0)
 			return ;
 	}
 }
 
 /* FRAMEBUFFER IMPLEMENTATION - DECISION EXECUTION
 Destroy existing framebuffer and create new one at chosen resolution
-Updates screen dimensions that drive rendering pipeline column count 
+Updates screen dimensions that drive rendering pipeline column count
 direct 1:1 mapping - no internal resolution */
 int	gfx_rebuild_framebuffer(t_graphics *g, int window_w, int window_h)
 {

@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/24 11:57:43 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/24 13:51:07 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/24 14:44:02 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,6 @@
 # define RENDER_H
 
 # include "cub3d.h"
-
-# define MINIMUM_WALL_DISTANCE_THRESHOLD	1.0
 
 # define VERTICAL_WALL				0
 # define HORIZONTAL_WALL			1

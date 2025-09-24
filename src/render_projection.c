@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 11:18:50 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/24 13:49:46 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/24 14:43:55 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,19 +67,13 @@ Maximum 2x screen height allows for reasonable "wall fills view" effect
 without creating unmanageable pixel counts for column renderer  */
 int	calculate_screen_wall_height(double world_wall_distance)
 {
-	int		screen_wall_height_pixels;
-	// int		max_wall_height;
-	double	world_wall_distance_protected;
+	int	screen_wall_height_pixels;
 
-	world_wall_distance_protected = world_wall_distance;
-	if (world_wall_distance_protected < MINIMUM_WALL_DISTANCE_THRESHOLD)
-		world_wall_distance_protected = MINIMUM_WALL_DISTANCE_THRESHOLD;
+	// Use raw distance directly - no protection/clamping
+	screen_wall_height_pixels = (int)(g_game.graphics.screen_height / world_wall_distance);
 	
-	screen_wall_height_pixels = (int)(g_game.graphics.screen_height
-			/ world_wall_distance_protected);
-	
-	// DEBUG OUTPUT - Add this
-	if (world_wall_distance < 0.5)  // Only show when very close
+	// DEBUG OUTPUT
+	if (world_wall_distance < 0.5)
 		printf("Distance: %.6f → Height: %d pixels\n", 
 		       world_wall_distance, screen_wall_height_pixels);
 	

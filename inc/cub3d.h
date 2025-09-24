@@ -13,44 +13,11 @@
 
 // external
 # include "../lib/MLX42/include/MLX42/MLX42.h"
-# include "../lib/libft/libft/libft.h"
-# include "../lib/libft/gnl/get_next_line.h"
-# include "../lib/libft/ft_printf/ft_printf.h"
-
-/* spaces & their coordinate conventions, relationships
-
-top-left origin (0,0), x → right, y → down
-top-down view (world / map)
-
-
-world space (continuous floats)       map grid (discrete ints)
-+--------------------+                +--------------------+
-|                    |                | 0,0   1,0   2,0    |
-|   p (player)       |                | 0,1   1,1   2,1    |
-|    (3.5,2.2)       |                | 0,2   1,2   2,2    |
-|                    |                |                    |
-+--------------------+                +--------------------+
-
-
-screen space (pixels, top-left origin)
-+---------------------------+
-| screen_y=0                |
-|                           |
-| screen_y=1                |
-| ...                       |
-| screen_y=height-1         |
-+---------------------------+
-x → screen_x
-
-
-. world space: floating-point coordinates, continuous
-. map grid: integer indices, (map_x, map_y)
-. screen space: pixels, (screen_x, screen_y), origin top-left
-. y increases downward in all spaces	*/
+# include "../lib/libft/libft.h"
+# include "../lib/gnl/get_next_line.h"
+# include "../lib/ft_printf/ft_printf.h"
 
 // ⭐⭐ DEFINES
-// math constants, form geometric framework
-
 // ⭐ SYSTEM ARCHITECTURE
 // framebuffer display resolution
 # define DEFAULT_WIDTH					1024

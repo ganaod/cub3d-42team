@@ -1,26 +1,20 @@
-# ==============================================================================
-# Cub3D Makefile - Corrected Version
-# ==============================================================================
+# project metadata
+NAME = cub3d
 
-# ------------------------------------------------------------------------------
-# Metadata & Paths
-# ------------------------------------------------------------------------------
-name = cub3d
-src_dir = src
-obj_dir = obj
-lib_dir = lib
+# directory structure
+SRC_DIR = src
+OBJ_DIR = obj
+INC_DIR = inc
 
-# Sub-library paths - CORRECTED
-libft_path  = $(lib_dir)/libft/libft
-printf_path = $(lib_dir)/libft/ft_printf
-gnl_path    = $(lib_dir)/libft/gnl
-mlx_path    = $(lib_dir)/MLX42
-mlx_build   = $(mlx_path)/build
+# library paths
+LIBFT_DIR = lib/libft
+PRINTF_DIR = lib/ft_printf  
+GNL_DIR = lib/gnl
+MLX_DIR = lib/MLX42
+MLX_BUILD = $(MLX_DIR)/build
 
-# ------------------------------------------------------------------------------
-# File Lists
-# ------------------------------------------------------------------------------
-src_files = main.c \
+# explicit source file list (42 norm requirement)
+SRC_FILES = main.c \
 			global_state.c \
 			parse_utils.c \
 			parse_header.c \
@@ -56,137 +50,70 @@ src_files = main.c \
 			map_loader.c \
 			runtime_init.c
 
-srcs = $(addprefix $(src_dir)/,$(src_files))
-objs = $(addprefix $(obj_dir)/,$(src_files:.c=.o))
-deps = $(objs:.o=.d)
+# derived file paths
+SRCS = $(addprefix $(SRC_DIR)/,$(SRC_FILES))
+OBJS = $(addprefix $(OBJ_DIR)/,$(SRC_FILES:.c=.o))
+DEPS = $(OBJS:.o=.d)
 
-# Sub-library targets - CORRECTED
-libft_a  = $(libft_path)/libft.a
-printf_a = $(printf_path)/libftprintf.a
-gnl_a    = $(gnl_path)/libgnl.a
-mlx_a    = $(mlx_build)/libmlx42.a
+# library targets
+LIBFT = $(LIBFT_DIR)/libft.a
+PRINTF = $(PRINTF_DIR)/libftprintf.a
+GNL = $(GNL_DIR)/libgnl.a
+MLX = $(MLX_BUILD)/libmlx42.a
 
-# ------------------------------------------------------------------------------
-# Configuration (Build Type & Toolchain)
-# ------------------------------------------------------------------------------
-BUILD_TYPE ?= release
+# toolchain configuration
+CC = cc
+CFLAGS = -Wall -Wextra -Werror -MMD -MP
+INCLUDES = -I $(INC_DIR) -I $(MLX_DIR)/include -I $(LIBFT_DIR)
+LDFLAGS = -L$(LIBFT_DIR) -lft \
+		  -L$(PRINTF_DIR) -lftprintf \
+		  -L$(GNL_DIR) -lgnl \
+		  -L$(MLX_BUILD) -lmlx42 -lglfw -ldl -pthread -lm
 
-cc = cc
-cflags = -Wall -Wextra -Werror -MMD -MP
+# build rules
+all: $(NAME)
 
-# Includes - CORRECTED paths
-includes = -I inc -I $(mlx_path)/include -I $(libft_path)
+$(NAME): $(OBJS) $(LIBFT) $(PRINTF) $(GNL) $(MLX)
+	$(CC) $(OBJS) $(LDFLAGS) -o $(NAME)
 
-# Library linking - CORRECTED paths
-ldflags = -L$(mlx_build) -lmlx42 -lglfw -ldl -pthread -lm \
-		  -L$(libft_path) -lft \
-		  -L$(printf_path) -lftprintf \
-		  -L$(gnl_path) -lgnl
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
-# Initialize mlx_cmake_flags
-mlx_cmake_flags =
+$(OBJ_DIR):
+	mkdir -p $(OBJ_DIR)
 
-# Conditional flags based on BUILD_TYPE
-ifeq ($(BUILD_TYPE), debug)
-	cflags += -g3 -O0
-else ifeq ($(BUILD_TYPE), asan)
-	cflags += -fsanitize=address -fno-omit-frame-pointer -g3
-	mlx_cmake_flags = -DCMAKE_C_FLAGS="-fsanitize=address -fno-omit-frame-pointer -g3"
-else ifeq ($(BUILD_TYPE), ubsan)
-	cflags += -fsanitize=undefined -fno-sanitize-recover=all -g3
-	mlx_cmake_flags = -DCMAKE_C_FLAGS="-fsanitize=undefined -fno-sanitize-recover=all -g3"
-else ifeq ($(BUILD_TYPE), combined)
-	cflags += -fsanitize=address,undefined -fno-omit-frame-pointer -fno-sanitize-recover=all -g3
-	mlx_cmake_flags = -DCMAKE_C_FLAGS="-fsanitize=address,undefined -fno-omit-frame-pointer -fno-sanitize-recover=all -g3"
-else
-	cflags += -O2
-endif
+# dependency inclusion
+-include $(DEPS)
 
-# ------------------------------------------------------------------------------
-# Main Targets
-# ------------------------------------------------------------------------------
-all: $(name)
+# library builds
+$(LIBFT):
+	$(MAKE) -C $(LIBFT_DIR)
 
-$(name): $(objs) $(libft_a) $(printf_a) $(gnl_a) $(mlx_a)
-	@echo "Linking $(name) ($(BUILD_TYPE) build)..."
-	@$(cc) $(objs) $(ldflags) -o $(name)
+$(PRINTF):
+	$(MAKE) -C $(PRINTF_DIR)
 
-# ------------------------------------------------------------------------------
-# Build Rules
-# ------------------------------------------------------------------------------
-$(obj_dir)/%.o: $(src_dir)/%.c | $(obj_dir)
-	@echo "Compiling $< ($(BUILD_TYPE) build)..."
-	@$(cc) $(cflags) -c $< -o $@ $(includes)
+$(GNL):
+	$(MAKE) -C $(GNL_DIR)
 
-$(obj_dir):
-	@mkdir -p $(obj_dir)
+$(MLX):
+	mkdir -p $(MLX_BUILD)
+	cmake -S $(MLX_DIR) -B $(MLX_BUILD)
+	$(MAKE) -C $(MLX_BUILD)
 
--include $(deps)
-
-# ------------------------------------------------------------------------------
-# Dependency Build Handling
-# ------------------------------------------------------------------------------
-$(libft_a):
-ifeq ($(BUILD_TYPE), release)
-	@$(MAKE) -s -C $(libft_path)
-else
-	@$(MAKE) -s -C $(libft_path) CC="$(cc) $(cflags)"
-endif
-
-$(printf_a):
-	@$(MAKE) -s -C $(printf_path)
-
-$(gnl_a):
-	@$(MAKE) -s -C $(gnl_path)
-
-$(mlx_a):
-	@echo "Building MLX42 ($(BUILD_TYPE) build)..."
-	@mkdir -p $(mlx_build)
-	@cmake -S $(mlx_path) -B $(mlx_build) $(mlx_cmake_flags) -Wno-dev >/dev/null 2>&1
-	@$(MAKE) -s -C $(mlx_build) >/dev/null 2>&1
-
-# ------------------------------------------------------------------------------
-# Cleanup & Other Utility Targets
-# ------------------------------------------------------------------------------
+# cleanup
 clean:
-	@rm -rf $(obj_dir)
-	@echo "Cleaned object files."
+	rm -rf $(OBJ_DIR)
+	$(MAKE) -C $(LIBFT_DIR) clean
+	$(MAKE) -C $(PRINTF_DIR) clean
+	$(MAKE) -C $(GNL_DIR) clean
 
-fclean: clean full-clean
-	@rm -f $(name)
-	@echo "Cleaned executable."
-
-full-clean:
-	@rm -rf $(mlx_build)
-	@$(MAKE) -s -C $(libft_path) fclean >/dev/null 2>&1 || true
-	@$(MAKE) -s -C $(printf_path) fclean >/dev/null 2>&1 || true
-	@$(MAKE) -s -C $(gnl_path) fclean >/dev/null 2>&1 || true
-	@echo "Fully cleaned dependencies."
+fclean: clean
+	rm -f $(NAME)
+	$(MAKE) -C $(LIBFT_DIR) fclean
+	$(MAKE) -C $(PRINTF_DIR) fclean
+	$(MAKE) -C $(GNL_DIR) fclean
+	rm -rf $(MLX_BUILD)
 
 re: fclean all
 
-full-clean: fclean
-	@rm -rf $(mlx_build)
-	@$(MAKE) -s -C $(libft_path) fclean >/dev/null 2>&1 || true
-	@$(MAKE) -s -C $(printf_path) fclean >/dev/null 2>&1 || true
-	@$(MAKE) -s -C $(gnl_path) fclean >/dev/null 2>&1 || true
-	@echo "Fully cleaned dependencies."
-
-# ------------------------------------------------------------------------------
-# Testing Helpers
-# ------------------------------------------------------------------------------
-test: all
-	@echo "Running tests..."
-	@./$(name) maps/valid/simple.cub
-
-vtest:
-	@echo "Running Valgrind test (debug build)..."
-	@$(MAKE) BUILD_TYPE=debug
-	@valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./$(name) maps/valid/simple.cub
-
-asan-test:
-	@echo "Running ASan test..."
-	@$(MAKE) BUILD_TYPE=asan
-	@ASAN_OPTIONS=verbosity=1:abort_on_error=1 ./$(name) maps/valid/simple.cub
-
-.PHONY: all clean fclean re full-clean test vtest asan-test
+.PHONY: all clean fclean re

@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 15:48:27 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/21 14:08:10 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/24 10:32:40 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,12 +68,12 @@ t_ray_result	cast_ray_to_wall(double world_ray_dir_x, double world_ray_dir_y)
 
 	setup_dda_vars(world_ray_dir_x, world_ray_dir_y, &dda_state);
 	execute_dda_traversal(&dda_state, &wall_intersection_result.world_wall_side);
-	wall_intersection_result.world_perpendicular_distance = 
+	wall_intersection_result.world_perp_dist = 
 		calculate_wall_distance(&dda_state, wall_intersection_result.world_wall_side);
 	wall_intersection_result.world_intersection_x = g_game.player.world_pos_x 
-		+ (wall_intersection_result.world_perpendicular_distance * world_ray_dir_x);
+		+ (wall_intersection_result.world_perp_dist * world_ray_dir_x);
 	wall_intersection_result.world_intersection_y = g_game.player.world_pos_y 
-		+ (wall_intersection_result.world_perpendicular_distance * world_ray_dir_y);
+		+ (wall_intersection_result.world_perp_dist * world_ray_dir_y);
 	wall_intersection_result.world_wall_face = 
 		determine_intersected_wall_face(&wall_intersection_result);
 	return (wall_intersection_result);

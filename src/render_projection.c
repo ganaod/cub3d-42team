@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 11:18:50 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/24 11:07:02 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/24 11:55:17 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,7 @@ without creating unmanageable pixel counts for column renderer  */
 int	calculate_screen_wall_height(double world_wall_distance)
 {
 	int		screen_wall_height_pixels;
+	int		max_wall_height;
 	double	world_wall_distance_protected;
 
 	world_wall_distance_protected = world_wall_distance;
@@ -75,14 +76,16 @@ int	calculate_screen_wall_height(double world_wall_distance)
 		world_wall_distance_protected = MINIMUM_WALL_DISTANCE_THRESHOLD;
 	screen_wall_height_pixels = (int)(g_game.graphics.screen_height
 			/ world_wall_distance_protected);
-	if (screen_wall_height_pixels > MAXIMUM_WALL_HEIGHT_PIXELS)
-		screen_wall_height_pixels = MAXIMUM_WALL_HEIGHT_PIXELS;
+	max_wall_height = g_game.graphics.screen_height
+		* MAXIMUM_WALL_HEIGHT_MULTIPLIER;
+	if (screen_wall_height_pixels > max_wall_height)
+		screen_wall_height_pixels = max_wall_height;
 	return (screen_wall_height_pixels);
 }
 
 /* HIGH-LEVEL PERSPECTIVE SIMULATION */
 void	simulate_eye_level_perspective(int wall_height,
-		int *wall_start, int *wall_end)
+	int *wall_start, int *wall_end)
 {
 	centre_wall_at_eye_level(wall_height, wall_start, wall_end);
 	enforce_screen_pixel_boundaries(wall_start, wall_end);
@@ -105,7 +108,7 @@ wall_end = wall_start + wall_height
 . wall spans equally above/below this line
 . preserved perspective geometry from similar triangles */
 static void	centre_wall_at_eye_level(int wall_height,
-		int *wall_start, int *wall_end)
+	int *wall_start, int *wall_end)
 {
 	int	screen_centre_horizon_line;
 

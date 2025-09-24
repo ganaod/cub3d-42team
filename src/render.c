@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 10:54:39 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/24 10:35:33 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/24 12:01:08 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,11 +57,13 @@ void	render_single_column(int screen_column_x)
 	t_ray_result	wall_intersection_data;
 	int				projected_wall_height;
 
-	calc_ray_dir(screen_column_x, &world_ray_dir_x, &world_ray_dir_y);
+	calculate_ray_direction(screen_column_x, &world_ray_dir_x,
+		&world_ray_dir_y);
 	wall_intersection_data
 		= cast_ray_to_wall(world_ray_dir_x, world_ray_dir_y);
 	projected_wall_height
-		= calculate_screen_wall_height(wall_intersection_data.world_perp_dist);
+		= calculate_screen_wall_height
+		(wall_intersection_data.world_perpendicular_distance);
 	render_wall_column(screen_column_x,
 		&wall_intersection_data, projected_wall_height);
 }
@@ -76,8 +78,8 @@ Mathematical boundaries:
 	wall_start = (screen_height - wall_height) / 2
 	wall_end = wall_start + wall_height */
 void	render_wall_column(int screen_column_x,
-			t_ray_result *wall_intersection_data,
-			int projected_wall_height)
+		t_ray_result *wall_intersection_data,
+		int projected_wall_height)
 {
 	int	screen_wall_start_y_pixel;
 	int	screen_wall_end_y_pixel;

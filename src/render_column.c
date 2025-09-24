@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 10:54:44 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/21 14:08:17 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/24 11:43:46 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,14 +53,17 @@ void	render_wall_section(int screen_column_x, int wall_start_y_pixel,
 	t_texture_context	texture_mapping_info;
 
 	texture_mapping_info.world_wall_face = wall_hit_data->world_wall_face;
-	texture_mapping_info.world_wall_intersection_x = wall_hit_data->world_intersection_x;
-	texture_mapping_info.world_wall_intersection_y = wall_hit_data->world_intersection_y;
-	texture_mapping_info.screen_wall_height = wall_end_y_pixel - wall_start_y_pixel;
+	texture_mapping_info.world_wall_intersection_x
+		= wall_hit_data->world_intersection_x;
+	texture_mapping_info.world_wall_intersection_y
+		= wall_hit_data->world_intersection_y;
+	texture_mapping_info.screen_wall_height
+		= wall_end_y_pixel - wall_start_y_pixel;
 	current_pixel_y = wall_start_y_pixel;
 	while (current_pixel_y < wall_end_y_pixel)
 	{
 		pixel_color = screen_pixel_texture_colour(&texture_mapping_info,
-						current_pixel_y);
+				current_pixel_y);
 		put_pixel(screen_column_x, current_pixel_y, pixel_color);
 		current_pixel_y++;
 	}

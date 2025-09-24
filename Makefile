@@ -83,7 +83,7 @@ $(OBJ_DIR):
 	mkdir -p $(OBJ_DIR)
 
 # dependency inclusion
--include $(DEPS)
+include $(DEPS)
 
 # library builds
 $(LIBFT):

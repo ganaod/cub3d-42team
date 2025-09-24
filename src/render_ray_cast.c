@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 13:48:28 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/24 11:04:54 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/24 12:03:55 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ top-down view of rays from player (P):
   P -> dir (forward)
        \
         \ ray offset = -1 (left) */
-void	calc_ray_dir(int screen_column_x,
+void	calculate_ray_direction(int screen_column_x,
 	double *world_ray_direction_x, double *world_ray_direction_y)
 {
 	double	fov_space_camera_plane_offset;

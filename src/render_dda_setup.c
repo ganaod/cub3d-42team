@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 17:01:49 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/24 11:07:23 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/24 11:48:55 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,8 @@ to naive ray stepping approaches */
 
 #include "../inc/render.h"
 
-static void	setup_x_axis_stepping(double world_ray_dir_x, t_dda_state *dda_state);
-static void	setup_y_axis_stepping(double world_ray_dir_y, t_dda_state *dda_state);
+static void	setup_x_step(double ray_dir_x, t_dda_state *state);
+static void	setup_y_step(double ray_dir_y, t_dda_state *state);
 
 /* DDA SETUP INITIALIZATION
 transform ray direction → DDA stepping params
@@ -36,18 +36,17 @@ purpose:
 . calculate delta distances (distance per grid step)
 . initialise stepping directions and boundary distances
 . prepare state for efficient grid traversal */
-void	setup_dda_vars(double world_ray_dir_x, double world_ray_dir_y, 
-			t_dda_state *dda_state)
+void	setup_dda_vars(double ray_dir_x, double ray_dir_y, t_dda_state *state)
 {
-	dda_state->map_x = (int)g_game.player.world_pos_x;
-	dda_state->map_y = (int)g_game.player.world_pos_y;
-	dda_state->delta_dist_x = fabs(1.0 / world_ray_dir_x);
-	dda_state->delta_dist_y = fabs(1.0 / world_ray_dir_y);
-	dda_state->world_ray_dir_x = world_ray_dir_x;
-	dda_state->world_ray_dir_y = world_ray_dir_y;
-	setup_x_axis_stepping(world_ray_dir_x, dda_state);
-	setup_y_axis_stepping(world_ray_dir_y, dda_state);
-	dda_state->wall_intersection_found = 0;
+	state->map_x = (int)g_game.player.world_pos_x;
+	state->map_y = (int)g_game.player.world_pos_y;
+	state->delta_dist_x = fabs(1.0 / ray_dir_x);
+	state->delta_dist_y = fabs(1.0 / ray_dir_y);
+	state->world_ray_dir_x = ray_dir_x;
+	state->world_ray_dir_y = ray_dir_y;
+	setup_x_step(ray_dir_x, state);
+	setup_y_step(ray_dir_y, state);
+	state->wall_intersection_found = 0;
 }
 
 /* X-AXIS STEPPING CONFIGURATION
@@ -57,21 +56,23 @@ Mathematical setup:
 - Determine stepping direction: +1 (East) or -1 (West)
 - Calculate distance from player to next X grid line
 - Handles both positive and negative ray directions */
-static void	setup_x_axis_stepping(double world_ray_dir_x, t_dda_state *dda_state)
+static void	setup_x_step(double ray_dir_x, t_dda_state *state)
 {
-	if (world_ray_dir_x < 0)
+	double	player_x;
+	double	dist;
+
+	player_x = g_game.player.world_pos_x;
+	if (ray_dir_x < 0)
 	{
-		// Ray pointing West (-X direction)
-		dda_state->step_x = -1;
-		dda_state->world_dist_to_next_boundary_x = 
-			(g_game.player.world_pos_x - dda_state->map_x) * dda_state->delta_dist_x;
+		state->step_x = -1;
+		dist = (player_x - state->map_x) * state->delta_dist_x;
+		state->world_dist_to_next_boundary_x = dist;
 	}
 	else
 	{
-		// Ray pointing East (+X direction)
-		dda_state->step_x = 1;
-		dda_state->world_dist_to_next_boundary_x = 
-			(dda_state->map_x + 1.0 - g_game.player.world_pos_x) * dda_state->delta_dist_x;
+		state->step_x = 1;
+		dist = (state->map_x + 1.0 - player_x) * state->delta_dist_x;
+		state->world_dist_to_next_boundary_x = dist;
 	}
 }
 
@@ -82,20 +83,22 @@ setup:
 . determine stepping direction: +1 (South) or -1 (North)
 . calculate distance from player to next Y grid line
 . handles both positive and negative ray directions */
-static void	setup_y_axis_stepping(double world_ray_dir_y, t_dda_state *dda_state)
+static void	setup_y_step(double ray_dir_y, t_dda_state *state)
 {
-	if (world_ray_dir_y < 0)
+	double	player_y;
+	double	dist;
+
+	player_y = g_game.player.world_pos_y;
+	if (ray_dir_y < 0)
 	{
-		// Ray pointing North (-Y direction)
-		dda_state->step_y = -1;
-		dda_state->world_dist_to_next_boundary_y = 
-			(g_game.player.world_pos_y - dda_state->map_y) * dda_state->delta_dist_y;
+		state->step_y = -1;
+		dist = (player_y - state->map_y) * state->delta_dist_y;
+		state->world_dist_to_next_boundary_y = dist;
 	}
 	else
 	{
-		// Ray pointing South (+Y direction) 
-		dda_state->step_y = 1;
-		dda_state->world_dist_to_next_boundary_y = 
-			(dda_state->map_y + 1.0 - g_game.player.world_pos_y) * dda_state->delta_dist_y;
+		state->step_y = 1;
+		dist = (state->map_y + 1.0 - player_y) * state->delta_dist_y;
+		state->world_dist_to_next_boundary_y = dist;
 	}
 }

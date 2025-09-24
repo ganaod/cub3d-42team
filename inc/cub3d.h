@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3d.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
+/*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/24 12:28:28 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/24 12:33:48 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/24 12:53:40 by blohrer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,67 +15,73 @@
 
 // ⭐⭐ INCLUDES
 // system
-# include <unistd.h>
-# include <stdlib.h>
-# include <stdio.h>
 # include <fcntl.h>
+# include <stdio.h>
+# include <stdlib.h>
+# include <unistd.h>
 
 // math
 # include <math.h>
 
 // external
 # include "../lib/MLX42/include/MLX42/MLX42.h"
-# include "../lib/libft/libft.h"
-# include "../lib/gnl/get_next_line.h"
 # include "../lib/ft_printf/ft_printf.h"
+# include "../lib/gnl/get_next_line.h"
+# include "../lib/libft/libft.h"
 
 // ⭐⭐ DEFINES
 // ⭐ SYSTEM ARCHITECTURE
 // framebuffer display resolution
-# define DEFAULT_WIDTH					1024
-# define DEFAULT_HEIGHT					768
+# define DEFAULT_WIDTH 1024
+# define DEFAULT_HEIGHT 768
 
 // absolute maximum limits (memory protection)
-# define MAX_RENDER_WIDTH				1600
-# define MAX_RENDER_HEIGHT				900
+# define MAX_RENDER_WIDTH 1600
+# define MAX_RENDER_HEIGHT 900
 
 // exit codes
-# define EXIT_SUCCESS					0
-# define EXIT_FAILURE					1
+# define EXIT_SUCCESS 0
+# define EXIT_FAILURE 1
 
 // ⭐ MATHEMATICAL FOUNDATION
 // (fixed) field of view (FoV) configuration
-# define FOV_DEGREES					60.0
+# define FOV_DEGREES 60.0
 
 // SCREEN > FOV COORDINATE TRANSFORMATION
-# define SCREEN_TO_FOV_SCALE_FACTOR		2.0
-# define FOV_CENTER_OFFSET				1.0
+# define SCREEN_TO_FOV_SCALE_FACTOR 2.0
+# define FOV_CENTER_OFFSET 1.0
+
+// wall face directions: absolute world coords
+# define WALL_NORTH 0
+# define WALL_SOUTH 1
+# define WALL_WEST 2
+# define WALL_EAST 3
+
+// player direction codes: relative to actor orientation
+# define DIR_N 0
+# define DIR_S 1
+# define DIR_W 2
+# define DIR_E 3
 
 // ⭐ WORLD DOMAIN PRIMITIVES
 // map cell types
-# define CELL_VOID						(-1)
-# define CELL_EMPTY						(0)
-# define CELL_WALL						(1)
-
-// wall face directions: absolute world coords
-# define WALL_NORTH						0
-# define WALL_SOUTH						1
-# define WALL_WEST						2
-# define WALL_EAST						3
-
-// player direction codes: relative to actor orientation
-# define DIR_N							0
-# define DIR_S							1
-# define DIR_W							2
-# define DIR_E							3
+typedef enum e_cell
+{
+	CELL_VOID = -1,
+	CELL_EMPTY = 0,
+	CELL_WALL = 1
+}					t_cell;
 
 // ⭐ PARSER STATE FLAGS
-# define HDR_NO							(1<<0)
-# define HDR_SO							(1<<1)
-# define HDR_WE							(1<<2)
-# define HDR_EA							(1<<3)
-# define HDR_F							(1<<4)
-# define HDR_C							(1<<5)
+enum
+{
+	HDR_NO = (1 << 0),
+	HDR_SO = (1 << 1),
+	HDR_WE = (1 << 2),
+	HDR_EA = (1 << 3),
+	HDR_F = (1 << 4),
+	HDR_C = (1 << 5),
+};
 
 // ⭐⭐ STRUCTS
 // PRIMITIVE DATA CONTAINERS
@@ -198,16 +204,14 @@ void				rstrip_eol(char *s);
 int					normalize_map(char ***lines_io, int h, int *out_w);
 
 // ================== MAP_GRID_CELL ==================
-int					put_cell_from_char(t_map *m, t_player *pl, int idx,
-						char c);
+int					put_cell_from_char(t_map *m, t_player *pl, int idx, char c);
 
 // ================== MAP_GRID_FILL ==================
-int					fill_grid(t_map *m, t_player *pl, char **lines,
-						int *count);
+int					fill_grid(t_map *m, t_player *pl, char **lines, int *count);
 
 // ================== MAP_GRID_BUILD ==================
-int					build_grid_from_lines(t_map *m, t_player *pl,
-						char **lines, int *player_found);
+int					build_grid_from_lines(t_map *m, t_player *pl, char **lines,
+						int *player_found);
 
 // ================== MAP_CHECK_FLOOD ==================
 void				ffctx_init(t_ffctx *c, const t_map *m, char *vis, int *q);

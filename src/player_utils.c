@@ -6,44 +6,47 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/18 10:17:40 by blohrer           #+#    #+#             */
-/*   Updated: 2025/09/24 13:27:56 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/24 14:54:29 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/cub3d.h"
 
-static int	is_walkable(const t_map *m, double x, double y)
+// collision prevention (basic & proximity) as solution to texture pixel stretching
+static double	distance_to_nearest_wall(const t_map *m, double x, double y)
 {
-	int	ix = (int)x;
-	int	iy = (int)y;
+	int ix = (int)x;
+	int iy = (int)y;
 	
-	// Basic collision - must be in empty cell
+	// First check: target cell must be empty
 	if (map_cell(m, ix, iy) != CELL_EMPTY)
-		return (0);
+		return (0.0);  // Inside wall - distance is 0
 		
-	// Check distance to nearest walls (prevent extreme proximity)
-	const double MIN_WALL_DIST = 0.1;
+	double fx = x - ix;
+	double fy = y - iy;
+	double min_dist = 1.0;
 	
-	// Check 4 neighboring cells for walls
-	if (map_cell(m, ix + 1, iy) == CELL_WALL && (x - ix) > (1.0 - MIN_WALL_DIST))
-		return (0);  // Too close to east wall
-	if (map_cell(m, ix - 1, iy) == CELL_WALL && (x - ix) < MIN_WALL_DIST)
-		return (0);  // Too close to west wall  
-	if (map_cell(m, ix, iy + 1) == CELL_WALL && (y - iy) > (1.0 - MIN_WALL_DIST))
-		return (0);  // Too close to south wall
-	if (map_cell(m, ix, iy - 1) == CELL_WALL && (y - iy) < MIN_WALL_DIST)
-		return (0);  // Too close to north wall
+	// Check 4 adjacent cells for walls
+	if (map_cell(m, ix + 1, iy) == CELL_WALL)
+		min_dist = fmin(min_dist, 1.0 - fx);
+	if (map_cell(m, ix - 1, iy) == CELL_WALL)
+		min_dist = fmin(min_dist, fx);
+	if (map_cell(m, ix, iy + 1) == CELL_WALL)
+		min_dist = fmin(min_dist, 1.0 - fy);
+	if (map_cell(m, ix, iy - 1) == CELL_WALL)
+		min_dist = fmin(min_dist, fy);
 		
-	return (1);
+	return min_dist;
 }
 
 void	try_move_player(double new_x, double new_y)
 {
-	double	cur_y = g_game.player.world_pos_y;
+	const double MIN_WALL_DISTANCE = 0.15;
+	double cur_y = g_game.player.world_pos_y;
 	
-	if (is_walkable(&g_game.map, new_x, cur_y))
+	if (distance_to_nearest_wall(&g_game.map, new_x, cur_y) >= MIN_WALL_DISTANCE)
 		g_game.player.world_pos_x = new_x;
-	if (is_walkable(&g_game.map, g_game.player.world_pos_x, new_y))
+	if (distance_to_nearest_wall(&g_game.map, g_game.player.world_pos_x, new_y) >= MIN_WALL_DISTANCE)
 		g_game.player.world_pos_y = new_y;
 }
 

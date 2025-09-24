@@ -6,7 +6,7 @@
 /*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/24 09:55:16 by blohrer           #+#    #+#             */
-/*   Updated: 2025/09/24 10:19:34 by blohrer          ###   ########.fr       */
+/*   Updated: 2025/09/24 13:26:09 by blohrer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,20 +19,26 @@ void	parse_error(const char *msg)
 	write(2, "\n", 1);
 }
 
-void	handle_exit_input(void)
+void	handle_exit_input(t_game *g)
 {
 	mlx_t	*mlx;
 
-	mlx = g_game.graphics.mlx;
+	if (!g || !g->graphics.mlx)
+		return ;
+	mlx = g->graphics.mlx;
 	if (mlx_is_key_down(mlx, MLX_KEY_ESCAPE))
 		mlx_close_window(mlx);
 }
 
 void	on_close(void *param)
 {
-	(void)param;
-	g_game.running = 0;
-	mlx_close_window(g_game.graphics.mlx);
+	t_game	*g;
+
+	g = (t_game *)param;
+	if (!g || !g->graphics.mlx)
+		return ;
+	g->running = 0;
+	mlx_close_window(g->graphics.mlx);
 }
 
 int	check_cub_extension(const char *filename)

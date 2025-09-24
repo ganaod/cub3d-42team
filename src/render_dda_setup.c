@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   render_dda_setup.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
+/*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 17:01:49 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/24 11:48:55 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/24 15:45:54 by blohrer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-/* dda setup: transform ray dir > grid traversal params 
+/* dda setup: transform ray dir > grid traversal params
 
 purpose:
 . convert continous ray dir to discrete stepping params
@@ -25,9 +25,6 @@ to naive ray stepping approaches */
 
 #include "../inc/render.h"
 
-static void	setup_x_step(double ray_dir_x, t_dda_state *state);
-static void	setup_y_step(double ray_dir_y, t_dda_state *state);
-
 /* DDA SETUP INITIALIZATION
 transform ray direction → DDA stepping params
 
@@ -36,16 +33,16 @@ purpose:
 . calculate delta distances (distance per grid step)
 . initialise stepping directions and boundary distances
 . prepare state for efficient grid traversal */
-void	setup_dda_vars(double ray_dir_x, double ray_dir_y, t_dda_state *state)
+void	setup_dda_vars(t_game *g, double ray_dir_x, double ray_dir_y, t_dda_state *state)
 {
-	state->map_x = (int)g_game.player.world_pos_x;
-	state->map_y = (int)g_game.player.world_pos_y;
+	state->map_x = (int)g->player.world_pos_x;
+	state->map_y = (int)g->player.world_pos_y;
 	state->delta_dist_x = fabs(1.0 / ray_dir_x);
 	state->delta_dist_y = fabs(1.0 / ray_dir_y);
 	state->world_ray_dir_x = ray_dir_x;
 	state->world_ray_dir_y = ray_dir_y;
-	setup_x_step(ray_dir_x, state);
-	setup_y_step(ray_dir_y, state);
+	setup_x_step(g, ray_dir_x, state);
+	setup_y_step(g, ray_dir_y, state);
 	state->wall_intersection_found = 0;
 }
 
@@ -56,12 +53,12 @@ Mathematical setup:
 - Determine stepping direction: +1 (East) or -1 (West)
 - Calculate distance from player to next X grid line
 - Handles both positive and negative ray directions */
-static void	setup_x_step(double ray_dir_x, t_dda_state *state)
+void	setup_x_step(t_game *g, double ray_dir_x, t_dda_state *state)
 {
 	double	player_x;
 	double	dist;
 
-	player_x = g_game.player.world_pos_x;
+	player_x = g->player.world_pos_x;
 	if (ray_dir_x < 0)
 	{
 		state->step_x = -1;
@@ -83,12 +80,12 @@ setup:
 . determine stepping direction: +1 (South) or -1 (North)
 . calculate distance from player to next Y grid line
 . handles both positive and negative ray directions */
-static void	setup_y_step(double ray_dir_y, t_dda_state *state)
+void	setup_y_step(t_game *g, double ray_dir_y, t_dda_state *state)
 {
 	double	player_y;
 	double	dist;
 
-	player_y = g_game.player.world_pos_y;
+	player_y = g->player.world_pos_y;
 	if (ray_dir_y < 0)
 	{
 		state->step_y = -1;

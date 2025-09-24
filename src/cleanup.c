@@ -6,7 +6,7 @@
 /*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 13:41:44 by blohrer           #+#    #+#             */
-/*   Updated: 2025/09/23 13:49:20 by blohrer          ###   ########.fr       */
+/*   Updated: 2025/09/24 16:01:43 by blohrer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ void	free_lines_array(char **lines, int h)
 	free(lines);
 }
 
-void	free_map(t_map *m)
+void	free_map(t_game *g, t_map *m)
 {
 	int	i;
 
@@ -39,9 +39,9 @@ void	free_map(t_map *m)
 		if (m->texture_paths[i])
 			free(m->texture_paths[i]);
 		m->texture_paths[i] = NULL;
-		if (m->wall_textures[i].mlx_image && g_game.graphics.mlx)
+		if (m->wall_textures[i].mlx_image && g->graphics.mlx)
 		{
-			mlx_delete_image(g_game.graphics.mlx,
+			mlx_delete_image(g->graphics.mlx,
 				m->wall_textures[i].mlx_image);
 			m->wall_textures[i].mlx_image = NULL;
 		}
@@ -59,6 +59,6 @@ int	cleanup_and_exit(t_game *g, int code)
 	if (g && g->graphics.mlx)
 		mlx_terminate(g->graphics.mlx);
 	if (g)
-		free_map(&g->map);
+		free_map(g, &g->map);
 	return (code);
 }

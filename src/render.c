@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   render.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
+/*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 10:54:39 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/24 12:01:08 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/24 14:35:05 by blohrer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,40 +32,41 @@ core operations:
 . for each screen col: cast ray, find wall, draw vert strip
 . screen width determines ray count (1 ray / col)
 . rays spread across player's FOV */
-void	render_complete_frame(void)
+void	render_complete_frame(t_game *g)
 {
-	int	screen_column_x;
-	int	screen_width;
+	int	x;
+	int	w;
 
-	clear_screen_buffer();
-	screen_width = g_game.graphics.screen_width;
-	screen_column_x = 0;
-	while (screen_column_x < screen_width)
+	if (!g || !g->graphics.frame)
+		return ;
+	clear_screen_buffer(g);
+	w = g->graphics.screen_width;
+	x = 0;
+	while (x < w)
 	{
-		render_single_column(screen_column_x);
-		screen_column_x++;
+		render_single_column(g, x);
+		x++;
 	}
 }
 
 /* column-based rendering
 		Why: ray casting gives distance per column, not per pixel
 		necessity: 1 ray → 1 distance → entire vertical strip */
-void	render_single_column(int screen_column_x)
+void	render_single_column(t_game *g, int screen_column_x)
 {
 	double			world_ray_dir_x;
 	double			world_ray_dir_y;
 	t_ray_result	wall_intersection_data;
 	int				projected_wall_height;
 
-	calculate_ray_direction(screen_column_x, &world_ray_dir_x,
+	calculate_ray_direction(g, screen_column_x, &world_ray_dir_x,
 		&world_ray_dir_y);
-	wall_intersection_data
-		= cast_ray_to_wall(world_ray_dir_x, world_ray_dir_y);
-	projected_wall_height
-		= calculate_screen_wall_height
-		(wall_intersection_data.world_perpendicular_distance);
-	render_wall_column(screen_column_x,
-		&wall_intersection_data, projected_wall_height);
+	wall_intersection_data = cast_ray_to_wall(g, world_ray_dir_x,
+			world_ray_dir_y);
+	projected_wall_height = calculate_screen_wall_height(g,
+			wall_intersection_data.world_perpendicular_distance);
+	render_wall_column(g, screen_column_x, &wall_intersection_data,
+		projected_wall_height);
 }
 
 /* WALL COLUMN RENDERING COORDINATION
@@ -77,18 +78,16 @@ receives ray intersection data, adds wall_height, passes both forward
 Mathematical boundaries:
 	wall_start = (screen_height - wall_height) / 2
 	wall_end = wall_start + wall_height */
-void	render_wall_column(int screen_column_x,
-		t_ray_result *wall_intersection_data,
-		int projected_wall_height)
+void	render_wall_column(t_game *g, int screen_column_x,
+		t_ray_result *wall_intersection_data, int projected_wall_height)
 {
-	int	screen_wall_start_y_pixel;
-	int	screen_wall_end_y_pixel;
+	int	start_y;
+	int	end_y;
 
-	screen_wall_start_y_pixel = (g_game.graphics.screen_height
-			- projected_wall_height) / 2;
-	screen_wall_end_y_pixel = screen_wall_start_y_pixel + projected_wall_height;
-	render_ceiling_section(screen_column_x, screen_wall_start_y_pixel);
-	render_wall_section(screen_column_x, screen_wall_start_y_pixel,
-		screen_wall_end_y_pixel, wall_intersection_data);
-	render_floor_section(screen_column_x, screen_wall_end_y_pixel);
+	start_y = (g->graphics.screen_height - projected_wall_height) / 2;
+	end_y = start_y + projected_wall_height;
+	render_ceiling_section(g, screen_column_x, start_y);
+	render_wall_section(g, screen_column_x, start_y, end_y,
+		wall_intersection_data);
+	render_floor_section(g, screen_column_x, end_y);
 }

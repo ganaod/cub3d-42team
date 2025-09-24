@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   render_ray_cast.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
+/*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 13:48:28 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/24 12:03:55 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/24 14:55:28 by blohrer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,18 +39,18 @@ top-down view of rays from player (P):
   P -> dir (forward)
        \
         \ ray offset = -1 (left) */
-void	calculate_ray_direction(int screen_column_x,
+void	calculate_ray_direction(t_game *g, int screen_column_x,
 	double *world_ray_direction_x, double *world_ray_direction_y)
 {
 	double	fov_space_camera_plane_offset;
 
 	fov_space_camera_plane_offset
 		= (SCREEN_TO_FOV_SCALE_FACTOR * screen_column_x)
-		/ (double)g_game.graphics.screen_width - FOV_CENTER_OFFSET;
-	*world_ray_direction_x = g_game.player.world_dir_x
-		+ fov_space_camera_plane_offset * g_game.player.world_camera_plane_x;
-	*world_ray_direction_y = g_game.player.world_dir_y
-		+ fov_space_camera_plane_offset * g_game.player.world_camera_plane_y;
+		/ (double)g->graphics.screen_width - FOV_CENTER_OFFSET;
+	*world_ray_direction_x = g->player.world_dir_x
+		+ fov_space_camera_plane_offset * g->player.world_camera_plane_x;
+	*world_ray_direction_y = g->player.world_dir_y
+		+ fov_space_camera_plane_offset * g->player.world_camera_plane_y;
 }
 
 /* no peripheral sweep → all columns show the same forward view.
@@ -59,8 +59,8 @@ visual effect: telescope-like, extremely narrow, boring “tunnel” view */
 // 		double *world_ray_direction_x, double *world_ray_direction_y)
 // {
 // 	(void)screen_column_x;
-// 	*world_ray_direction_x = g_game.player.world_dir_x;
-// 	*world_ray_direction_y = g_game.player.world_dir_y;
+// 	*world_ray_direction_x = g->player.world_dir_x;
+// 	*world_ray_direction_y = g->player.world_dir_y;
 // }
 
 /* why? determine which compass dir wall face was hit by a ray
@@ -72,14 +72,14 @@ how? 1. check wall orientation (vert/horz)
 	. vert walls: x-coord
 		intersection_x > player_x : E
 	. horz walls: y-coord
-		intersection_y > player_y : S	
+		intersection_y > player_y : S
 3. ret compass dir const for texture selection */
-int	determine_intersected_wall_face(t_ray_result *wall_intersection_data)
+int	determine_intersected_wall_face(t_game *g, t_ray_result *wall_intersection_data)
 {
 	if (wall_intersection_data->world_wall_side == VERTICAL_WALL)
 	{
 		if (wall_intersection_data->world_intersection_x
-			> g_game.player.world_pos_x)
+			> g->player.world_pos_x)
 			return (WALL_EAST);
 		else
 			return (WALL_WEST);
@@ -87,7 +87,7 @@ int	determine_intersected_wall_face(t_ray_result *wall_intersection_data)
 	else
 	{
 		if (wall_intersection_data->world_intersection_y
-			> g_game.player.world_pos_y)
+			> g->player.world_pos_y)
 			return (WALL_SOUTH);
 		else
 			return (WALL_NORTH);

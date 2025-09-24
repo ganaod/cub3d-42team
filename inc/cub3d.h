@@ -6,7 +6,7 @@
 /*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/24 12:28:28 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/24 12:53:40 by blohrer          ###   ########.fr       */
+/*   Updated: 2025/09/24 16:07:28 by blohrer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,9 +164,6 @@ typedef struct s_game
 	double			time_now;
 }					t_game;
 
-// global game state
-extern t_game		g_game;
-
 // ⭐⭐ FUNCTION PROTOTYPES
 // ================== PARSE_UTILS ==================
 int					skip_ws(const char *s, int i);
@@ -234,14 +231,14 @@ int					flood_from_border(t_ffctx *c);
 int					map_is_closed(const t_map *m);
 
 // ================== GAME_LOOP ==================
-double				get_delta_time(void);
-void				rotate_player(double angle);
-void				try_move_player(double new_x, double new_y);
-void				handle_input(double dt);
+double				get_delta_time(t_game *g);
+void				rotate_player(t_game *g, double angle);
+void				try_move_player(t_game *g, double new_x, double new_y);
+void				handle_input(t_game *g, double dt);
 void				game_loop_tick(void *param);
 void				on_close(void *param);
-void				handle_exit_input(void);
-void				handle_rotation_input(double ang);
+void				handle_exit_input(t_game *g);
+void				handle_rotation_input(t_game *g, double ang);
 int					map_cell(const t_map *m, int ix, int iy);
 
 // ================== UTILS ==================
@@ -262,7 +259,7 @@ int					load_all_wall_textures(t_map *m);
 
 // ================== CLEANUP ==================
 void				free_lines_array(char **lines, int h);
-void				free_map(t_map *m);
+void				free_map(t_game *g, t_map *m);
 int					cleanup_and_exit(t_game *g, int code);
 
 // ================== RUNTIME_INIT ==================

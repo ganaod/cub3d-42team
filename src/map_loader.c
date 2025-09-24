@@ -6,7 +6,7 @@
 /*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 14:24:47 by blohrer           #+#    #+#             */
-/*   Updated: 2025/09/23 14:50:54 by blohrer          ###   ########.fr       */
+/*   Updated: 2025/09/24 16:03:25 by blohrer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ static int	map_collect_lines_close(t_game *g, int fd, char ***out_lines,
 	{
 		parse_error("collect_map_lines failed");
 		close(fd);
-		free_map(&g->map);
+		free_map(g, &g->map);
 		return (0);
 	}
 	close(fd);
@@ -60,7 +60,7 @@ static int	map_normalize_lines_only(t_game *g, char ***lines_io, int h)
 	{
 		parse_error("normalize_map failed");
 		free_lines_array(*lines_io, h);
-		free_map(&g->map);
+		free_map(g, &g->map);
 		return (0);
 	}
 	return (1);
@@ -76,14 +76,14 @@ static int	map_build_grid_and_check(t_game *g, char **lines, int h)
 	{
 		parse_error("grid build failed (player count)");
 		free_lines_array(lines, h);
-		free_map(&g->map);
+		free_map(g, &g->map);
 		return (0);
 	}
 	if (!map_is_closed(&g->map))
 	{
 		parse_error("map is open (leaks into VOID)");
 		free_lines_array(lines, h);
-		free_map(&g->map);
+		free_map(g, &g->map);
 		return (0);
 	}
 	free_lines_array(lines, h);

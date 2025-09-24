@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   render_column.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
+/*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 10:54:44 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/24 11:43:46 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/24 15:55:39 by blohrer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,54 +29,62 @@ re. texture, from subject:
 
 hence
 1 helper per section, texturing
-only in render_wall_section() */
+only in	render_wall_section(void) */
 
 #include "../inc/render.h"
 
-void	render_ceiling_section(int screen_column_x, int wall_start_y_pixel)
+void	render_ceiling_section(t_game *g, int screen_column_x,
+		int wall_start_y_pixel)
 {
-	int	current_pixel_y;
+	int			y;
+	int			h;
+	uint32_t	color;
 
-	current_pixel_y = 0;
-	while (current_pixel_y < wall_start_y_pixel)
+	if (!g || !g->graphics.frame)
+		return ;
+	h = g->graphics.screen_height;
+	if (wall_start_y_pixel < 0)
+		wall_start_y_pixel = 0;
+	if (wall_start_y_pixel > h)
+		wall_start_y_pixel = h;
+	color = g->map.ceiling_color;
+	y = 0;
+	while (y < wall_start_y_pixel)
 	{
-		put_pixel(screen_column_x, current_pixel_y, g_game.map.ceiling_color);
-		current_pixel_y++;
+		put_pixel(g, screen_column_x, y, color);
+		y++;
 	}
 }
 
-void	render_wall_section(int screen_column_x, int wall_start_y_pixel,
-						int wall_end_y_pixel, t_ray_result *wall_hit_data)
+void	render_wall_section(t_game *g, int screen_column_x, int wall_start_y_pixel,
+		int wall_end_y_pixel, t_ray_result *wall_hit_data)
 {
 	int					current_pixel_y;
 	uint32_t			pixel_color;
 	t_texture_context	texture_mapping_info;
 
 	texture_mapping_info.world_wall_face = wall_hit_data->world_wall_face;
-	texture_mapping_info.world_wall_intersection_x
-		= wall_hit_data->world_intersection_x;
-	texture_mapping_info.world_wall_intersection_y
-		= wall_hit_data->world_intersection_y;
-	texture_mapping_info.screen_wall_height
-		= wall_end_y_pixel - wall_start_y_pixel;
+	texture_mapping_info.world_wall_intersection_x = wall_hit_data->world_intersection_x;
+	texture_mapping_info.world_wall_intersection_y = wall_hit_data->world_intersection_y;
+	texture_mapping_info.screen_wall_height = wall_end_y_pixel
+		- wall_start_y_pixel;
 	current_pixel_y = wall_start_y_pixel;
 	while (current_pixel_y < wall_end_y_pixel)
 	{
-		pixel_color = screen_pixel_texture_colour(&texture_mapping_info,
+		pixel_color = screen_pixel_texture_colour(g, &texture_mapping_info,
 				current_pixel_y);
-		put_pixel(screen_column_x, current_pixel_y, pixel_color);
+		put_pixel(g, screen_column_x, current_pixel_y, pixel_color);
 		current_pixel_y++;
 	}
 }
 
-void	render_floor_section(int screen_column_x, int wall_end_y_pixel)
+void	render_floor_section(t_game *g, int screen_column_x, int wall_end_y_pixel)
 {
-	int	current_pixel_y;
+	int y = wall_end_y_pixel;
 
-	current_pixel_y = wall_end_y_pixel;
-	while (current_pixel_y < g_game.graphics.screen_height)
+	while (y < g->graphics.screen_height)
 	{
-		put_pixel(screen_column_x, current_pixel_y, g_game.map.floor_color);
-		current_pixel_y++;
+		put_pixel(g, screen_column_x, y, g->map.floor_color);
+		y++;
 	}
 }

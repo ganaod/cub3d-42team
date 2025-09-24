@@ -6,7 +6,7 @@
 /*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 10:03:55 by blohrer           #+#    #+#             */
-/*   Updated: 2025/09/22 09:36:59 by blohrer          ###   ########.fr       */
+/*   Updated: 2025/09/24 12:59:18 by blohrer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,8 @@ static int	ensure_array_initialized(char ***lines_ptr, int *cap_ptr,
 static int	grow_if_needed(char ***lines_ptr, int *cap_ptr, int h)
 {
 	char	**new_lines;
-	int		new_cap;
 	int		i;
+	int		new_cap;
 
 	if (!lines_ptr || !*lines_ptr || !cap_ptr)
 		return (0);

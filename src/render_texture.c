@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   render_texture.c                                   :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/07 14:01:40 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/24 16:00:12 by blohrer          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 /* TEXTURE
 . projection established spatial positioning, scale relationships
 . texturing provides surface appearance, visual detail
@@ -62,14 +50,14 @@ Mathematical Process: world_wall_position - floor(world_wall_position)
 . Ray impact becomes surface coordinate */
 double	world_wall_texture_u(t_texture_context *ctx)
 {
-	double	inter_coord;
+	double	wall_coordinate;
 
-	if (ctx->world_wall_face == WALL_NORTH
-		|| ctx->world_wall_face == WALL_SOUTH)
-		inter_coord = ctx->world_wall_intersection_x;
+	if (ctx->world_wall_face == WALL_NORTH || ctx->world_wall_face == WALL_SOUTH)
+		wall_coordinate = ctx->world_wall_intersection_x;  // Use parametric X
 	else
-		inter_coord = ctx->world_wall_intersection_y;
-	return (safe_fractional_part(inter_coord));
+		wall_coordinate = ctx->world_wall_intersection_y;  // Use parametric Y
+
+	return (safe_fractional_part(wall_coordinate));
 }
 
 /* Screen pixel → texture vertical position
@@ -84,8 +72,7 @@ double	screen_wall_texture_v(t_game *g, t_texture_context *ctx, int curr_px_y)
 	int		end_y;
 	double	span;
 
-	simulate_eye_level_perspective(g, ctx->screen_wall_height,
-		&start_y, &end_y);
+	simulate_eye_level_perspective(g, ctx->screen_wall_height, &start_y, &end_y);
 	span = end_y - start_y;
 	if (span <= 0)
 		return (0.0);
@@ -97,8 +84,7 @@ Input Space: TEXTURE SPACE (normalized UV coordinates converted to pixel indices
 Output Space: COLOUR VALUE (RGB data from texture memory)
 Mathematical Process: Bounds protection + 2D→1D array indexing
 . Surface position becomes pixel reality */
-int	texture_pixel_colour(t_texture_image *tx_img,
-	int tx_px_x, int tx_px_y)
+int	texture_pixel_colour(t_texture_image *tx_img, int tx_px_x, int tx_px_y)
 {
 	int	clamped_w;
 	int	clamped_h;

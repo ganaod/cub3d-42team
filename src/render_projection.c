@@ -1,16 +1,5 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   render_projection.c                                :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/07 11:18:50 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/24 15:53:10 by blohrer          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../inc/render.h"
+#include <stdio.h> // printf for optional debug
 
 /* convert 1D dist measurements > 2D screen pixel heights
 (creating 3D/2.5D depth illusion)
@@ -44,6 +33,7 @@ behaviour:
 	. Distance 1.0 → Wall fills screen (height = screen_height)
 	. Distance 2.0 → Wall half screen (height = screen_height/2)
 	. Distance → ∞ → Wall approaches 0 pixels	*/
+
 /* CALCULATE SCREEN WALL HEIGHT
 Perspective projection: Convert world distance to screen pixels
 
@@ -62,19 +52,15 @@ Maximum 2x screen height allows for reasonable "wall fills view" effect
 without creating unmanageable pixel counts for column renderer  */
 int	calculate_screen_wall_height(t_game *g, double world_wall_distance)
 {
-	int		screen_wall_height_pixels;
-	int		max_wall_height;
-	double	world_wall_distance_protected;
+	int	screen_wall_height_pixels;
 
-	world_wall_distance_protected = world_wall_distance;
-	if (world_wall_distance_protected < MINIMUM_WALL_DISTANCE_THRESHOLD)
-		world_wall_distance_protected = MINIMUM_WALL_DISTANCE_THRESHOLD;
-	screen_wall_height_pixels = (int)(g->graphics.screen_height
-			/ world_wall_distance_protected);
-	max_wall_height = g->graphics.screen_height
-		* MAXIMUM_WALL_HEIGHT_MULTIPLIER;
-	if (screen_wall_height_pixels > max_wall_height)
-		screen_wall_height_pixels = max_wall_height;
+	// Use raw distance directly - no protection/clamping
+	screen_wall_height_pixels =
+		(int)(g->graphics.screen_height / world_wall_distance);
+
+	if (world_wall_distance < 0.5)
+		printf("Distance: %.6f → Height: %d pixels\n",
+		       world_wall_distance, screen_wall_height_pixels);
 	return (screen_wall_height_pixels);
 }
 

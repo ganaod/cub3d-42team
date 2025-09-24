@@ -36,16 +36,6 @@
 # define FOV_DEGREES					60.0
 // good perspective without excessive distortion
 
-# define FOV_RADIANS					(FOV_DEGREES * (M_PI / 180.0))
-// convert FOV from degrees > radians for C's math fns
-
-# define FOV_HALF_ANGLE_RADIANS			(FOV_RADIANS / 2.0)
-// half-angle needed for tangent calculation
-
-# define FOV_CAMERA_PLANE_MAGNITUDE		tan(FOV_HALF_ANGLE_RADIANS)
-// camera plane vector magnitude for desired FOV
-// this value determines angular spread of vision
-
 // SCREEN > FOV COORDINATE TRANSFORMATION
 # define SCREEN_TO_FOV_SCALE_FACTOR		2.0
 // Scales normalized screen coordinates [0,1] to [0,2]

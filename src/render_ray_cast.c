@@ -6,12 +6,11 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 13:48:28 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/24 10:39:47 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/24 11:04:54 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-/* ray geometric operations: mathematical transformations for 3D vision simulation
-core responsibility: screen coordinate → world ray vector transformations */
+/* core responsibility: screen coordinate → world ray vector transformations */
 
 #include "../inc/render.h"
 
@@ -39,18 +38,18 @@ top-down view of rays from player (P):
        /
   P -> dir (forward)
        \
-        \ ray offset = -1 (left)
-*/
-void calc_ray_dir(int screen_column_x, 
+        \ ray offset = -1 (left) */
+void	calc_ray_dir(int screen_column_x,
 	double *world_ray_direction_x, double *world_ray_direction_y)
 {
-	double fov_space_camera_plane_offset;
-	
-	fov_space_camera_plane_offset = SCREEN_TO_FOV_SCALE_FACTOR * screen_column_x 
+	double	fov_space_camera_plane_offset;
+
+	fov_space_camera_plane_offset
+		= (SCREEN_TO_FOV_SCALE_FACTOR * screen_column_x)
 		/ (double)g_game.graphics.screen_width - FOV_CENTER_OFFSET;
-	*world_ray_direction_x = g_game.player.world_dir_x 
+	*world_ray_direction_x = g_game.player.world_dir_x
 		+ fov_space_camera_plane_offset * g_game.player.world_camera_plane_x;
-	*world_ray_direction_y = g_game.player.world_dir_y 
+	*world_ray_direction_y = g_game.player.world_dir_y
 		+ fov_space_camera_plane_offset * g_game.player.world_camera_plane_y;
 }
 
@@ -79,14 +78,16 @@ int	determine_intersected_wall_face(t_ray_result *wall_intersection_data)
 {
 	if (wall_intersection_data->world_wall_side == VERTICAL_WALL)
 	{
-		if (wall_intersection_data->world_intersection_x > g_game.player.world_pos_x)
+		if (wall_intersection_data->world_intersection_x
+			> g_game.player.world_pos_x)
 			return (WALL_EAST);
 		else
 			return (WALL_WEST);
 	}
 	else
 	{
-		if (wall_intersection_data->world_intersection_y > g_game.player.world_pos_y)
+		if (wall_intersection_data->world_intersection_y
+			> g_game.player.world_pos_y)
 			return (WALL_SOUTH);
 		else
 			return (WALL_NORTH);

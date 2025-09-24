@@ -1,36 +1,34 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: kzarins <kzarins@student.42heilbronn.de    +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2025/03/29 10:09:34 by blohrer           #+#    #+#              #
-#    Updated: 2025/04/08 15:36:54 by kzarins          ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
-
 NAME = libgnl.a
-
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -I.
+CFLAGS = -Wall -Wextra -Werror -I. -MMD -MP
+
+# object directory
+OBJ_DIR = obj
 
 SRC = get_next_line.c get_next_line_utils.c
-OBJ = $(SRC:.c=.o)
+
+# object and dependency files
+OBJ = $(addprefix $(OBJ_DIR)/,$(SRC:.c=.o))
+DEPS = $(OBJ:.o=.d)
 
 all: $(NAME)
 
 $(NAME): $(OBJ)
-	@ar rcs $(NAME) $(OBJ) > /dev/null
+	ar rcs $(NAME) $(OBJ)
 
-%.o: %.c
-	@$(CC) $(CFLAGS) -c $< -o $@ > /dev/null
+$(OBJ_DIR)/%.o: %.c | $(OBJ_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(OBJ_DIR):
+	mkdir -p $(OBJ_DIR)
+
+-include $(DEPS)
 
 clean:
-	@rm -f $(OBJ) > /dev/null
+	rm -rf $(OBJ_DIR)
 
 fclean: clean
-	@rm -f $(NAME) > /dev/null
+	rm -f $(NAME)
 
 re: fclean all
 

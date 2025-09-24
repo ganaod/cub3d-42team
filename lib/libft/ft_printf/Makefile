@@ -1,43 +1,41 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: kzarins <kzarins@student.42heilbronn.de    +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2024/10/29 10:58:28 by blohrer           #+#    #+#              #
-#    Updated: 2025/04/08 15:37:09 by kzarins          ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
-
-NAME 	= libftprintf.a
-CC 		= gcc
-CFLAGS 	= -Wall -Wextra -Werror
+NAME = libftprintf.a
+CC = gcc
+CFLAGS = -Wall -Wextra -Werror -MMD -MP
 AR = ar
 
-CFILES =	ft_putchar.c \
-			ft_putstr.c \
-			ft_putnbr_fd.c \
-			ft_puthex.c \
-			ft_put_unsigned.c \
-			ft_put_pointer.c \
-			ft_printf.c \
+# object directory
+OBJ_DIR = obj
 
-OFILES = $(CFILES:.c=.o)
+CFILES = ft_putchar.c \
+	ft_putstr.c \
+	ft_putnbr_fd.c \
+	ft_puthex.c \
+	ft_put_unsigned.c \
+	ft_put_pointer.c \
+	ft_printf.c
+
+# object and dependency files
+OBJ = $(addprefix $(OBJ_DIR)/,$(CFILES:.c=.o))
+DEPS = $(OBJ:.o=.d)
 
 all: $(NAME)
 
-$(NAME): $(OFILES)
-	@$(AR) rcs $(NAME) $(OFILES) > /dev/null
+$(NAME): $(OBJ)
+	$(AR) rcs $(NAME) $(OBJ)
 
-%.o: %.c
-	@$(CC) -c $(CFLAGS) $? > /dev/null
+$(OBJ_DIR)/%.o: %.c | $(OBJ_DIR)
+	$(CC) -c $(CFLAGS) $< -o $@
+
+$(OBJ_DIR):
+	mkdir -p $(OBJ_DIR)
+
+-include $(DEPS)
 
 clean:
-	@rm -f $(OFILES) > /dev/null
+	rm -rf $(OBJ_DIR)
 
 fclean: clean
-	@rm -f $(NAME) $(OBFILES) > /dev/null
+	rm -f $(NAME)
 
 re: fclean all
 

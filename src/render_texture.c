@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 14:01:40 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/24 10:50:39 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/24 13:32:51 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,16 +66,16 @@ Mathematical Process: world_wall_position - floor(world_wall_position)
 	floor calculation: fractional result represents relative position within
 	grid cell, independent of cell's world location
 . Ray impact becomes surface coordinate */
-static double	world_wall_texture_u(t_texture_context *ctx)
+static double world_wall_texture_u(t_texture_context *ctx)
 {
-	double	inter_coord;
-
-	if (ctx->world_wall_face == WALL_NORTH
-		|| ctx->world_wall_face == WALL_SOUTH)
-		inter_coord = ctx->world_wall_intersection_x;
-	else
-		inter_coord = ctx->world_wall_intersection_y;
-	return (safe_fractional_part(inter_coord));
+    double wall_coordinate;
+    
+    if (ctx->world_wall_face == WALL_NORTH || ctx->world_wall_face == WALL_SOUTH)
+        wall_coordinate = ctx->world_wall_intersection_x;  // Use parametric X
+    else
+        wall_coordinate = ctx->world_wall_intersection_y;  // Use parametric Y
+        
+    return safe_fractional_part(wall_coordinate);
 }
 
 /* Screen pixel → texture vertical position

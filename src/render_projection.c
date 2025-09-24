@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/07 11:18:50 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/24 11:55:17 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/24 13:49:46 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,18 +68,21 @@ without creating unmanageable pixel counts for column renderer  */
 int	calculate_screen_wall_height(double world_wall_distance)
 {
 	int		screen_wall_height_pixels;
-	int		max_wall_height;
+	// int		max_wall_height;
 	double	world_wall_distance_protected;
 
 	world_wall_distance_protected = world_wall_distance;
 	if (world_wall_distance_protected < MINIMUM_WALL_DISTANCE_THRESHOLD)
 		world_wall_distance_protected = MINIMUM_WALL_DISTANCE_THRESHOLD;
+	
 	screen_wall_height_pixels = (int)(g_game.graphics.screen_height
 			/ world_wall_distance_protected);
-	max_wall_height = g_game.graphics.screen_height
-		* MAXIMUM_WALL_HEIGHT_MULTIPLIER;
-	if (screen_wall_height_pixels > max_wall_height)
-		screen_wall_height_pixels = max_wall_height;
+	
+	// DEBUG OUTPUT - Add this
+	if (world_wall_distance < 0.5)  // Only show when very close
+		printf("Distance: %.6f → Height: %d pixels\n", 
+		       world_wall_distance, screen_wall_height_pixels);
+	
 	return (screen_wall_height_pixels);
 }
 

@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/24 11:57:43 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/24 11:57:43 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/24 13:17:54 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,15 +35,6 @@ typedef struct s_dda_state
 	double	world_ray_dir_y;
 	int		wall_intersection_found;
 }	t_dda_state;
-
-typedef struct s_distance_calc_context
-{
-	double	wall_grid_position;
-	double	player_position;
-	double	ray_direction_component;
-	double	wall_face_offset;
-	int		step_direction;
-}	t_distance_calc_context;
 
 typedef struct s_ray_result
 {

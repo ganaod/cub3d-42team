@@ -94,7 +94,7 @@
 []Memory usage remains stable (no obvious leaks during gameplay)
 []Program handles rapid input without crashing
 
-### SMART-ASS STRESS TESTS
+### STRESS TESTS
 []Keyboard mashing (roll face on keyboard) doesn't crash program
 []Rapid window resizing/minimizing doesn't break display
 []Running with wrong number of arguments fails gracefully

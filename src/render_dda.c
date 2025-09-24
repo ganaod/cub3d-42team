@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/24 12:09:39 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/24 12:10:15 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/24 13:16:33 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,6 @@
 
 void			execute_dda_traversal(t_dda_state *state, int *wall_side);
 double			calculate_wall_distance(t_dda_state *dda_state, int wall_side);
-static void		setup_distance_context(t_dda_state *dda_state, int wall_side,
-					t_distance_calc_context *ctx);
-static double	compute_perpendicular_distance(t_distance_calc_context *ctx);
 
 /* Digital Differential Analyzer (DDA) traversal algorithm: 
 optimal discrete grid intersection algo
@@ -112,49 +109,10 @@ void	execute_dda_traversal(t_dda_state *dda_state, int *world_wall_side)
 }
 
 /* calculate perpendicular distance from player to wall intersection */
-double	calculate_wall_distance(t_dda_state *dda_state, int world_wall_side)
+double calculate_wall_distance(t_dda_state *dda_state, int world_wall_side)
 {
-	t_distance_calc_context	calc_context;
-
-	setup_distance_context(dda_state, world_wall_side, &calc_context);
-	return (compute_perpendicular_distance(&calc_context));
-}
-
-/* setup calculation context with all required values
-   extracts coordinate components, step direction, and wall face offset 
-   
-Direction of movement determines which face of the cell you hit first:
-Moving positive (+1): Hit the near edge (0 offset from cell origin)
-Moving negative (-1): Hit the far edge (1 offset from cell origin)   */
-static void	setup_distance_context(t_dda_state *dda_state, int world_wall_side,
-		t_distance_calc_context *ctx)
-{
-	if (world_wall_side == VERTICAL_WALL)
-	{
-		ctx->wall_grid_position = (double)dda_state->map_x;
-		ctx->player_position = g_game.player.world_pos_x;
-		ctx->ray_direction_component = dda_state->world_ray_dir_x;
-		ctx->step_direction = dda_state->step_x;
-	}
-	else
-	{
-		ctx->wall_grid_position = (double)dda_state->map_y;
-		ctx->player_position = g_game.player.world_pos_y;
-		ctx->ray_direction_component = dda_state->world_ray_dir_y;
-		ctx->step_direction = dda_state->step_y;
-	}
-	if (ctx->step_direction == 1)
-		ctx->wall_face_offset = 0.0;
-	else
-		ctx->wall_face_offset = 1.0;
-}
-
-/* compute final perpendicular distance using prepared context */
-static double	compute_perpendicular_distance(t_distance_calc_context *ctx)
-{
-	double	distance_in_grid_units;
-
-	distance_in_grid_units = ctx->wall_grid_position - ctx->player_position
-		+ ctx->wall_face_offset;
-	return (distance_in_grid_units / ctx->ray_direction_component);
+    if (world_wall_side == VERTICAL_WALL)
+        return (dda_state->world_dist_to_next_boundary_x - dda_state->delta_dist_x);
+    else
+        return (dda_state->world_dist_to_next_boundary_y - dda_state->delta_dist_y);
 }

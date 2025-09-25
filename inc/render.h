@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/25 09:18:15 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/25 09:23:07 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/25 09:27:29 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # define VERTICAL_WALL    0
 # define HORIZONTAL_WALL  1
 
+// screen-space positioning data for sgl col
 typedef struct s_screen_column_bounds
 {
     int column_x;
@@ -59,14 +60,12 @@ typedef struct s_texture_context
 
 void		render_complete_frame(t_game *g);
 void		render_single_column(t_game *g, int screen_column_x);
-void		render_wall_column(t_game *g, int screen_column_x,
-				t_ray_result *wall_intersection_data,
-				int projected_wall_height);
+void render_wall_column(t_game *g, int screen_column_x,
+	t_ray_result *wall_intersection_data, int projected_wall_height);
 void		render_ceiling_section(t_game *g, int screen_column_x,
 				int wall_start_y_pixel);
-void		render_wall_section(t_game *g, int screen_column_x,
-				int wall_start_y_pixel, int wall_end_y_pixel,
-				t_ray_result *wall_hit_data);
+void render_wall_section(t_game *g, t_screen_column_bounds *screen_bounds,
+					t_ray_result *wall_hit_data);
 void		render_floor_section(t_game *g, int screen_column_x,
 				int wall_end_y_pixel);
 

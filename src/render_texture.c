@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/25 11:22:37 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/25 11:25:48 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/25 11:31:19 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,20 +94,4 @@ double	world_wall_texture_u(t_texture_context *ctx)
 	else
 		wall_coordinate = ctx->world_wall_intersection_y;
 	return (safe_fractional_part(wall_coordinate));
-}
-
-/* Extract fractional part of coordinate for texture mapping
-Input: World coordinate (can be negative or > 1.0)
-Output: Normalized fractional part in range [0.0, 1.0)
-Handles: Negative coordinates and ensures valid texture coordinate range */
-double	safe_fractional_part(double coordinate)
-{
-	double	fractional;
-
-	fractional = coordinate - floor(coordinate);
-	if (fractional < 0.0)
-		fractional += 1.0;
-	if (fractional >= 1.0)
-		fractional = 0.999999;
-	return (fractional);
 }

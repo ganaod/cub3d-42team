@@ -6,7 +6,7 @@
 /*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 13:48:28 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/24 14:55:28 by blohrer          ###   ########.fr       */
+/*   Updated: 2025/09/25 09:42:04 by blohrer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,19 +34,19 @@ notes on plane:
 	. acts as a helper for generating angular deviation
 	. scaling offset * plane produces angular spread across screen columns
 top-down view of rays from player (P):
-        / ray offset = +1 (right)
-       /
+		/ ray offset = +1 (right)
+		/
   P -> dir (forward)
-       \
-        \ ray offset = -1 (left) */
+		\
+		\ ray offset = -1 (left) */
 void	calculate_ray_direction(t_game *g, int screen_column_x,
-	double *world_ray_direction_x, double *world_ray_direction_y)
+		double *world_ray_direction_x, double *world_ray_direction_y)
 {
 	double	fov_space_camera_plane_offset;
 
-	fov_space_camera_plane_offset
-		= (SCREEN_TO_FOV_SCALE_FACTOR * screen_column_x)
-		/ (double)g->graphics.screen_width - FOV_CENTER_OFFSET;
+	fov_space_camera_plane_offset = (SCREEN_TO_FOV_SCALE_FACTOR
+			* screen_column_x) / (double)g->graphics.screen_width
+		- FOV_CENTER_OFFSET;
 	*world_ray_direction_x = g->player.world_dir_x
 		+ fov_space_camera_plane_offset * g->player.world_camera_plane_x;
 	*world_ray_direction_y = g->player.world_dir_y
@@ -74,7 +74,8 @@ how? 1. check wall orientation (vert/horz)
 	. horz walls: y-coord
 		intersection_y > player_y : S
 3. ret compass dir const for texture selection */
-int	determine_intersected_wall_face(t_game *g, t_ray_result *wall_intersection_data)
+int	determine_intersected_wall_face(t_game *g,
+		t_ray_result *wall_intersection_data)
 {
 	if (wall_intersection_data->world_wall_side == VERTICAL_WALL)
 	{

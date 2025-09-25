@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   render_texture.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/25 09:38:18 by blohrer           #+#    #+#             */
+/*   Updated: 2025/09/25 09:38:56 by blohrer          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 /* TEXTURE
 . projection established spatial positioning, scale relationships
 . texturing provides surface appearance, visual detail
@@ -5,9 +17,6 @@
 
 texture mapping: world pos > texture pos
 texture sampling: extract colour vals	*/
-
-#include "../inc/render.h"
-
 /* Transform single screen pixel → colour value
 Input Space: SCREEN SPACE (pixel Y coordinate)
 	+ TEXTURE CONTEXT (world intersection data)
@@ -21,7 +30,10 @@ invalid states:
 . broken texture data (corrupted image dimensions)
 these specific wall pixels render as bright magenta (0xFF00FF)
 clearer debugging than silent black pixels / crash */
-int	screen_pixel_texture_colour(t_game *g, t_texture_context *ctx, int current_pixel_y)
+#include "../inc/render.h"
+
+int	screen_pixel_texture_colour(t_game *g, t_texture_context *ctx,
+		int current_pixel_y)
 {
 	t_texture_image	*tex;
 	double			texture_coord_u;
@@ -52,11 +64,11 @@ double	world_wall_texture_u(t_texture_context *ctx)
 {
 	double	wall_coordinate;
 
-	if (ctx->world_wall_face == WALL_NORTH || ctx->world_wall_face == WALL_SOUTH)
-		wall_coordinate = ctx->world_wall_intersection_x;  // Use parametric X
+	if (ctx->world_wall_face == WALL_NORTH
+		|| ctx->world_wall_face == WALL_SOUTH)
+		wall_coordinate = ctx->world_wall_intersection_x;
 	else
-		wall_coordinate = ctx->world_wall_intersection_y;  // Use parametric Y
-
+		wall_coordinate = ctx->world_wall_intersection_y;
 	return (safe_fractional_part(wall_coordinate));
 }
 
@@ -72,7 +84,8 @@ double	screen_wall_texture_v(t_game *g, t_texture_context *ctx, int curr_px_y)
 	int		end_y;
 	double	span;
 
-	simulate_eye_level_perspective(g, ctx->screen_wall_height, &start_y, &end_y);
+	simulate_eye_level_perspective(g, ctx->screen_wall_height, &start_y,
+		&end_y);
 	span = end_y - start_y;
 	if (span <= 0)
 		return (0.0);

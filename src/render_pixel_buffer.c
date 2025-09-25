@@ -6,7 +6,7 @@
 /*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 15:51:35 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/24 14:50:34 by blohrer          ###   ########.fr       */
+/*   Updated: 2025/09/25 09:42:12 by blohrer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,7 @@ void	clear_screen_buffer(t_game *g)
 	size_t	bytes_per_pixel;
 	size_t	total_buffer_size_bytes;
 
-	screen_pixel_count = g->graphics.screen_width
-		* g->graphics.screen_height;
+	screen_pixel_count = g->graphics.screen_width * g->graphics.screen_height;
 	bytes_per_pixel = sizeof(uint32_t);
 	total_buffer_size_bytes = screen_pixel_count * bytes_per_pixel;
 	ft_memset(g->graphics.frame->pixels, 0xFF, total_buffer_size_bytes);
@@ -50,7 +49,7 @@ prevents partial writes that could create visual artifacts
 maintains colour channel alignment across byte boundaries
 
 mem layout:
-Single pixel = 32 bits = 4 bytes in memory
+Single		pixel = 32 bits = 4 bytes in memory
 	Byte 0: Alpha   (bits 24-31)
 	Byte 1: Red     (bits 16-23)
 	Byte 2: Green   (bits 8-15)
@@ -67,7 +66,7 @@ Problem: Between writes 1-3, pixel contains mixed old/new data.
 Another process reading during this sequence gets corrupted colour.
 
 With uint32_t casting (safe):
-uint32_t *buffer = (uint32_t*)pixels;
+uint32_t	*buffer = (uint32_t*)pixels;
 buffer[index] = 0xAARRGGBB;
 // Single atomic write: all 4 channels updated simultaneously */
 void	put_pixel(t_game *g, int screen_x, int screen_y, int pixel_color)
@@ -83,4 +82,3 @@ void	put_pixel(t_game *g, int screen_x, int screen_y, int pixel_color)
 	pixel_index = screen_y * g->graphics.screen_width + screen_x;
 	pixel_buffer[pixel_index] = (uint32_t)pixel_color;
 }
-

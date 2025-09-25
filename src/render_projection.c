@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   render_projection.c                                :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/25 09:39:50 by blohrer           #+#    #+#             */
+/*   Updated: 2025/09/25 09:40:19 by blohrer          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../inc/render.h"
 #include <stdio.h> // printf for optional debug
 
@@ -54,19 +66,17 @@ int	calculate_screen_wall_height(t_game *g, double world_wall_distance)
 {
 	int	screen_wall_height_pixels;
 
-	// Use raw distance directly - no protection/clamping
-	screen_wall_height_pixels =
-		(int)(g->graphics.screen_height / world_wall_distance);
-
+	screen_wall_height_pixels = (int)(g->graphics.screen_height
+			/ world_wall_distance);
 	if (world_wall_distance < 0.5)
-		printf("Distance: %.6f → Height: %d pixels\n",
-		       world_wall_distance, screen_wall_height_pixels);
+		printf("Distance: %.6f → Height: %d pixels\n", world_wall_distance,
+			screen_wall_height_pixels);
 	return (screen_wall_height_pixels);
 }
 
 /* HIGH-LEVEL PERSPECTIVE SIMULATION */
 void	simulate_eye_level_perspective(t_game *g, int wall_height,
-	int *wall_start, int *wall_end)
+		int *wall_start, int *wall_end)
 {
 	centre_wall_at_eye_level(g, wall_height, wall_start, wall_end);
 	enforce_screen_pixel_boundaries(g, wall_start, wall_end);
@@ -88,8 +98,8 @@ wall_end = wall_start + wall_height
 . screen midpt = natural horizon position
 . wall spans equally above/below this line
 . preserved perspective geometry from similar triangles */
-void	centre_wall_at_eye_level(t_game *g, int wall_height,
-	int *wall_start, int *wall_end)
+void	centre_wall_at_eye_level(t_game *g, int wall_height, int *wall_start,
+		int *wall_end)
 {
 	int	screen_centre_horizon_line;
 
@@ -100,7 +110,8 @@ void	centre_wall_at_eye_level(t_game *g, int wall_height,
 
 /* screen buffer has fixed dimensions [0, screen_height - 1]
 implementation requirement: protect array bounds */
-void	enforce_screen_pixel_boundaries(t_game *g, int *wall_start, int *wall_end)
+void	enforce_screen_pixel_boundaries(t_game *g, int *wall_start,
+		int *wall_end)
 {
 	if (*wall_start < 0)
 		*wall_start = 0;

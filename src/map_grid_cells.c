@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   map_grid_cells.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
+/*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 16:03:35 by blohrer           #+#    #+#             */
-/*   Updated: 2025/09/24 12:20:00 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/25 09:31:32 by blohrer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,8 @@ static void	dir_vec_from_char(char c, double *dx, double *dy)
 
 static void	set_player_from_char(t_player *p, int x, int y, char c)
 {
-	double	dx;
-	double	dy;
+	double			dx;
+	double			dy;
 	const double	fov_radians = FOV_DEGREES * (M_PI / 180.0);
 	const double	fov_half_angle = fov_radians / 2.0;
 	const double	camera_plane_magnitude = tan(fov_half_angle);

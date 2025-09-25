@@ -6,7 +6,7 @@
 /*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/05 17:01:49 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/24 15:45:54 by blohrer          ###   ########.fr       */
+/*   Updated: 2025/09/25 09:41:25 by blohrer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,8 @@ purpose:
 . calculate delta distances (distance per grid step)
 . initialise stepping directions and boundary distances
 . prepare state for efficient grid traversal */
-void	setup_dda_vars(t_game *g, double ray_dir_x, double ray_dir_y, t_dda_state *state)
+void	setup_dda_vars(t_game *g, double ray_dir_x, double ray_dir_y,
+		t_dda_state *state)
 {
 	state->map_x = (int)g->player.world_pos_x;
 	state->map_y = (int)g->player.world_pos_y;

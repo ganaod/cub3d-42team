@@ -8,14 +8,13 @@ INC_DIR = inc
 
 # library paths
 LIBFT_DIR = lib/libft
-PRINTF_DIR = lib/ft_printf  
+PRINTF_DIR = lib/ft_printf
 GNL_DIR = lib/gnl
 MLX_DIR = lib/MLX42
 MLX_BUILD = $(MLX_DIR)/build
 
 # explicit source file list
 SRC_FILES = main.c \
-			global_state.c \
 			parse_utils.c \
 			parse_header.c \
 			parse_header_lines.c \

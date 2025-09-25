@@ -6,7 +6,7 @@
 /*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 11:10:54 by blohrer           #+#    #+#             */
-/*   Updated: 2025/09/23 10:53:36 by blohrer          ###   ########.fr       */
+/*   Updated: 2025/09/25 14:05:37 by blohrer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,8 +77,6 @@ int	map_is_closed(const t_map *m)
 	if (!m || !m->grid || m->width <= 0 || m->height <= 0)
 		return (0);
 	if (map_has_open_border(m))
-		return (0);
-	if (has_empty_adjacent_to_void(m))
 		return (0);
 	if (!alloc_ff_buffers(m, &vis, &q, &total))
 		return (0);

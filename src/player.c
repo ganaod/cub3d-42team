@@ -6,12 +6,14 @@
 /*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 13:08:21 by blohrer           #+#    #+#             */
-/*   Updated: 2025/09/24 14:32:07 by blohrer          ###   ########.fr       */
+/*   Updated: 2025/09/25 13:48:33 by blohrer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/cub3d.h"
 #include "../inc/render.h"
+
+
 
 int	map_cell(const t_map *m, int ix, int iy)
 {

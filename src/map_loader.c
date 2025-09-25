@@ -6,7 +6,7 @@
 /*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 14:24:47 by blohrer           #+#    #+#             */
-/*   Updated: 2025/09/24 16:03:25 by blohrer          ###   ########.fr       */
+/*   Updated: 2025/09/25 14:02:38 by blohrer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,13 +79,14 @@ static int	map_build_grid_and_check(t_game *g, char **lines, int h)
 		free_map(g, &g->map);
 		return (0);
 	}
-	if (!map_is_closed(&g->map))
+	if (!map_is_closed_player_region(&g->map, &g->player))
 	{
-		parse_error("map is open (leaks into VOID)");
+		parse_error("map is open around player region");
 		free_lines_array(lines, h);
 		free_map(g, &g->map);
 		return (0);
 	}
+
 	free_lines_array(lines, h);
 	return (1);
 }

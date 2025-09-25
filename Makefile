@@ -1,75 +1,78 @@
-# Project metadata
-NAME		= cub3d
+# project metadata
+NAME = cub3d
 
-# Directory structure
-SRC_DIR		= src
-OBJ_DIR		= obj
-INC_DIR		= inc
+# directory structure
+SRC_DIR = src
+OBJ_DIR = obj
+INC_DIR = inc
 
-# Library paths
-LIBFT_DIR	= lib/libft
-PRINTF_DIR	= lib/ft_printf
-GNL_DIR		= lib/gnl
-MLX_DIR		= lib/MLX42
-MLX_BUILD	= $(MLX_DIR)/build
+# library paths
+LIBFT_DIR = lib/libft
+PRINTF_DIR = lib/ft_printf
+GNL_DIR = lib/gnl
+MLX_DIR = lib/MLX42
+MLX_BUILD = $(MLX_DIR)/build
 
-# Source files
-SRC_FILES	= main.c \
-			  parse_utils.c \
-			  parse_header.c \
-			  parse_header_lines.c \
-			  parse_header_utils.c \
-			  parse_paths_check.c \
-			  collect_map_lines.c \
-			  collect_map_lines_utils.c \
-			  collect_map_lines_core.c \
-			  normalize_map.c \
-			  map_grid_cells.c \
-			  map_grid_fill.c \
-			  map_grid_build.c \
-			  map_check.c \
-			  map_check_flood.c \
-			  map_check_utils.c \
-			  map_check_border.c \
-			  graphics_window.c \
-			  utils.c \
-			  player.c \
-			  player_utils.c \
-			  render.c \
-			  render_column.c \
-			  render_dda.c \
-			  render_dda_setup.c \
-			  render_pixel_buffer.c \
-			  render_projection.c \
-			  render_ray_cast.c \
-			  render_texture.c \
-			  render_texture_utils.c \
-			  load_texture.c \
-			  cleanup.c \
-			  map_loader.c \
-			  runtime_init.c
+# explicit source file list
+SRC_FILES = main.c \
+			parse_utils.c \
+			parse_header.c \
+			parse_header_lines.c \
+			parse_header_utils.c \
+			parse_paths_check.c \
+			collect_map_lines.c \
+			collect_map_lines_utils.c \
+			collect_map_lines_core.c \
+			normalize_map.c \
+			map_grid_cells.c \
+			map_grid_fill.c \
+			map_grid_build.c \
+			map_check.c \
+			map_check_flood.c \
+			map_check_utils.c \
+			map_check_border.c \
+			graphics_window.c \
+			utils.c \
+			player.c \
+			player_utils.c \
+			render.c \
+			render_column.c \
+			render_dda.c \
+			render_dda_setup.c \
+			render_pixel_buffer.c \
+			render_projection.c \
+			render_ray_cast.c \
+			render_texture.c \
+			render_texture_utils.c \
+			load_texture.c \
+			cleanup.c \
+			map_loader.c \
+			runtime_init.c \
+			wall_collides.c \
+			ff.c \
+			map_check_outside.c
 
-# Derived paths
-SRCS		= $(addprefix $(SRC_DIR)/,$(SRC_FILES))
-OBJS		= $(addprefix $(OBJ_DIR)/,$(SRC_FILES:.c=.o))
-DEPS		= $(OBJS:.o=.d)
+# derived file paths
+SRCS = $(addprefix $(SRC_DIR)/,$(SRC_FILES))
+OBJS = $(addprefix $(OBJ_DIR)/,$(SRC_FILES:.c=.o))
+DEPS = $(OBJS:.o=.d)
 
-# Library targets
-LIBFT		= $(LIBFT_DIR)/libft.a
-PRINTF		= $(PRINTF_DIR)/libftprintf.a
-GNL			= $(GNL_DIR)/libgnl.a
-MLX			= $(MLX_BUILD)/libmlx42.a
+# library targets
+LIBFT = $(LIBFT_DIR)/libft.a
+PRINTF = $(PRINTF_DIR)/libftprintf.a
+GNL = $(GNL_DIR)/libgnl.a
+MLX = $(MLX_BUILD)/libmlx42.a
 
-# Toolchain
-CC			= cc
-CFLAGS		= -Wall -Wextra -Werror -MMD -MP
-INCLUDES	= -I $(INC_DIR) -I $(MLX_DIR)/include -I $(LIBFT_DIR)
-LDFLAGS		= -L$(LIBFT_DIR) -lft \
-			  -L$(PRINTF_DIR) -lftprintf \
-			  -L$(GNL_DIR) -lgnl \
-			  -L$(MLX_BUILD) -lmlx42 -lglfw -ldl -pthread -lm
+# toolchain configuration
+CC = cc
+CFLAGS = -Wall -Wextra -Werror -MMD -MP
+INCLUDES = -I $(INC_DIR) -I $(MLX_DIR)/include -I $(LIBFT_DIR)
+LDFLAGS = -L$(LIBFT_DIR) -lft \
+		  -L$(PRINTF_DIR) -lftprintf \
+		  -L$(GNL_DIR) -lgnl \
+		  -L$(MLX_BUILD) -lmlx42 -lglfw -ldl -pthread -lm
 
-# Build rules
+# build rules
 all: $(NAME)
 
 $(NAME): $(OBJS) $(LIBFT) $(PRINTF) $(GNL) $(MLX)

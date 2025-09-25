@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3d.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
+/*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/25 09:16:57 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/25 15:26:56 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/25 15:52:40 by blohrer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,6 +121,18 @@ typedef struct s_map
 	t_texture_image	wall_textures[4];
 }					t_map;
 
+typedef struct s_collide_ctx
+{
+	const t_map	*m;
+	int			min_x;
+	int			max_x;
+	int			min_y;
+	int			max_y;
+	double		x;
+	double		y;
+	double		r;
+}	t_collide_ctx;
+
 /* ⭐ SYSTEM INTERFACES */
 /* graphics system */
 typedef struct s_graphics
@@ -141,7 +153,9 @@ typedef struct s_ffctx
 	int				h;
 	int				head;
 	int				tail;
-}					t_ffctx;
+	const t_player	*pl;
+	const char		*vis_void;
+}	t_ffctx;
 
 /* parser contexts */
 typedef struct s_texinfo
@@ -166,6 +180,15 @@ typedef struct s_game
 	double			time_prev;
 	double			time_now;
 }					t_game;
+
+typedef struct s_outctx
+{
+	const t_map	*m;
+	char		*vis;
+	int			*q;
+	int			w;
+	int			h;
+}				t_outctx;
 
 /* ⭐⭐ FUNCTION PROTOTYPES */
 /* ================== PARSE_UTILS ================== */
@@ -270,5 +293,14 @@ void				init_runtime_defaults(t_game *g);
 int					start_window(t_game *g, const char *title, int w, int h);
 void				sync_player_world_fields_from_parser(t_game *g);
 int					map_load_and_validate(t_game *g, const char *path);
+
+
+int map_is_closed_player_region(const t_map *m, const t_player *pl);
+int	collides_with_wall(const t_map *m, double x, double y, double r);
+double	clampd(double v, double lo, double hi);
+int	player_region_is_closed(const t_map *m, const t_player *pl,
+	const char *vis_void);
+void	mark_outside_void_pure(const t_map *m, char *vis_out, int *q);
+
 
 #endif

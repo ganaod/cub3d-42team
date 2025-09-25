@@ -3,43 +3,23 @@
 /*                                                        :::      ::::::::   */
 /*   player_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
+/*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/25 09:32:59 by blohrer           #+#    #+#             */
-/*   Updated: 2025/09/25 13:53:25 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/25 15:49:19 by blohrer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+
 #include "../inc/cub3d.h"
 
-/* player pos is continous floating pt val,
-not discrete int tied to map cell.
-fractional dist tells precise location within cell,
-allows 4 accurate & smooth collision detection */
-static double	distance_to_nearest_wall(const t_map *m, double x, double y)
+double	clampd(double v, double lo, double hi)
 {
-	int		ix;
-	int		iy;
-	double	fx;
-	double	fy;
-	double	min_dist;
-
-	ix = (int)x;
-	iy = (int)y;
-	if (map_cell(m, ix, iy) != CELL_EMPTY)
-		return (0.0);
-	fx = x - ix;
-	fy = y - iy;
-	min_dist = 1.0;
-	if (map_cell(m, ix + 1, iy) == CELL_WALL)
-		min_dist = fmin(min_dist, 1.0 - fx);
-	if (map_cell(m, ix - 1, iy) == CELL_WALL)
-		min_dist = fmin(min_dist, fx);
-	if (map_cell(m, ix, iy + 1) == CELL_WALL)
-		min_dist = fmin(min_dist, 1.0 - fy);
-	if (map_cell(m, ix, iy - 1) == CELL_WALL)
-		min_dist = fmin(min_dist, fy);
-	return (min_dist);
+	if (v < lo)
+		return (lo);
+	if (v > hi)
+		return (hi);
+	return (v);
 }
 
 /* attempt to move P to new pos
@@ -48,17 +28,14 @@ checks dist to nearest wall at proposed x & y coords
 if both coords are clear of Ws, update P pos */
 void	try_move_player(t_game *g, double new_x, double new_y)
 {
-	double	min_wall_distance;
-	double	cur_y;
+	double	r;
 
-	min_wall_distance = 0.15;
 	if (!g)
 		return ;
-	cur_y = g->player.world_pos_y;
-	if (distance_to_nearest_wall(&g->map, new_x, cur_y) >= min_wall_distance)
+	r = 0.15;
+	if (!collides_with_wall(&g->map, new_x, g->player.world_pos_y, r))
 		g->player.world_pos_x = new_x;
-	if (distance_to_nearest_wall(&g->map, g->player.world_pos_x,
-			new_y) >= min_wall_distance)
+	if (!collides_with_wall(&g->map, g->player.world_pos_x, new_y, r))
 		g->player.world_pos_y = new_y;
 }
 
@@ -108,4 +85,46 @@ double	get_delta_time(t_game *g)
 		dt = 0.05;
 	g->time_prev = g->time_now;
 	return (dt);
+}
+
+static int	mpr_prepare_buffers(const t_map *m, char **vis_void, int **q)
+{
+	int	total;
+	int	i;
+
+	total = m->width * m->height;
+	*vis_void = (char *)malloc(total);
+	*q = (int *)malloc(sizeof(int) * total);
+	if (!*vis_void || !*q)
+	{
+		free(*vis_void);
+		free(*q);
+		return (0);
+	}
+	i = 0;
+	while (i < total)
+	{
+		(*vis_void)[i] = 0;
+		i++;
+	}
+	return (1);
+}
+
+int	map_is_closed_player_region(const t_map *m, const t_player *pl)
+{
+	char	*vis_void;
+	int		*q;
+	int		ok;
+
+	if (!m || !pl || !m->grid || m->width <= 0 || m->height <= 0)
+		return (0);
+	vis_void = NULL;
+	q = NULL;
+	if (!mpr_prepare_buffers(m, &vis_void, &q))
+		return (0);
+	mark_outside_void_pure(m, vis_void, q);
+	ok = player_region_is_closed(m, pl, vis_void);
+	free(vis_void);
+	free(q);
+	return (ok);
 }

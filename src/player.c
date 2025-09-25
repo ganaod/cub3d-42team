@@ -6,23 +6,12 @@
 /*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/17 13:08:21 by blohrer           #+#    #+#             */
-/*   Updated: 2025/09/25 13:48:33 by blohrer          ###   ########.fr       */
+/*   Updated: 2025/09/25 18:23:58 by blohrer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/cub3d.h"
 #include "../inc/render.h"
-
-
-
-int	map_cell(const t_map *m, int ix, int iy)
-{
-	if (!m || !m->grid)
-		return (CELL_WALL);
-	if (ix < 0 || iy < 0 || ix >= m->width || iy >= m->height)
-		return (CELL_WALL);
-	return (m->grid[iy * m->width + ix]);
-}
 
 static void	handle_move_ws(t_game *g, double step)
 {

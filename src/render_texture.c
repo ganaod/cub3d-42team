@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   render_texture.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
+/*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/25 11:22:37 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/25 15:26:55 by go-donne         ###   ########.fr       */
+/*   Created: 2025/09/25 20:26:50 by blohrer           #+#    #+#             */
+/*   Updated: 2025/09/25 20:26:55 by blohrer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,8 +48,10 @@ SOLUTION: Pre-calculate step size once, then use simple addition per pixel:
    v += v_increment               (per pixel - just addition)
 
 ANALOGY: Painting a wall stripe using a photo reference
-- OLD: For each brushstroke, measure distance from top, calculate %, find photo position
-- NEW: Pre-calculate "each brushstroke moves 1% down the photo", just add 1% each time
+- OLD: For each brushstroke, measure distance from top, calculate %,
+	find photo position
+- NEW: Pre-calculate "each brushstroke moves 1% down the photo",
+	just add 1% each time
 
 MATHEMATICAL PROOF: Both produce identical linear interpolation sequences:
    Per-pixel: 0.0, 1/span, 2/span, 3/span, ...
@@ -75,7 +77,7 @@ Input: Game state, screen column X, prepared texture step data
 Process: Incremental V stepping eliminates per-pixel divisions
 Output: Textured pixels written to frame buffer */
 void	render_textured_pixels(t_game *g, int column_x,
-			t_texture_step_data *data)
+		t_texture_step_data *data)
 {
 	int			y;
 	int			tx_y;

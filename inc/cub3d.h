@@ -6,7 +6,7 @@
 /*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/25 09:16:57 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/25 15:52:40 by blohrer          ###   ########.fr       */
+/*   Updated: 2025/09/25 20:37:31 by blohrer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,15 +123,15 @@ typedef struct s_map
 
 typedef struct s_collide_ctx
 {
-	const t_map	*m;
-	int			min_x;
-	int			max_x;
-	int			min_y;
-	int			max_y;
-	double		x;
-	double		y;
-	double		r;
-}	t_collide_ctx;
+	const t_map		*m;
+	int				min_x;
+	int				max_x;
+	int				min_y;
+	int				max_y;
+	double			x;
+	double			y;
+	double			r;
+}					t_collide_ctx;
 
 /* ⭐ SYSTEM INTERFACES */
 /* graphics system */
@@ -155,7 +155,7 @@ typedef struct s_ffctx
 	int				tail;
 	const t_player	*pl;
 	const char		*vis_void;
-}	t_ffctx;
+}					t_ffctx;
 
 /* parser contexts */
 typedef struct s_texinfo
@@ -183,12 +183,12 @@ typedef struct s_game
 
 typedef struct s_outctx
 {
-	const t_map	*m;
-	char		*vis;
-	int			*q;
-	int			w;
-	int			h;
-}				t_outctx;
+	const t_map		*m;
+	char			*vis;
+	int				*q;
+	int				w;
+	int				h;
+}					t_outctx;
 
 /* ⭐⭐ FUNCTION PROTOTYPES */
 /* ================== PARSE_UTILS ================== */
@@ -196,7 +196,6 @@ int					skip_ws(const char *s, int i);
 int					parse_u8_component(const char *s, int *i, int *out);
 int					expect_comma(const char *s, int *i);
 int					parse_rgb_triplet(const char *s, uint32_t *out_rgb);
-int					open_rdonly(const char *path);
 
 /* ================== PARSE_HEADER ================== */
 int					set_texture_field(char **dst_path, const char *after_key);
@@ -204,8 +203,6 @@ int					set_color_field(uint32_t *dst_rgb, const char *after_key,
 						int *was_set);
 int					parse_header_line(t_map *m, const char *line, int *flags);
 int					match2(const char *s, int i, char a, char b);
-int					set_tex_entry(char **slot, const char *after_key, int bit,
-						int *flags);
 int					parse_header_texture(t_map *m, const char *line, int i,
 						int *flags);
 int					parse_header_color(t_map *m, const char *line, int i,
@@ -213,7 +210,6 @@ int					parse_header_color(t_map *m, const char *line, int i,
 
 /* ================== PARSE_HEADER LINES ================== */
 int					parse_header_lines(t_map *m, int fd);
-int					check_texture_paths_exist(const t_map *m);
 
 /* ================== COLLECT_MAP_LINES ================== */
 int					collect_map_lines(t_map *m, int fd, char ***out_lines,
@@ -222,6 +218,7 @@ int					append_line(char ***lines_ptr, int *cap_ptr, int *h_ptr,
 						char *take);
 int					validate_map_line(const char *s);
 void				rstrip_eol(char *s);
+int					read_lines_loop(int fd, char ***lines, int *cap, int *h);
 
 /* ================== NORMALIZE_MAP ================== */
 int					normalize_map(char ***lines_io, int h, int *out_w);
@@ -236,26 +233,6 @@ int					fill_grid(t_map *m, t_player *pl, char **lines, int *count);
 int					build_grid_from_lines(t_map *m, t_player *pl, char **lines,
 						int *player_found);
 
-/* ================== MAP_CHECK_FLOOD ================== */
-void				ffctx_init(t_ffctx *c, const t_map *m, char *vis, int *q);
-int					flood_from_start(t_ffctx *c, int start_idx);
-int					map_has_open_border(const t_map *m);
-int					border_rows_have_empty(const t_map *m, int w, int h);
-int					border_cols_have_empty(const t_map *m, int w, int h);
-int					cell_adjacent_to_void(const t_map *m, int x, int y);
-int					has_empty_adjacent_to_void(const t_map *m);
-
-/* ================== MAP_CHECK_UTILS ================== */
-int					idx_2d_to_1d(int x, int y, int w);
-int					in_bounds(int x, int y, int w, int h);
-void				queue_push(int *q, int *tail, int v);
-int					queue_pop(int *q, int *head, int tail, int *out);
-int					load_textures_or_fail(t_game *g);
-
-/* ================== MAP_CHECK_FLOOD ================== */
-int					flood_from_border(t_ffctx *c);
-int					map_is_closed(const t_map *m);
-
 /* ================== GAME_LOOP ================== */
 double				get_delta_time(t_game *g);
 void				rotate_player(t_game *g, double angle);
@@ -265,11 +242,11 @@ void				game_loop_tick(void *param);
 void				on_close(void *param);
 void				handle_exit_input(t_game *g);
 void				handle_rotation_input(t_game *g, double ang);
-int					map_cell(const t_map *m, int ix, int iy);
 
 /* ================== UTILS ================== */
 void				parse_error(const char *msg);
 int					check_cub_extension(const char *filename);
+int					load_textures_or_fail(t_game *g);
 
 /* ================== GRAPHICS / WINDOW ================== */
 int					gfx_open_window_resizable(t_game *game, const char *title,
@@ -294,13 +271,24 @@ int					start_window(t_game *g, const char *title, int w, int h);
 void				sync_player_world_fields_from_parser(t_game *g);
 int					map_load_and_validate(t_game *g, const char *path);
 
+/* ================== PLAYER ================== */
 
-int map_is_closed_player_region(const t_map *m, const t_player *pl);
-int	collides_with_wall(const t_map *m, double x, double y, double r);
-double	clampd(double v, double lo, double hi);
-int	player_region_is_closed(const t_map *m, const t_player *pl,
-	const char *vis_void);
-void	mark_outside_void_pure(const t_map *m, char *vis_out, int *q);
+int					map_is_closed_player_region(const t_map *m,
+						const t_player *pl);
+double				clampd(double v, double lo, double hi);
+int					player_region_is_closed(const t_map *m, const t_player *pl,
+						const char *vis_void);
+int					ff_region_scan(t_ffctx *c);
 
+/* ================== WALL_COLLIDES ================== */
+
+int					collides_with_wall(const t_map *m, double x, double y,
+						double r);
+int					cell_hits(const t_collide_ctx *c, int ix, int iy);
+
+/* ================== WALL_COLLIDES ================== */
+
+void				mark_outside_void_pure(const t_map *m, char *vis_out,
+						int *q);
 
 #endif

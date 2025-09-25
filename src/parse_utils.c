@@ -6,7 +6,7 @@
 /*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 14:45:34 by blohrer           #+#    #+#             */
-/*   Updated: 2025/09/23 14:20:27 by blohrer          ###   ########.fr       */
+/*   Updated: 2025/09/25 18:12:59 by blohrer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,14 +80,4 @@ int	parse_rgb_triplet(const char *s, uint32_t *out_rgb)
 		return (0);
 	*out_rgb = (0xFF << 24) | (b << 16) | (g << 8) | r;
 	return (1);
-}
-
-int	open_rdonly(const char *path)
-{
-	int	fd;
-
-	fd = open(path, O_RDONLY);
-	if (fd < 0)
-		parse_error("open failed");
-	return (fd);
 }

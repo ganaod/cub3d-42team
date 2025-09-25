@@ -19,18 +19,12 @@ SRC_FILES = main.c \
 			parse_header.c \
 			parse_header_lines.c \
 			parse_header_utils.c \
-			parse_paths_check.c \
 			collect_map_lines.c \
 			collect_map_lines_utils.c \
-			collect_map_lines_core.c \
 			normalize_map.c \
 			map_grid_cells.c \
 			map_grid_fill.c \
 			map_grid_build.c \
-			map_check.c \
-			map_check_flood.c \
-			map_check_utils.c \
-			map_check_border.c \
 			graphics_window.c \
 			utils.c \
 			player.c \
@@ -49,8 +43,11 @@ SRC_FILES = main.c \
 			map_loader.c \
 			runtime_init.c \
 			wall_collides.c \
-			ff.c \
-			map_check_outside.c
+			player_region_utils.c \
+			player_region.c \
+			map_check_outside.c \
+			wall_collides_utils.c \
+			player_utils2.c
 
 # derived file paths
 SRCS = $(addprefix $(SRC_DIR)/,$(SRC_FILES))

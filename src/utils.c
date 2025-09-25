@@ -6,7 +6,7 @@
 /*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/24 09:55:16 by blohrer           #+#    #+#             */
-/*   Updated: 2025/09/24 13:26:09 by blohrer          ###   ########.fr       */
+/*   Updated: 2025/09/25 18:00:44 by blohrer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,5 +55,17 @@ int	check_cub_extension(const char *filename)
 	if (filename[len - 1] != 'b' || filename[len - 2] != 'u' || filename[len
 			- 3] != 'c' || filename[len - 4] != '.')
 		return (0);
+	return (1);
+}
+
+int	load_textures_or_fail(t_game *g)
+{
+	if (!g)
+		return (0);
+	if (!load_all_wall_textures(&g->map))
+	{
+		parse_error("failed to load wall textures");
+		return (0);
+	}
 	return (1);
 }

@@ -6,7 +6,7 @@
 /*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 10:03:55 by blohrer           #+#    #+#             */
-/*   Updated: 2025/09/24 12:59:18 by blohrer          ###   ########.fr       */
+/*   Updated: 2025/09/25 20:15:45 by blohrer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,46 @@ static int	grow_if_needed(char ***lines_ptr, int *cap_ptr, int h)
 	free(*lines_ptr);
 	*lines_ptr = new_lines;
 	*cap_ptr = new_cap;
+	return (1);
+}
+
+static int	adopt_first_map_line(t_map *m, char ***lines, int *cap, int *h)
+{
+	if (!m || !lines || !cap || !h || !m->first_map_line)
+		return (0);
+	rstrip_eol(m->first_map_line);
+	if (!validate_map_line(m->first_map_line))
+		return (0);
+	if (!append_line(lines, cap, h, m->first_map_line))
+		return (0);
+	m->first_map_line = NULL;
+	return (1);
+}
+
+int	collect_map_lines(t_map *m, int fd, char ***out_lines, int *out_h)
+{
+	char	**lines;
+	int		cap;
+	int		h;
+
+	if (!m || fd < 0 || !out_lines || !out_h)
+		return (0);
+	lines = NULL;
+	cap = 0;
+	h = 0;
+	if (!adopt_first_map_line(m, &lines, &cap, &h))
+	{
+		if (!m->first_map_line)
+			return (parse_error("Map error: missing map after header"), 0);
+		return (parse_error("Map error: invalid first map line"), 0);
+	}
+	if (!read_lines_loop(fd, &lines, &cap, &h))
+	{
+		free_lines_array(lines, h);
+		return (parse_error("Map error: invalid or empty line inside map"), 0);
+	}
+	*out_lines = lines;
+	*out_h = h;
 	return (1);
 }
 

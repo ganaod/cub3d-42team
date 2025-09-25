@@ -6,7 +6,7 @@
 /*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/23 14:24:47 by blohrer           #+#    #+#             */
-/*   Updated: 2025/09/25 14:02:38 by blohrer          ###   ########.fr       */
+/*   Updated: 2025/09/25 20:27:18 by blohrer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,6 @@ static int	map_build_grid_and_check(t_game *g, char **lines, int h)
 		free_map(g, &g->map);
 		return (0);
 	}
-
 	free_lines_array(lines, h);
 	return (1);
 }

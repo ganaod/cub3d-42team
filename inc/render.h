@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   render.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
+/*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/25 09:18:15 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/25 10:02:34 by blohrer          ###   ########.fr       */
+/*   Updated: 2025/09/25 11:25:03 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,11 +58,27 @@ typedef struct s_texture_context
 	int			screen_wall_height;
 }				t_texture_context;
 
+typedef struct s_texture_step_data
+{
+	t_texture_image	*texture;
+	int				texture_x;
+	double			v_current;
+	double			v_increment;
+	int				start_y;
+	int				end_y;
+}				t_texture_step_data;
+
+
+/* ⭐⭐ FUNCTION PROTOTYPES */
+
+/* ================== FRAME ORCHESTRATION ================== */
 void			render_complete_frame(t_game *g);
 void			render_single_column(t_game *g, int screen_column_x);
 void			render_wall_column(t_game *g, int screen_column_x,
 					t_ray_result *wall_intersection_data,
 					int projected_wall_height);
+
+/* ================== COLUMN SECTION RENDERING ================== */
 void			render_ceiling_section(t_game *g, int screen_column_x,
 					int wall_start_y_pixel);
 void			render_wall_section(t_game *g,
@@ -71,6 +87,7 @@ void			render_wall_section(t_game *g,
 void			render_floor_section(t_game *g, int screen_column_x,
 					int wall_end_y_pixel);
 
+/* ================== RAY CASTING ================== */
 void			calculate_ray_direction(t_game *g, int screen_column_x,
 					double *world_ray_direction_x,
 					double *world_ray_direction_y);
@@ -79,13 +96,17 @@ t_ray_result	cast_ray_to_wall(t_game *g, double world_ray_dir_x,
 int				determine_intersected_wall_face(t_game *g,
 					t_ray_result *wall_intersection_data);
 
+/* ================== DDA ALGORITHM ================== */
 void			setup_dda_vars(t_game *g, double ray_dir_x, double ray_dir_y,
 					t_dda_state *state);
 void			execute_dda_traversal(t_game *g, t_dda_state *dda_state,
 					int *world_wall_side);
 double			calculate_wall_distance(t_game *g, t_dda_state *dda_state,
 					int world_wall_side);
+void			setup_x_step(t_game *g, double ray_dir_x, t_dda_state *state);
+void			setup_y_step(t_game *g, double ray_dir_y, t_dda_state *state);
 
+/* ================== PROJECTION ================== */
 int				calculate_screen_wall_height(t_game *g,
 					double world_wall_distance);
 void			simulate_eye_level_perspective(t_game *g, int wall_height,
@@ -95,21 +116,21 @@ void			centre_wall_at_eye_level(t_game *g, int wall_height,
 void			enforce_screen_pixel_boundaries(t_game *g, int *wall_start,
 					int *wall_end);
 
+/* ================== TEXTURE MAPPING ================== */
 double			world_wall_texture_u(t_texture_context *ctx);
-double			screen_wall_texture_v(t_game *g, t_texture_context *ctx,
-					int curr_px_y);
-int				screen_pixel_texture_colour(t_game *g, t_texture_context *ctx,
-					int current_pixel_y);
-int				texture_pixel_colour(t_texture_image *tx_img, int tx_px_x,
-					int tx_px_y);
 double			safe_fractional_part(double coordinate);
-int				clamp_texture_pixel(int pixel_coord, int max_dimension);
+int				setup_wall_texture_data(t_game *g,
+					t_screen_column_bounds *bounds,
+					t_ray_result *wall_hit, t_texture_step_data *data);
+void			calculate_texture_stepping(t_texture_step_data *data);
+void			render_textured_pixels(t_game *g, int column_x,
+					t_texture_step_data *data);
+uint32_t	    sample_texture_pixel(t_texture_image *texture,
+                    int tex_x, int tex_y);
 
+/* ================== PIXEL BUFFER ================== */
 void			clear_screen_buffer(t_game *g);
 void			put_pixel(t_game *g, int screen_x, int screen_y,
 					int pixel_color);
-
-void			setup_x_step(t_game *g, double ray_dir_x, t_dda_state *state);
-void			setup_y_step(t_game *g, double ray_dir_y, t_dda_state *state);
 
 #endif

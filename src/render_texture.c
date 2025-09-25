@@ -3,63 +3,87 @@
 /*                                                        :::      ::::::::   */
 /*   render_texture.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
+/*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/25 09:38:18 by blohrer           #+#    #+#             */
-/*   Updated: 2025/09/25 09:38:56 by blohrer          ###   ########.fr       */
+/*   Created: 2025/09/25 11:22:37 by go-donne          #+#    #+#             */
+/*   Updated: 2025/09/25 11:25:48 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-/* TEXTURE
-. projection established spatial positioning, scale relationships
-. texturing provides surface appearance, visual detail
-. coordinate both for complete visual representation
-
-texture mapping: world pos > texture pos
-texture sampling: extract colour vals	*/
-/* Transform single screen pixel → colour value
-Input Space: SCREEN SPACE (pixel Y coordinate)
-	+ TEXTURE CONTEXT (world intersection data)
-Output Space: COLOUR VALUE (final RGB pixel data)
-Mathematical Process: Complete coordinate space pipeline orchestration
-. Called for each pixel as we paint the wall
-
-invalid states:
-. invalid wall face (corrupted ray data)
-. missing texture (failed file load)
-. broken texture data (corrupted image dimensions)
-these specific wall pixels render as bright magenta (0xFF00FF)
-clearer debugging than silent black pixels / crash */
 #include "../inc/render.h"
 
-int	screen_pixel_texture_colour(t_game *g, t_texture_context *ctx,
-		int current_pixel_y)
+/* Validate texture data and prepare rendering context
+Input: Game state, column bounds, wall intersection data
+Output: Populated texture step data structure
+Returns: 1 on success, 0 on invalid texture/wall face */
+int	setup_wall_texture_data(t_game *g, t_screen_column_bounds *bounds,
+		t_ray_result *wall_hit, t_texture_step_data *data)
 {
-	t_texture_image	*tex;
-	double			texture_coord_u;
-	double			texture_coord_v;
-	int				texture_pixel_x;
-	int				texture_pixel_y;
+	t_texture_context	ctx;
+	double				u;
 
-	if (ctx->world_wall_face < WALL_NORTH || ctx->world_wall_face > WALL_EAST)
-		return (0xFF00FF);
-	tex = &g->map.wall_textures[ctx->world_wall_face];
-	if (!tex || !tex->pixels || tex->image_width <= 0 || tex->image_height <= 0)
-		return (0xFF00FF);
-	texture_coord_u = world_wall_texture_u(ctx);
-	texture_coord_v = screen_wall_texture_v(g, ctx, current_pixel_y);
-	texture_pixel_x = (int)(texture_coord_u * tex->image_width);
-	texture_pixel_y = (int)(texture_coord_v * tex->image_height);
-	return (texture_pixel_colour(tex, texture_pixel_x, texture_pixel_y));
+	ctx.world_wall_face = wall_hit->world_wall_face;
+	ctx.world_wall_intersection_x = wall_hit->world_intersection_x;
+	ctx.world_wall_intersection_y = wall_hit->world_intersection_y;
+	ctx.screen_wall_height = bounds->wall_end_y - bounds->wall_start_y;
+	if (ctx.world_wall_face < WALL_NORTH || ctx.world_wall_face > WALL_EAST)
+		return (0);
+	data->texture = &g->map.wall_textures[ctx.world_wall_face];
+	if (!data->texture || !data->texture->pixels)
+		return (0);
+	if (data->texture->image_width <= 0 || data->texture->image_height <= 0)
+		return (0);
+	u = world_wall_texture_u(&ctx);
+	data->texture_x = (int)(u * data->texture->image_width);
+	data->start_y = bounds->wall_start_y;
+	data->end_y = bounds->wall_end_y;
+	return (1);
 }
 
-/* World intersection → texture horizontal position
-in: WORLD SPACE (wall intersection coordinates)
-out: TEXTURE SPACE (horizontal position 0.0-1.0)
-Mathematical Process: world_wall_position - floor(world_wall_position)
-	floor calculation: fractional result represents relative position within
-	grid cell, independent of cell's world location
-. Ray impact becomes surface coordinate */
+/* Calculate texture coordinate stepping for incremental rendering
+Input: Texture step data with screen boundaries
+Output: Sets v_current to 0.0 and v_increment for each pixel step
+Optimization: One division per column instead of per pixel */
+void	calculate_texture_stepping(t_texture_step_data *data)
+{
+	int	span;
+
+	span = data->end_y - data->start_y;
+	if (span <= 0)
+	{
+		data->v_increment = 0.0;
+		return ;
+	}
+	data->v_current = 0.0;
+	data->v_increment = 1.0 / (double)span;
+}
+
+/* Render vertical wall column with incremental texture sampling
+Input: Game state, screen column X, prepared texture step data
+Process: Incremental V stepping eliminates per-pixel divisions
+Output: Textured pixels written to frame buffer */
+void	render_textured_pixels(t_game *g, int column_x,
+			t_texture_step_data *data)
+{
+	int			y;
+	int			tx_y;
+	uint32_t	color;
+
+	y = data->start_y;
+	while (y < data->end_y)
+	{
+		tx_y = (int)(data->v_current * data->texture->image_height);
+		color = sample_texture_pixel(data->texture, data->texture_x, tx_y);
+		put_pixel(g, column_x, y, color);
+		data->v_current += data->v_increment;
+		y++;
+	}
+}
+
+/* Convert world wall intersection to texture horizontal coordinate
+Input: Texture context with world intersection point and wall face
+Output: Normalized U coordinate (0.0 to 1.0) across texture width
+Process: Extract fractional part of world coordinate for texture mapping */
 double	world_wall_texture_u(t_texture_context *ctx)
 {
 	double	wall_coordinate;
@@ -72,41 +96,18 @@ double	world_wall_texture_u(t_texture_context *ctx)
 	return (safe_fractional_part(wall_coordinate));
 }
 
-/* Screen pixel → texture vertical position
-Input Space: SCREEN SPACE (pixel Y position)
-Output Space: TEXTURE SPACE (vertical position 0.0-1.0)
-Mathematical Process: (current_pixel_y - wall_start_y)
-	/ (wall_end_y - wall_start_y)
-. Display location becomes surface coordinate */
-double	screen_wall_texture_v(t_game *g, t_texture_context *ctx, int curr_px_y)
+/* Extract fractional part of coordinate for texture mapping
+Input: World coordinate (can be negative or > 1.0)
+Output: Normalized fractional part in range [0.0, 1.0)
+Handles: Negative coordinates and ensures valid texture coordinate range */
+double	safe_fractional_part(double coordinate)
 {
-	int		start_y;
-	int		end_y;
-	double	span;
+	double	fractional;
 
-	simulate_eye_level_perspective(g, ctx->screen_wall_height, &start_y,
-		&end_y);
-	span = end_y - start_y;
-	if (span <= 0)
-		return (0.0);
-	return ((double)(curr_px_y - start_y) / span);
-}
-
-/* Texture coordinates → memory colour
-Input Space: TEXTURE SPACE (normalized UV coordinates converted to pixel indices)
-Output Space: COLOUR VALUE (RGB data from texture memory)
-Mathematical Process: Bounds protection + 2D→1D array indexing
-. Surface position becomes pixel reality */
-int	texture_pixel_colour(t_texture_image *tx_img, int tx_px_x, int tx_px_y)
-{
-	int	clamped_w;
-	int	clamped_h;
-
-	if (!tx_img || !tx_img->pixels)
-		return (0xFF00FF);
-	if (tx_img->image_width <= 0 || tx_img->image_height <= 0)
-		return (0xFF00FF);
-	clamped_w = clamp_texture_pixel(tx_px_x, tx_img->image_width);
-	clamped_h = clamp_texture_pixel(tx_px_y, tx_img->image_height);
-	return (tx_img->pixels[clamped_h * tx_img->image_width + clamped_w]);
+	fractional = coordinate - floor(coordinate);
+	if (fractional < 0.0)
+		fractional += 1.0;
+	if (fractional >= 1.0)
+		fractional = 0.999999;
+	return (fractional);
 }

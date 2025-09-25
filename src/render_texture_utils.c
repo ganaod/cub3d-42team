@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/21 14:07:54 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/24 10:27:28 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/25 11:24:39 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,13 +24,26 @@ double	safe_fractional_part(double coordinate)
 	return (fractional);
 }
 
-/* Clamp texture pixel coordinates to valid image bounds 
-(instead of wrapping with %, good for tiling) */
-int	clamp_texture_pixel(int pixel_coord, int max_dimension)
+/* Sample texture pixel with coordinate clamping
+Input: Texture image, raw texture coordinates
+Output: Clamped ARGB color value from texture memory
+Process: Bounds protection + 2D array indexing */
+uint32_t	sample_texture_pixel(t_texture_image *texture, int tex_x, int tex_y)
 {
-	if (pixel_coord < 0)
-		return (0);
-	if (pixel_coord >= max_dimension)
-		return (max_dimension - 1);
-	return (pixel_coord);
+	int	cx;
+	int	cy;
+
+	if (tex_x < 0)
+		cx = 0;
+	else
+		cx = tex_x;
+	if (cx >= texture->image_width)
+		cx = texture->image_width - 1;
+	if (tex_y < 0)
+		cy = 0;
+	else
+		cy = tex_y;
+	if (cy >= texture->image_height)
+		cy = texture->image_height - 1;
+	return (texture->pixels[cy * texture->image_width + cx]);
 }

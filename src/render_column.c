@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   render_column.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
+/*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 10:54:44 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/25 10:45:01 by blohrer          ###   ########.fr       */
+/*   Updated: 2025/09/25 11:16:37 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,50 +56,16 @@ void	render_ceiling_section(t_game *g, int screen_column_x,
 	}
 }
 
-void	render_wall_section(t_game *g, t_screen_column_bounds *screen_bounds,
-	t_ray_result *wall_hit_data)
+void	render_wall_section(t_game *g,
+			t_screen_column_bounds *screen_bounds,
+			t_ray_result *wall_hit_data)
 {
-int					y;
-uint32_t			color;
-t_texture_context	ctx;
+	t_texture_step_data	data;
 
-// --- TODO 1: build ctx once
-ctx.world_wall_face = wall_hit_data->world_wall_face;
-ctx.world_wall_intersection_x = wall_hit_data->world_intersection_x;
-ctx.world_wall_intersection_y = wall_hit_data->world_intersection_y;
-ctx.screen_wall_height = screen_bounds->wall_end_y - screen_bounds->wall_start_y;
-
-// --- TODO 2: precompute texture ptr + stepping
-t_texture_image *tex = &g->map.wall_textures[ctx.world_wall_face];
-if (!tex || !tex->pixels || tex->image_width <= 0 || tex->image_height <= 0)
-	return;
-
-const double u = world_wall_texture_u(&ctx);           // once per column
-const int tx_x = (int)(u * tex->image_width);          // once per column
-const int wall_h = ctx.screen_wall_height;
-if (wall_h <= 0) return;
-
-// project once (instead of inside screen_wall_texture_v)
-const int start_y = screen_bounds->wall_start_y;
-const int end_y   = screen_bounds->wall_end_y;
-const double inv_span = 1.0 / (double)(end_y - start_y);  // safe: wall_h>0
-double v = 0.0;                               // at y == start_y
-const double dv = inv_span;                   // per-pixel increment
-
-// --- TODO 3: draw pixels with incremental v
-y = start_y;
-while (y < end_y)
-{
-	const int tx_y = (int)(v * tex->image_height);
-	// clamp & sample (avoid the function call overhead in hot path)
-	const int cx = (tx_x < 0) ? 0 : (tx_x >= tex->image_width ? tex->image_width - 1 : tx_x);
-	const int cy = (tx_y < 0) ? 0 : (tx_y >= tex->image_height ? tex->image_height - 1 : tx_y);
-	color = tex->pixels[cy * tex->image_width + cx];
-
-	put_pixel(g, screen_bounds->column_x, y, color);
-	v += dv;
-	y++;
-}
+	if (!setup_wall_texture_data(g, screen_bounds, wall_hit_data, &data))
+		return ;
+	calculate_texture_stepping(&data);
+	render_textured_pixels(g, screen_bounds->column_x, &data);
 }
 
 void	render_floor_section(t_game *g, int screen_column_x,

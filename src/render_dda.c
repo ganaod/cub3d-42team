@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/25 09:35:42 by blohrer           #+#    #+#             */
-/*   Updated: 2025/09/25 14:14:12 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/25 14:36:25 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,45 +40,39 @@ t_ray_result	cast_ray_to_wall(t_game *g, double world_ray_dir_x,
 	return (res);
 }
 
-/* walk along grid
+/* "walk along" grid
+ray: continuous line in 2D space
+grid: discrete (cells, walls)
+want to know which cell ray hits 1st
 
-The ray is a continuous line in 2D space.
+ray can cross:
+. vertical grid line (const x, up-down)
+(move into next col: E/W)
+. horiz grid line (const y, l-r)
+(cross 1 means moving into next row:
+S if step_y = +1, N if step_y = -1)
 
-The grid is discrete (cells, walls).
+at each iteration:
+which boundary (vert / horiz) is closer along ray's dir?
 
-We want to know which cell the ray hits first.
+advance along the smaller dist:
+ensures moving to closest grid boundary ray actually hits next
 
-The ray can cross:
+after moving:
+update that dist (1 cell's worth / delta_dist_y / _y)
+step the map coords (map_y / _y)
+repeat until W cell hit
 
-A vertical grid line (moving east/west to next column), or
+efficient:
+. const time / step: no trig inside loop
+distances precomputed
+. only necessary cells visited: don't overstep or
+sample pts along ray: only check cells ray enters
+. guarantees correct order
 
-A horizontal grid line (moving north/south to next row).
-
-So at each iteration we ask:
-👉 Which boundary (vertical or horizontal) is closer along the ray’s direction?
-
-always advance along the smaller distance → ensures we move to the closest grid boundary the ray actually hits next.
-After moving:
-
-We update that distance (add one cell’s worth, delta_dist_x or delta_dist_y),
-
-And we step the map coordinates (map_x or map_y).
-
-Repeat until you hit a wall cell.
-
-
-Why is this efficient?
-
-Constant time per step – no trigonometry inside the loop. Distances were precomputed (delta_dist_x, delta_dist_y).
-
-Only necessary cells are visited – we don’t “overstep” or sample points along the ray. We only ever check cells the ray actually enters.
-
-Guarantees correct order – at each iteration, we know which boundary comes first, so we’re traversing the exact sequence of grid cells the ray passes through.
-
-This is what makes DDA (Digital Differential Analyzer) superior to naive ray marching:
-instead of incrementing in tiny floating steps along the ray, we “jump” from cell boundary to cell boundary, always along the correct direction.*/
-
-/* */
+therefore superior to ray marching:
+instead of incrementing tiny floating steps along ray,
+jump from cell boundary > boundary, always along correct dir */
 void	execute_dda_traversal(t_game *g, t_dda_state *s, int *world_wall_side)
 {
 	(void)g;

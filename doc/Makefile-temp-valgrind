@@ -69,6 +69,11 @@ LDFLAGS = -L$(LIBFT_DIR) -lft \
 		  -L$(GNL_DIR) -lgnl \
 		  -L$(MLX_BUILD) -lmlx42 -lglfw -ldl -pthread -lm
 
+VALGRIND_FLAGS = --leak-check=full \
+                 --show-leak-kinds=all \
+                 --track-origins=yes \
+                 --verbose
+
 # build rules
 all: $(NAME)
 
@@ -80,6 +85,9 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
 
 $(OBJ_DIR):
 	mkdir -p $(OBJ_DIR)
+
+valgrind: re_debug
+	valgrind $(VALGRIND_FLAGS) ./$(NAME) maps/test.cub
 
 # dependency inclusion
 -include $(DEPS)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   render.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
+/*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 10:54:39 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/24 14:35:05 by blohrer          ###   ########.fr       */
+/*   Updated: 2025/09/25 09:22:55 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,16 +78,16 @@ receives ray intersection data, adds wall_height, passes both forward
 Mathematical boundaries:
 	wall_start = (screen_height - wall_height) / 2
 	wall_end = wall_start + wall_height */
-void	render_wall_column(t_game *g, int screen_column_x,
-		t_ray_result *wall_intersection_data, int projected_wall_height)
+void render_wall_column(t_game *g, int screen_column_x,
+        t_ray_result *wall_intersection_data, int projected_wall_height)
 {
-	int	start_y;
-	int	end_y;
-
-	start_y = (g->graphics.screen_height - projected_wall_height) / 2;
-	end_y = start_y + projected_wall_height;
-	render_ceiling_section(g, screen_column_x, start_y);
-	render_wall_section(g, screen_column_x, start_y, end_y,
-		wall_intersection_data);
-	render_floor_section(g, screen_column_x, end_y);
+    t_screen_column_bounds bounds;
+    
+    bounds.column_x = screen_column_x;
+    bounds.wall_start_y = (g->graphics.screen_height - projected_wall_height) / 2;
+    bounds.wall_end_y = bounds.wall_start_y + projected_wall_height;
+    
+    render_ceiling_section(g, screen_column_x, bounds.wall_start_y);
+    render_wall_section(g, &bounds, wall_intersection_data);
+    render_floor_section(g, screen_column_x, bounds.wall_end_y);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3d.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
+/*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/24 12:28:28 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/24 16:38:02 by blohrer          ###   ########.fr       */
+/*   Created: 2025/09/25 09:16:57 by go-donne          #+#    #+#             */
+/*   Updated: 2025/09/25 09:18:00 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,8 +80,8 @@ enum
 	HDR_SO = (1 << 1),
 	HDR_WE = (1 << 2),
 	HDR_EA = (1 << 3),
-	HDR_F  = (1 << 4),
-	HDR_C  = (1 << 5),
+	HDR_F = (1 << 4),
+	HDR_C = (1 << 5),
 };
 
 /* ⭐⭐ STRUCTS */
@@ -241,7 +241,8 @@ void	parse_error(const char *msg);
 int		check_cub_extension(const char *filename);
 
 /* ================== GRAPHICS / WINDOW ================== */
-int		gfx_open_window_resizable(t_game *game, const char *title, int w, int h);
+int		gfx_open_window_resizable(t_game *game,
+			const char *title, int w, int h);
 int		gfx_maximize_now(t_graphics *g);
 int		gfx_rebuild_framebuffer(t_graphics *g, int w, int h);
 void	handle_resize(int32_t w, int32_t h, void *param);

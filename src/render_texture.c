@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/25 11:22:37 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/25 11:31:19 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/25 15:26:55 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,7 @@
 
 /* Validate texture data and prepare rendering context
 Input: Game state, column bounds, wall intersection data
-Output: Populated texture step data structure
-Returns: 1 on success, 0 on invalid texture/wall face */
+Output: Populated texture step data structure */
 int	setup_wall_texture_data(t_game *g, t_screen_column_bounds *bounds,
 		t_ray_result *wall_hit, t_texture_step_data *data)
 {
@@ -40,10 +39,23 @@ int	setup_wall_texture_data(t_game *g, t_screen_column_bounds *bounds,
 	return (1);
 }
 
-/* Calculate texture coordinate stepping for incremental rendering
-Input: Texture step data with screen boundaries
-Output: Sets v_current to 0.0 and v_increment for each pixel step
-Optimization: One division per column instead of per pixel */
+/* INCREMENTAL TEXTURE STEPPING OPTIMIZATION
+PROBLEM: Original per-pixel approach required expensive division per pixel:
+   v = (current_y - wall_start) / wall_span  [~100-500 divisions per column]
+
+SOLUTION: Pre-calculate step size once, then use simple addition per pixel:
+   v_increment = 1.0 / wall_span  (once per column)
+   v += v_increment               (per pixel - just addition)
+
+ANALOGY: Painting a wall stripe using a photo reference
+- OLD: For each brushstroke, measure distance from top, calculate %, find photo position
+- NEW: Pre-calculate "each brushstroke moves 1% down the photo", just add 1% each time
+
+MATHEMATICAL PROOF: Both produce identical linear interpolation sequences:
+   Per-pixel: 0.0, 1/span, 2/span, 3/span, ...
+   Incremental: 0.0, 0+dv, 0+dv+dv, 0+dv+dv+dv, ... (where dv = 1/span)
+
+PERFORMANCE: ~50% reduction in arithmetic operations, identical visual output */
 void	calculate_texture_stepping(t_texture_step_data *data)
 {
 	int	span;

@@ -6,7 +6,7 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/25 13:56:12 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/25 13:56:14 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/25 14:59:26 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,12 @@ purpose:
 . determine initial boundary distances for efficient traversal
 
 insight:
-grid spacing is uniform: calculate step distances once,
+grid spacing is uniform & ray's angle stays const:
+calculate step distances once,
 reuse throughout traversal.
 this is the optimisation that makes dda superior
-to naive ray stepping approaches */
+to naive ray stepping approaches
+this delta_dist is a fixed constant for the entire ray's journey */
 
 #include "../inc/render.h"
 
@@ -47,7 +49,8 @@ void	setup_dda_vars(t_game *g, double ray_dir_x, double ray_dir_y,
 	state->wall_intersection_found = 0;
 }
 
-/* X-AXIS STEPPING CONFIGURATION
+/* x-axis stepping configuration
+initial pre-computation
 calculate step direction and distance to first X boundary
 
 Mathematical setup:

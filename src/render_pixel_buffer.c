@@ -3,16 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   render_pixel_buffer.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
+/*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 15:51:35 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/25 09:42:12 by blohrer          ###   ########.fr       */
+/*   Updated: 2025/09/25 15:26:46 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/render.h"
 
-/* clear screen buffer to known state for frame composition
+/* clear screen buffer to known state for
+additive frame composition
 1. calculate total pixel count (2d screen area)
 2. calculate memory size (pixel count * bytes per pixel)
 3. initialize all bytes to 0 (black rgba pixels) */
@@ -25,7 +26,7 @@ void	clear_screen_buffer(t_game *g)
 	screen_pixel_count = g->graphics.screen_width * g->graphics.screen_height;
 	bytes_per_pixel = sizeof(uint32_t);
 	total_buffer_size_bytes = screen_pixel_count * bytes_per_pixel;
-	ft_memset(g->graphics.frame->pixels, 0xFF, total_buffer_size_bytes);
+	ft_memset(g->graphics.frame->pixels, 0x00, total_buffer_size_bytes);
 }
 
 /* direct pixel write to mlx42 frame buffer
@@ -68,7 +69,8 @@ Another process reading during this sequence gets corrupted colour.
 With uint32_t casting (safe):
 uint32_t	*buffer = (uint32_t*)pixels;
 buffer[index] = 0xAARRGGBB;
-// Single atomic write: all 4 channels updated simultaneously */
+
+Single atomic write: all 4 channels updated simultaneously */
 void	put_pixel(t_game *g, int screen_x, int screen_y, int pixel_color)
 {
 	uint32_t	*pixel_buffer;

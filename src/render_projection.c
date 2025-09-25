@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   render_projection.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
+/*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/25 09:39:50 by blohrer           #+#    #+#             */
-/*   Updated: 2025/09/25 09:40:19 by blohrer          ###   ########.fr       */
+/*   Updated: 2025/09/25 10:23:44 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,9 +68,6 @@ int	calculate_screen_wall_height(t_game *g, double world_wall_distance)
 
 	screen_wall_height_pixels = (int)(g->graphics.screen_height
 			/ world_wall_distance);
-	if (world_wall_distance < 0.5)
-		printf("Distance: %.6f → Height: %d pixels\n", world_wall_distance,
-			screen_wall_height_pixels);
 	return (screen_wall_height_pixels);
 }
 

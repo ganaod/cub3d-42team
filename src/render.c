@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   render.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
+/*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 10:54:39 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/25 09:37:53 by blohrer          ###   ########.fr       */
+/*   Updated: 2025/09/25 10:22:42 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,8 +50,8 @@ void	render_complete_frame(t_game *g)
 }
 
 /* column-based rendering
-		Why: ray casting gives distance per column, not per pixel
-		necessity: 1 ray → 1 distance → entire vertical strip */
+Why: ray casting gives distance per column, not per pixel
+necessity: 1 ray → 1 distance → entire vertical strip */
 void	render_single_column(t_game *g, int screen_column_x)
 {
 	double			world_ray_dir_x;

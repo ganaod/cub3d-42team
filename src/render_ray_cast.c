@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   render_ray_cast.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
+/*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 13:48:28 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/25 09:42:04 by blohrer          ###   ########.fr       */
+/*   Updated: 2025/09/25 10:23:10 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,16 +52,6 @@ void	calculate_ray_direction(t_game *g, int screen_column_x,
 	*world_ray_direction_y = g->player.world_dir_y
 		+ fov_space_camera_plane_offset * g->player.world_camera_plane_y;
 }
-
-/* no peripheral sweep → all columns show the same forward view.
-visual effect: telescope-like, extremely narrow, boring “tunnel” view */
-// void	calculate_ray_direction_tunnel_vision(int screen_column_x,
-// 		double *world_ray_direction_x, double *world_ray_direction_y)
-// {
-// 	(void)screen_column_x;
-// 	*world_ray_direction_x = g->player.world_dir_x;
-// 	*world_ray_direction_y = g->player.world_dir_y;
-// }
 
 /* why? determine which compass dir wall face was hit by a ray
 in: t_ray_result: world coords of intersection + wall intersection (vert/horz)

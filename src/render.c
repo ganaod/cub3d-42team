@@ -6,32 +6,15 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 10:54:39 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/25 10:22:42 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/25 12:31:19 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/render.h"
 
-/* rendering module
-2D map data → 3D visual representation
-
-core operations:
-	1. Ray Direction:    Screen column → World ray vector
-	2. Ray Intersection: Ray vector → Wall hit point + distance
-	3. Projection:       Distance → Screen wall height
-	4. Boundaries:       Wall height → Pixel start/end positions
-	5. Texture Mapping:  Hit point + screen pixel → Texture coordinates
-	6. Texture Sampling: Texture coordinates → Colour value
-	7. Pixel Drawing:    Colour → Screen buffer */
-/* 1. initialise buffer
-. clear screen buff to known state (black pixels)
-. prepare canvas for additive composition
-
-2. raycasting core loop
-. read screen_width from graphics sys, process that many cols
-. for each screen col: cast ray, find wall, draw vert strip
-. screen width determines ray count (1 ray / col)
-. rays spread across player's FOV */
+/* frame orchestration
+clear buffer,
+process each screen col */
 void	render_complete_frame(t_game *g)
 {
 	int	x;
@@ -50,7 +33,7 @@ void	render_complete_frame(t_game *g)
 }
 
 /* column-based rendering
-Why: ray casting gives distance per column, not per pixel
+Why: ray casting gives distance per column
 necessity: 1 ray → 1 distance → entire vertical strip */
 void	render_single_column(t_game *g, int screen_column_x)
 {
@@ -69,15 +52,9 @@ void	render_single_column(t_game *g, int screen_column_x)
 		projected_wall_height);
 }
 
-/* WALL COLUMN RENDERING COORDINATION
-Manages complete vertical strip composition of the 3D perspective view
-
-bridge between the continuous world distance and the discrete screen pixels
-receives ray intersection data, adds wall_height, passes both forward
-
-Mathematical boundaries:
-	wall_start = (screen_height - wall_height) / 2
-	wall_end = wall_start + wall_height */
+/* split col into C, W, F
+bounds center wall symmetrically around screen middle 
+with equal F & C margins */
 void	render_wall_column(t_game *g, int screen_column_x,
 		t_ray_result *wall_intersection_data, int projected_wall_height)
 {

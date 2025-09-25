@@ -6,33 +6,20 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 10:54:44 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/25 11:16:37 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/25 12:49:46 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-/* screen-frame with its 3 zones:
-
-┌─────────────────┐
-│     CEILING     │ (rays above horizontal centreline)
-│                 │
-├╴╴╴╴╴╴╴╴╴╴╴╴╴╴╴╴╴┤ ← screen_y = wall_start_y_pixel
-│      WALL       │ (ray intersection determines height)
-│                 │
-├╴╴╴╴╴╴╴╴╴╴╴╴╴╴╴╴╴┤ ← screen_y = wall_end_y_pixel
-│      FLOOR      │
-│                 │	(rays below horizontal centreline)
-└─────────────────┘
-
-re. texture, from subject:
-	"display different wall textures"
-	"set the floor and ceiling to two different colours"
-
-hence
-1 helper per section, texturing
-only in	render_wall_section(void) */
-
 #include "../inc/render.h"
 
+/* perspective projection boundary protection
+ultra-close walls create mathematically valid
+but unrenderable coords:
+. wall h exceed screen: wall start -ve
+. wall start above screen top: clamp to pixel row 0
+. wall start below screen bottom: clamp to screen h
+prevents ray access violations while
+maintaining 3D perspective accuracy */
 void	render_ceiling_section(t_game *g, int screen_column_x,
 		int wall_start_y_pixel)
 {
@@ -56,6 +43,17 @@ void	render_ceiling_section(t_game *g, int screen_column_x,
 	}
 }
 
+/* 3 phases:
+. setup: validate txt data, calc horiz position 
+(U coord) 
+. stepping: pre-calculate vertical increment 
+1 division per col
+. render: apply texture using incremental addition
+per pixel 
+
+stepping eliminates ~1-500 divisions per col 
+   Old: v = (y - start) / span  [division every pixel]
+   New: v += increment          [addition every pixel] */
 void	render_wall_section(t_game *g,
 			t_screen_column_bounds *screen_bounds,
 			t_ray_result *wall_hit_data)

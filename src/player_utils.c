@@ -3,15 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   player_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
+/*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/25 09:32:59 by blohrer           #+#    #+#             */
-/*   Updated: 2025/09/25 09:35:17 by blohrer          ###   ########.fr       */
+/*   Updated: 2025/09/25 13:53:25 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/cub3d.h"
 
+/* player pos is continous floating pt val,
+not discrete int tied to map cell.
+fractional dist tells precise location within cell,
+allows 4 accurate & smooth collision detection */
 static double	distance_to_nearest_wall(const t_map *m, double x, double y)
 {
 	int		ix;
@@ -38,6 +42,10 @@ static double	distance_to_nearest_wall(const t_map *m, double x, double y)
 	return (min_dist);
 }
 
+/* attempt to move P to new pos
+while preventing walking through Ws
+checks dist to nearest wall at proposed x & y coords
+if both coords are clear of Ws, update P pos */
 void	try_move_player(t_game *g, double new_x, double new_y)
 {
 	double	min_wall_distance;

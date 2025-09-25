@@ -6,11 +6,11 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 13:48:28 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/25 10:23:10 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/25 13:28:27 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-/* core responsibility: screen coordinate → world ray vector transformations */
+/* screen coordinate → world ray vector transformations */
 
 #include "../inc/render.h"
 
@@ -22,11 +22,11 @@ how: transform ray caster from 1D scanner > 3D vision simulator
 	. this offset encodes relative angular deviation
 2. compute ray dir vector for this column:
 world_ray_dir = dir + offset * plane
-	. dir: forward-facing vector
+	. dir: forward-facing vector (dir P currently facing)
 	. plane: perpendicular vector spanning FOV width
 	. offset ∈ [-1,1], scales plane vector
 	. result: parametric dir vector for ray in world space
-3. viual effect:
+3. visual effect:
 	. without offset: all rays point forwards > tunnel vision
 	. with offset: rays sweep l>r > human-like peripheral vision
 notes on plane:
@@ -34,11 +34,12 @@ notes on plane:
 	. acts as a helper for generating angular deviation
 	. scaling offset * plane produces angular spread across screen columns
 top-down view of rays from player (P):
-		/ ray offset = +1 (right)
-		/
-  P -> dir (forward)
-		\
-		\ ray offset = -1 (left) */
+
+       /   (right ray)
+      /
+     P     (Player)
+      \
+       \   (left ray) */
 void	calculate_ray_direction(t_game *g, int screen_column_x,
 		double *world_ray_direction_x, double *world_ray_direction_y)
 {

@@ -6,12 +6,11 @@
 /*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/25 09:39:50 by blohrer           #+#    #+#             */
-/*   Updated: 2025/09/25 10:23:44 by go-donne         ###   ########.fr       */
+/*   Updated: 2025/09/25 13:47:05 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/render.h"
-#include <stdio.h> // printf for optional debug
 
 /* convert 1D dist measurements > 2D screen pixel heights
 (creating 3D/2.5D depth illusion)
@@ -46,22 +45,22 @@ behaviour:
 	. Distance 2.0 → Wall half screen (height = screen_height/2)
 	. Distance → ∞ → Wall approaches 0 pixels	*/
 
-/* CALCULATE SCREEN WALL HEIGHT
-Perspective projection: Convert world distance to screen pixels
+/* convert 1D world dist of W into
+its corresponding 2D screen h
+
+based on perspective projectn formula
+derived from similar triangles:
+wall_height_pixels = screen_height / world_wall_distance
+
+output creates illusion of 3D depth by making closer wall
+appear taller & farther walls appear shorter
 
 Mathematical constraint analysis:
 DDA returns distance to wall face, minimum theoretically > 0
 However: floating point precision near grid boundaries could
 produce values approaching 0, causing overflow in division
-Protection threshold - clamping (see .h)
-Smaller distances treated as "player touching wall"
-
-Core perspective projection: Similar triangles ratio
-wall_height_pixels = screen_height / wall_distance
-
-Rendering constraint: Prevent buffer overflow from extreme proximity
-Maximum 2x screen height allows for reasonable "wall fills view" effect
-without creating unmanageable pixel counts for column renderer  */
+Protection threshold - clamping
+Smaller distances treated as "player touching wall" */
 int	calculate_screen_wall_height(t_game *g, double world_wall_distance)
 {
 	int	screen_wall_height_pixels;
@@ -71,7 +70,6 @@ int	calculate_screen_wall_height(t_game *g, double world_wall_distance)
 	return (screen_wall_height_pixels);
 }
 
-/* HIGH-LEVEL PERSPECTIVE SIMULATION */
 void	simulate_eye_level_perspective(t_game *g, int wall_height,
 		int *wall_start, int *wall_end)
 {
@@ -105,8 +103,19 @@ void	centre_wall_at_eye_level(t_game *g, int wall_height, int *wall_start,
 	*wall_end = *wall_start + wall_height;
 }
 
-/* screen buffer has fixed dimensions [0, screen_height - 1]
-implementation requirement: protect array bounds */
+/* clamp start & end pixel coords of W to fit within screen's
+vertical boundaries
+(screen buff has fixed dimensions: [0, screen_height - 1])
+
+ensures W's drawing coords (wall_start & _end)
+are valid pixel indices for screen buff
+clamp wall start to 0 & height to screen_height
+
+prevents out-of-bounds write
+
+in combo with primitive texturing (no offsetting)
+- no cropping, so unrealistic texture morphing
+(squishing/stretching) */
 void	enforce_screen_pixel_boundaries(t_game *g, int *wall_start,
 		int *wall_end)
 {

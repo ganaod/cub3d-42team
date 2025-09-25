@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3d.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
+/*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/25 09:16:57 by go-donne          #+#    #+#             */
-/*   Updated: 2025/09/25 10:02:13 by blohrer          ###   ########.fr       */
+/*   Updated: 2025/09/25 13:27:47 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,11 +45,13 @@
 # define EXIT_FAILURE 1
 
 /* ⭐ MATHEMATICAL FOUNDATION */
-/* (fixed) field of view (FoV) configuration */
+/* (fixed) field of view (FoV) configuration
+approx that of humans*/
 # define FOV_DEGREES 60.0
 
 /* SCREEN > FOV COORDINATE TRANSFORMATION */
 # define SCREEN_TO_FOV_SCALE_FACTOR 2.0
+// center the normalized [0, 2] range around 0
 # define FOV_CENTER_OFFSET 1.0
 
 /* wall face directions: absolute world coords */

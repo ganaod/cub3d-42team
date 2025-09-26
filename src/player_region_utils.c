@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ff.c                                               :+:      :+:    :+:   */
+/*   player_region_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/25 15:11:28 by blohrer           #+#    #+#             */
-/*   Updated: 2025/09/25 20:08:07 by blohrer          ###   ########.fr       */
+/*   Updated: 2025/09/26 12:54:23 by blohrer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,14 @@ static int	ff_visit_idx(t_ffctx *c, int ni)
 		c->q[c->tail++] = ni;
 		return (1);
 	}
-	if (c->m->grid[ni] == CELL_VOID && c->vis_void[ni])
-		return (0);
+	if (c->m->grid[ni] == CELL_VOID)
+	{
+		if (c->vis_void[ni])
+			return (0);
+		c->vis[ni] = 1;
+		c->q[c->tail++] = ni;
+		return (1);
+	}
 	return (1);
 }
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   render_texture.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: blohrer <blohrer@student.42.fr>            +#+  +:+       +#+        */
+/*   By: go-donne <go-donne@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/25 20:26:50 by blohrer           #+#    #+#             */
-/*   Updated: 2025/09/25 20:26:55 by blohrer          ###   ########.fr       */
+/*   Updated: 2025/09/26 09:44:30 by go-donne         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ MATHEMATICAL PROOF: Both produce identical linear interpolation sequences:
    Per-pixel: 0.0, 1/span, 2/span, 3/span, ...
    Incremental: 0.0, 0+dv, 0+dv+dv, 0+dv+dv+dv, ... (where dv = 1/span)
 
-PERFORMANCE: ~50% reduction in arithmetic operations, identical visual output */
+~50% reduction in arithmetic operations, identical visual output */
 void	calculate_texture_stepping(t_texture_step_data *data)
 {
 	int	span;

@@ -39,7 +39,7 @@ void	init_runtime_defaults(t_game *g)
 {
 	if (!g)
 		return ;
-	g->movement_speed = 3.0;
-	g->rotation_speed = 2.0;
+	g->movement_speed = 4.0;
+	g->rotation_speed = 4.0;
 	sync_player_world_fields_from_parser(g);
 }
